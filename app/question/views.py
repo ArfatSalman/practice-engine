@@ -135,4 +135,17 @@ def get_tags():
 @question.route('/check-answer', methods=['POST'])
 @login_required
 def check_answer():
-	pass
+	ques_id = request.form.get('question-id', 0, type=int)
+	option_selected = request.form.getlist('opt')
+	
+	ques = Question.query.get_or_404(ques_id)
+
+	result = {}
+	for option_id in option_selected:
+		option = Option.query.get(int(option_id))
+		if option.is_right:
+			result[str(option.id)]=True
+		else:
+			result[str(option.id)]=False
+
+	return jsonify(result)

@@ -1,3 +1,17 @@
+$(function(){
+  //jQuery.post( url [, data ] [, success ] [, dataType ] )
+  $(".option-form").on("submit", function(event){
+    event.preventDefault();
+    $.post('/check-answer', $(this).serialize(), function(){
+      
+      console.log('success');
+
+    });
+
+  });
+
+});
+
 
 $(function(){
 

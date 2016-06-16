@@ -32,19 +32,27 @@
 			<p class="lead">{{ques.description}}</p>
 		</div>
 	</div>
-{% set options = ques.options %}
-{% for option in options %}
+
 	<div class="row">
+		<form class="option-form">
+		<input name="question-id" type="hidden" value="{{ques.id}}">
+		{% set options = ques.options %}
+		{% for option in options %}
 		<div class="col-md-6 col-md-offset-2">
 			<div class="checkbox">
 		  		<label>
-		    		<input type="checkbox" value="">
+		    		<input class="options" type="checkbox" name="opt" value="{{option.id}}">
 		    			{{option.body}}
 		  		</label>
 			</div>
 		</div>
+		{% endfor %}
+
+			<div class="col-md-3 col-md-offset-3">
+				<input id="submit-options" class="btn btn-primary" type="submit" value="check">
+			</div>
+		</form>
 	</div>
-{% endfor %}
 
 
 {% endblock %}
