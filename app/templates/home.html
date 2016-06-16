@@ -1,0 +1,50 @@
+{%extends "base.html" %}
+
+{% block content %}
+
+
+
+<div class="row">
+	<div class="col-md-2">
+		<h1>afwawfa<h1>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-6 col-md-offset-2">
+		{% for tag in ques.tags %}
+		<span>{{tag.tagname}}</span>
+		{% endfor %}
+	</div>
+</div>
+
+	<div class="row">
+		<div class="col-md-6 col-md-offset-2">
+			<h5>Question</h5>
+			<div>
+				<p class="lead">{{ques.body}}</p>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-6 col-md-offset-2">
+			<h5>Description</h5>
+			<p class="lead">{{ques.description}}</p>
+		</div>
+	</div>
+{% set options = ques.options %}
+{% for option in options %}
+	<div class="row">
+		<div class="col-md-6 col-md-offset-2">
+			<div class="checkbox">
+		  		<label>
+		    		<input type="checkbox" value="">
+		    			{{option.body}}
+		  		</label>
+			</div>
+		</div>
+	</div>
+{% endfor %}
+
+
+{% endblock %}

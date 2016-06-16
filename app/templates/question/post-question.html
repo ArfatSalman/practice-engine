@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% import "_macros.html" as macros %}
+
+{% block content%}
+
+<div class="row">
+	<div class="col-md-4 col-md-offset-1">
+		<form method="POST">
+			{{form.hidden_tag()}}
+
+			{{macros.render_field(form.tags, class='form-control')}}
+
+			{{macros.render_field(form.body, class='form-control', rows=5)}}
+
+
+			{{macros.render_field(form.description, class='form-control', rows=2)}}
+
+			<div class="form-inline">
+			{{macros.render_field(form.option1, class='form-control')}}
+			<div class="checkbox"><label>{{form.check_option1}}</label></div>
+		</div>
+
+			<div class="form-inline">
+			{{macros.render_field(form.option2, class='form-control', rows=2)}}
+			<div class="checkbox"><label>{{form.check_option2}}</label></div>
+
+		</div>
+
+			{{macros.render_field(form.option3, class='form-control', rows=2)}}
+
+			{{macros.render_field(form.option4, class='form-control', rows=2)}}
+
+			{{form.submit(class='btn btn-primary', value='PostT')}}
+
+
+		</form>
+	</div>
+
+	<div class="col-md-4 col-md-offset-1">
+		<h5> Question </h5>
+				<div class="questions">
+					<p id="MathQues" class="placeholder-text">Your question</p>
+				</div>
+	</div>
+
+	<div class="col-md-4 col-md-offset-1">
+		<h5> Description </h5>
+				<div>
+					<p id="desc-preview">Your question</p>
+				</div>
+	</div>
+
+
+</div>
+{% endblock %}
