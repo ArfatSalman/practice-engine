@@ -10,6 +10,11 @@ from .. import db
 from .forms import PostQuestionForm
 
 '''Helper Functions'''
+def bad_request(message, status_code=403):
+    response = jsonify({'message': message})
+    response.status_code = status_code
+    return response
+
 def get_options(form):
 	options = []
 	for fieldname, value in form.data.items():
@@ -138,6 +143,9 @@ def check_answer():
 	ques_id = request.form.get('question-id', 0, type=int)
 	option_selected = request.form.getlist('opt')
 	
+	if not option_selected:
+		return bad_request('Choose atleast one Option', 406)
+
 	ques = Question.query.get_or_404(ques_id)
 
 	result = {}
@@ -147,5 +155,4 @@ def check_answer():
 			result[str(option.id)]=True
 		else:
 			result[str(option.id)]=False
-
 	return jsonify(result)

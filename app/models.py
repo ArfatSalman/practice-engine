@@ -3,6 +3,22 @@ from flask_login import UserMixin
 from . import db, login_manager
 from datetime import datetime
 
+tags_assoc = db.Table('tags_assoc',
+    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id')),
+    db.Column('question_id', db.Integer, db.ForeignKey('questions.id'))
+)
+
+user_tags_assoc = db.Table('user_tags_assoc',
+    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id')),
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id'))
+)
+
+solved_questions_assoc = db.Table('solved_questions_assoc',
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
+    db.Column('question_id', db.Integer, db.ForeignKey('questions.id'))
+)
+
+
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -13,9 +29,18 @@ class User(UserMixin, db.Model):
                     backref=db.backref('user', lazy='joined'),
                     lazy='dynamic')
 
-    
+    questions_solved = db.relationship("Question",
+                                        secondary=solved_questions_assoc,
+                                        backref=db.backref('solved_by', 
+                                            lazy='dynamic'),
+                                        lazy='dynamic')
 
-    
+    associated_tags = db.relationship("Tag",
+                                      secondary=user_tags_assoc,
+                                      backref=db.backref('assoc_users', 
+                                                    lazy='dynamic'),
+                                      lazy='dynamic')
+
     def __init__(self, username, password=''):
     	self.username = username
     	self.password_hash = generate_password_hash(password)
@@ -27,10 +52,6 @@ class User(UserMixin, db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-tags_assoc = db.Table('tags_assoc',
-    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id')),
-    db.Column('question_id', db.Integer, db.ForeignKey('questions.id'))
-)
 
 class Question(db.Model):
     '''

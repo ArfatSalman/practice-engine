@@ -1,0 +1,44 @@
+#alert {
+    position: fixed;
+    z-index: 1;
+}
+.options p {
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 5px;
+    box-shadow: 1px 2px 3px lightblue;
+    cursor: pointer;
+}
+.selected {
+    background: lightblue;
+}
+
+.correct {
+    background: lightgreen;
+}
+
+.incorrect {
+    background: red;
+}
+
+.modal {
+    display:    none;
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 255, 255, 255, .8 ) 
+                url('http://i.stack.imgur.com/FhHRx.gif') 
+                50% 50% 
+                no-repeat;
+}
+
+.loading {
+    overflow: hidden;   
+}
+
+.loading .modal {
+    display: block;
+}
