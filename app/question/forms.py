@@ -36,6 +36,10 @@ class OptionForm(Form):
     option = TextAreaField('option')
     check_option = BooleanField()
 
+class UserTagsForm(Form):
+    tags = TagListField('Tags', validators=[Required()])
+    submit = SubmitField('Add')
+
 class PostQuestionForm(Form):
     body = TextAreaField('Question?', validators=[Required()])
     description = TextAreaField('Description')

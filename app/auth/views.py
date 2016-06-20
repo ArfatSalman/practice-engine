@@ -1,6 +1,6 @@
-from flask import session, redirect, url_for, jsonify, flash
+from flask import session, redirect, url_for, jsonify, flash, request
 from flask_login import login_user, login_required, logout_user
-
+from flask_login import current_user
 from . import auth
 from .. import db, google
 from ..models import User
@@ -10,12 +10,16 @@ GOOGLE_OAUTH_USERINFO_URL = 'https://www.googleapis.com/oauth2/v1/userinfo'
 
 @auth.route('/google-login')
 def google_login():
+	if current_user.is_authenticated:
+		return redirect(url_for('main.index'))
 	return google.authorize(
 		callback=url_for('.google_authorized', _external = True))
 
 @auth.route('/oauth2callback')
 @google.authorized_handler
 def google_authorized(resp):
+	next_url = request.args.get('next') or url_for('main.index')
+
 	if resp is None:
 		return 'Access Denied %s' % (request.args['error_reason'])
 
@@ -40,7 +44,7 @@ def google_authorized(resp):
 
 	login_user(user, remember=True)
 
-	return redirect(url_for('main.home'))
+	return redirect(next_url)
 
 @auth.route('/logout')
 @login_required

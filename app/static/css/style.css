@@ -1,44 +1,96 @@
+
 #alert {
     position: fixed;
     z-index: 1;
 }
-.options p {
-    border: 1px solid black;
+.options textarea {
+    height: 34px;
+}
+.options > p {
+    border: 1px solid lightgray;
     border-radius: 5px;
-    padding: 5px;
-    box-shadow: 1px 2px 3px lightblue;
+    box-shadow: 0 0 3px lightblue;
     cursor: pointer;
+    padding: 5px;
 }
 .selected {
-    background: lightblue;
+    background: lightblue none repeat scroll 0 0;
 }
-
 .correct {
-    background: lightgreen;
+    background: lightgreen none repeat scroll 0 0;
 }
-
 .incorrect {
-    background: red;
+    background: red none repeat scroll 0 0;
 }
-
 .modal {
-    display:    none;
-    position:   fixed;
-    z-index:    1000;
-    top:        0;
-    left:       0;
-    height:     100%;
-    width:      100%;
-    background: rgba( 255, 255, 255, .8 ) 
-                url('http://i.stack.imgur.com/FhHRx.gif') 
-                50% 50% 
-                no-repeat;
+    background: rgba(255, 255, 255, 0.8) url("http://i.stack.imgur.com/FhHRx.gif") no-repeat scroll 50% 50%;
+    display: none;
+    height: 100%;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
 }
-
 .loading {
-    overflow: hidden;   
+    overflow: hidden;
 }
-
 .loading .modal {
     display: block;
+}
+.question-box {
+    border: 1px solid lightblue;
+    border-radius: 5px;
+    box-shadow: 1px 2px 3px lightblue;
+    padding: 10px;
+}
+h5 {
+    color: gray;
+    font-family: Verdana;
+    font-style: italic;
+}
+.user-box img {
+    border-radius: 3px;
+}
+.user-box p {
+    color: gray;
+    font-size: 12px;
+    padding: 0;
+}
+.custom-checkbox input[type="checkbox"] {
+    display: none;
+}
+.custom-checkbox label {
+    background-color: #6a8494;
+    border: 3px solid #fff;
+    border-radius: 100px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    color: #fff;
+    cursor: pointer;
+    display: block;
+    margin: 21px 0 0;
+    padding: 30px 25px 5px 19px;
+    position: relative;
+    transition: background-color 0.2s ease 0s, box-shadow 0.2s ease 0s;
+    white-space: nowrap;
+}
+.custom-checkbox label::before {
+    border: 3px solid #fff;
+    border-radius: 100px;
+    bottom: 9px;
+    content: "";
+    display: block;
+    position: absolute;
+    top: 10px;
+    transition: background-color 0.2s ease 0s;
+    width: 17px;
+}
+.custom-checkbox label:hover, .container input:focus + label {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+}
+.custom-checkbox input:checked + label {
+    background-color: lightgreen;
+}
+.custom-checkbox input:checked + label::before {
+    background-color: #fff;
 }

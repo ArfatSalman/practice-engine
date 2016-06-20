@@ -7,7 +7,7 @@ from ..models import User, Question, Option, Tag
 from . import question
 from .. import db
 
-from .forms import PostQuestionForm
+from .forms import PostQuestionForm, UserTagsForm
 
 '''Helper Functions'''
 def bad_request(message, status_code=403):
@@ -156,3 +156,4 @@ def check_answer():
 		else:
 			result[str(option.id)]=False
 	return jsonify(result)
+

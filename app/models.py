@@ -2,20 +2,21 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from . import db, login_manager
 from datetime import datetime
+from .utilities import print_debug
 
 tags_assoc = db.Table('tags_assoc',
-    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id')),
-    db.Column('question_id', db.Integer, db.ForeignKey('questions.id'))
+    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id'), primary_key=True),
+    db.Column('question_id', db.Integer, db.ForeignKey('questions.id'), primary_key=True)
 )
 
 user_tags_assoc = db.Table('user_tags_assoc',
-    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id')),
-    db.Column('user_id', db.Integer, db.ForeignKey('users.id'))
+    db.Column('tag_id', db.Integer, db.ForeignKey('tags.id'), primary_key=True),
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True)
 )
 
 solved_questions_assoc = db.Table('solved_questions_assoc',
-    db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
-    db.Column('question_id', db.Integer, db.ForeignKey('questions.id'))
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
+    db.Column('question_id', db.Integer, db.ForeignKey('questions.id'), primary_key=True)
 )
 
 
@@ -46,10 +47,20 @@ class User(UserMixin, db.Model):
     	self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
+        print_debug('check password called')
     	return check_password_hash(self.password_hash, password)
+
+    def get_relevant_question(self):
+        ques = Question.query\
+        .join(tags_assoc, tags_assoc.c.question_id == Question.id)\
+        .join(user_tags_assoc, user_tags_assoc.c.tag_id == tags_assoc.c.tag_id)\
+        .filter_by(user_id=self.id)
+
+        return ques.first()
 
 @login_manager.user_loader
 def load_user(user_id):
+    print_debug("User loader called with id %s" % user_id)
     return User.query.get(int(user_id))
 
 

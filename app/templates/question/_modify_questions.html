@@ -1,0 +1,123 @@
+{% import "_macros.html" as macros %}
+
+<div class="row">
+	<div class="col-md-10 col-md-offset-1">
+		<form method="POST">
+			{{form.hidden_tag()}}
+
+			<div class="row">
+				<div class="col-md-4">
+					{{macros.render_field(form.tags, class='form-control')}}
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-5">
+					{{macros.render_field(form.body, class='form-control', rows=5)}}
+				</div>
+
+				<div class="col-md-5 col-md-offset-1">
+					<h5> Question </h5>
+					<div class="questions">
+						<p id="MathQues" class="placeholder-text">Your question</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-5">
+					{{macros.render_field(form.description, class='form-control', rows=1)}}
+				</div>
+
+				<div class="col-md-5 col-md-offset-1">
+					<h5> Description </h5>
+					<div>
+					<p id="desc-preview">Your question</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="options row">
+				<div class="col-md-5">
+					{{macros.render_field(form.option1, class='form-control', rows=1)}}
+				</div>
+				<div class="col-md-1">
+					<div class="custom-checkbox">
+						{{form.check_option1}}
+						<label for="check_option1"></label>
+					</div>
+				</div>
+
+				<div class="col-md-5">
+					<h5> Option 1 </h5>
+					<div>
+					<p id="option_preview_1">Your question</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="options row">
+				<div class="col-md-5">
+					{{macros.render_field(form.option2, class='form-control')}}
+				</div>
+				<div class="col-md-1">
+					<div class="custom-checkbox">
+						{{form.check_option2}}
+						<label for="check_option2"></label>
+					</div>
+				</div>
+
+				<div class="col-md-5">
+					<h5> Option 2 </h5>
+					<div>
+					<p id="option_preview_2">Your question</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="options row">
+				<div class="col-md-5">
+					{{macros.render_field(form.option3, class='form-control')}}
+				</div>
+
+				<div class="col-md-1">
+					<div class="custom-checkbox">
+						{{form.check_option3}}
+						<label for="check_option3"></label>
+					</div>
+				</div>
+
+				<div class="col-md-5">
+					<h5> Option 3 </h5>
+					<div>
+					<p id="option_preview_3">Your question</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="options row">
+				<div class="col-md-5">
+					{{macros.render_field(form.option4, class='form-control')}}
+				</div>
+
+				<div class="col-md-1">
+					<div class="custom-checkbox">
+						{{form.check_option4}}
+						<label for="check_option4"></label>
+					</div>
+				</div>
+				
+				<div class="col-md-5">
+					<h5> Option 4 </h5>
+					<div>
+					<p id="option_preview_4">Your question</p>
+					</div>
+				</div>
+			</div>
+
+			{{form.submit(class='btn btn-primary', value='PostT')}}
+
+
+		</form>
+	</div>
+</div>
