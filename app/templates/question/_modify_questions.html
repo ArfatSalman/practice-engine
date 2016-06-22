@@ -6,12 +6,6 @@
 			{{form.hidden_tag()}}
 
 			<div class="row">
-				<div class="col-md-4">
-					{{macros.render_field(form.tags, class='form-control')}}
-				</div>
-			</div>
-
-			<div class="row">
 				<div class="col-md-5">
 					{{macros.render_field(form.body, class='form-control', rows=5)}}
 				</div>
@@ -112,6 +106,12 @@
 					<div>
 					<p id="option_preview_4">Your question</p>
 					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-12">
+					{{macros.render_field(form.tags, class='form-control')}}
 				</div>
 			</div>
 

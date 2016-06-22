@@ -15,6 +15,7 @@ def google_login():
 	return google.authorize(
 		callback=url_for('.google_authorized', _external = True))
 
+
 @auth.route('/oauth2callback')
 @google.authorized_handler
 def google_authorized(resp):

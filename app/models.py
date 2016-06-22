@@ -51,10 +51,24 @@ class User(UserMixin, db.Model):
     	return check_password_hash(self.password_hash, password)
 
     def get_relevant_question(self):
-        ques = Question.query\
-        .join(tags_assoc, tags_assoc.c.question_id == Question.id)\
-        .join(user_tags_assoc, user_tags_assoc.c.tag_id == tags_assoc.c.tag_id)\
-        .filter_by(user_id=self.id)
+
+        # get the questions
+        ques = Question.query
+
+        '''Remove the questions which are already solved by the user'''
+        ques = ques.join(solved_questions_assoc, solved_questions_assoc.c.question_id != Question.id)
+        
+        '''
+        Get the questions where tags are filled.
+        It is required because the next joins filters by tags
+        '''
+        ques = ques.join(tags_assoc, tags_assoc.c.question_id == Question.id)
+
+        '''Get the questions where the tags matches the tags of user'''
+        ques = ques.join(user_tags_assoc, user_tags_assoc.c.tag_id == tags_assoc.c.tag_id)
+
+        '''Filter the question by individual user'''
+        ques = ques.filter_by(user_id=self.id)
 
         return ques.first()
 

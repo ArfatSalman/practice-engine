@@ -8,6 +8,7 @@ from . import question
 from .. import db
 
 from .forms import PostQuestionForm, UserTagsForm
+from ..utilities import add_to_database
 
 '''Helper Functions'''
 def bad_request(message, status_code=403):
@@ -31,6 +32,7 @@ def associate_tags(form):
 			tag = Tag(tagname=tagname)
 		tags.append(tag)
 	return tags
+
 
 @question.route('/post-question', methods=['GET','POST'])
 @login_required
@@ -125,6 +127,16 @@ def edit_question(id):
 
 	return render_template('question/edit-question.html', form=form)
 
+
+@question.route('/question/<int:id>')
+@login_required
+def question_by_id(id):
+	ques = Question.query.get(id)
+
+	return render_template('question/question.html', 
+							ques=ques)
+
+
 @question.route('/get-tags', methods=['GET'])
 @login_required
 def get_tags():
@@ -149,11 +161,20 @@ def check_answer():
 	ques = Question.query.get_or_404(ques_id)
 
 	result = {}
+	is_answered = False
 	for option_id in option_selected:
-		option = Option.query.get(int(option_id))
+		option = Option.query.get_or_404(int(option_id))
 		if option.is_right:
 			result[str(option.id)]=True
+			is_answered = True
 		else:
 			result[str(option.id)]=False
+			is_answered = False
+
+	if is_answered:
+		current_user.questions_solved = [ques]
+		msg = 'You have successfully solved this question'
+		add_to_database(current_user)
+	
 	return jsonify(result)
 

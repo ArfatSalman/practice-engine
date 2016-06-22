@@ -106,7 +106,13 @@ $(function () {
                     .attr('disabled', false);
             },
             success: function (data, textStatus, jqxhr) {
-                var list = $('.list-group')
+                var list = $('.list-group');
+                var alt_msg = list.next();
+                
+                if (!$.isEmptyObject(alt_msg)) {
+                    alt_msg.remove();
+                }
+
                 list.children().remove();
                 $.each(data, function (key, value) {
                     var firstHalf = '<a href="#" data-id="';
@@ -207,6 +213,9 @@ $(function () {
                 } else {
                     showAlert('Something went wrong.', 'danger');
                 }
+                $('.option-form input[type="submit"]')
+                    .attr('value', 'Check')
+                    .prop('disabled', false);
             }
         }).done(function () {
             $('.option-form input[type="submit"]')
