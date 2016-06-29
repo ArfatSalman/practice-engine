@@ -19,6 +19,20 @@ solved_questions_assoc = db.Table('solved_questions_assoc',
     db.Column('question_id', db.Integer, db.ForeignKey('questions.id'), primary_key=True)
 )
 
+favourite_question_assoc = db.Table('favourite_question_assoc',
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
+    db.Column('question_id', db.Integer, db.ForeignKey('questions.id'), primary_key=True)
+)
+
+upvote_question_assoc = db.Table('upvote_question_assoc',
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
+    db.Column('question_id', db.Integer, db.ForeignKey('questions.id'), primary_key=True)
+)
+
+downvote_question_assoc = db.Table('downvote_question_assoc',
+    db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
+    db.Column('question_id', db.Integer, db.ForeignKey('questions.id'), primary_key=True)
+)
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
@@ -29,6 +43,24 @@ class User(UserMixin, db.Model):
     questions = db.relationship("Question", 
                     backref=db.backref('user', lazy='joined'),
                     lazy='dynamic')
+
+    questions_upvoted = db.relationship("Question", 
+                                        secondary=upvote_question_assoc,
+                                        backref=db.backref('upvoted_by', 
+                                                        lazy='dynamic'),
+                                        lazy='dynamic')
+
+    questions_downvoted = db.relationship("Question", 
+                                        secondary=downvote_question_assoc,
+                                        backref=db.backref('downvoted_by', 
+                                                        lazy='dynamic'),
+                                        lazy='dynamic')
+
+    questions_fav = db.relationship("Question", 
+                                        secondary=favourite_question_assoc,
+                                        backref=db.backref('fav_by', 
+                                                        lazy='dynamic'),
+                                        lazy='dynamic')
 
     questions_solved = db.relationship("Question",
                                         secondary=solved_questions_assoc,
@@ -50,6 +82,24 @@ class User(UserMixin, db.Model):
         print_debug('check password called')
     	return check_password_hash(self.password_hash, password)
 
+    def has_upvoted(self, ques):
+        u = self.questions_upvoted.filter(Question.id==ques.id).first()
+        if u:
+            return True
+        return False
+
+    def has_downvoted(self, ques):
+        u = self.questions_downvoted.filter(Question.id == ques.id).first()
+        if u:
+            return True
+        return False
+
+    def has_favourited(self, ques):
+        u = self.questions_fav.filter(Question.id == ques.id).first()
+        if u:
+            return True
+        return False
+
     def get_relevant_question(self):
 
         # get the questions
@@ -70,7 +120,7 @@ class User(UserMixin, db.Model):
         '''Filter the question by individual user'''
         ques = ques.filter_by(user_id=self.id)
 
-        return ques.first()
+        return ques.limit(10).all()
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -89,11 +139,10 @@ class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text, nullable=False)
     description = db.Column(db.Text)
+
+    disabled = db.Column(db.Boolean, default=False)
     
     body_html = db.Column(db.Text)
-    
-    upvotes = db.Column(db.Integer, default=0)
-    downvotes = db.Column(db.Integer, default=0)
     
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
@@ -108,6 +157,21 @@ class Question(db.Model):
                             backref=db.backref('questions', 
                                                 lazy='dynamic'),
                             lazy='dynamic')
+
+    '''
+    BACKREFS:
+    user -> the user object who has posted this question
+    upvoted_by -> is a collection of Users who've upvoted this question
+    downvoted_by -> same as upvoted by
+    fav_by -> collection of Users who've favourited this question
+    solved_by -> collection of Users who've solved this question
+
+    '''
+    @property
+    def votes(self):
+        upvotes = self.upvoted_by.count()
+        downvotes = self.downvoted_by.count()
+        return upvotes - downvotes
 
 
 class Option(db.Model):
@@ -126,3 +190,8 @@ class Tag(db.Model):
     __tablename__ = 'tags'
     id = db.Column(db.Integer, primary_key=True)
     tagname = db.Column(db.String(64), unique=True, nullable=False)
+
+    '''
+    BACKREFS: 
+    assoc_users-> Users associated with this tag
+    '''

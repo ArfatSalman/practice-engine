@@ -1,17 +1,19 @@
 from flask import render_template, session, redirect, url_for
 from flask import request, jsonify, flash
-from flask_login import current_user, login_required
+from flask_login import current_user, login_required, login_user
 from sqlalchemy.exc import SQLAlchemyError
 from . import main
 from .. import db
 from ..models import User, Question, Tag
 from .forms import UserTagsForm
-from ..question.views import associate_tags, bad_request
-from ..utilities import print_debug
+from ..question.views import associate_tags
+from ..utilities import print_debug, bad_request, add_to_db, add_to_db_ajax
+import random
 
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
+	login_user(User.query.get(1))
 	if current_user.is_authenticated:
 		print_debug('User is authenticated in /')
 		return redirect(url_for('.home'))
@@ -23,16 +25,20 @@ def index():
 @login_required
 def home():
 	form = UserTagsForm()
-	
-	user = User.query.get(current_user.id)
 
-	tags = user.associated_tags.all()
+	tags = current_user.associated_tags.all()
 	
-	ques = current_user.get_relevant_question()
+	ques = random.sample(set(current_user.get_relevant_question()), 5)
+
+	for q in ques:
+		print_debug(q.id)
+
+	ques, sidebar = ques[0], ques[1:]
 
 	return render_template('home.html',
 							tags=tags, 
-							ques=ques, 
+							ques=ques,
+							side_ques=sidebar, 
 							form=form)
 
 
@@ -92,7 +98,64 @@ def remove_user_tags():
 	return jsonify(result)
 
 
-@main.route('/aaa')
-def aaa():
-	if current_user.is_authenticated:
-		print_debug('aaa')
+@main.route('/upvote', methods=['POST'])
+@login_required
+def upvote():
+
+	ques_id = request.form.get('question-id', 0, type=int)
+	ques = Question.query.get_or_404(ques_id)
+
+	if current_user.has_downvoted(ques):
+		msg = "You can't upvote and downvote the same question"
+		return bad_request(msg)
+
+	if current_user.has_upvoted(ques):
+		current_user.questions_upvoted.remove(ques)
+		msg = 'Upvote Removed'
+	else:
+		current_user.questions_upvoted.append(ques)
+		msg = 'Upvoted'
+
+	add_to_db_ajax(current_user, 'Upvote unsuccessful', 500)
+
+	return jsonify(message=msg)
+
+
+@main.route('/downvote', methods=['POST'])
+@login_required
+def downvote():
+	ques_id = request.form.get('question-id', 0, type=int)
+	ques = Question.query.get_or_404(ques_id)
+
+	if current_user.has_upvoted(ques):
+		msg = "You can't upvote and downvote the same question"
+		return bad_request(msg)
+
+	if current_user.has_downvoted(ques):
+		current_user.questions_downvoted.remove(ques)
+		msg = 'Downvote Removed'
+	else:
+		current_user.questions_downvoted.append(ques)
+		msg = 'Downvoted'
+
+	add_to_db_ajax(current_user, 'Downvote unsuccessful', 500)
+
+	return jsonify(message=msg)
+
+
+@main.route('/favourite-question', methods=['POST'])
+@login_required
+def fav_ques():
+	ques_id = request.form.get('question-id', 0, type=int)
+	ques = Question.query.get_or_404(ques_id)
+
+	if current_user.has_favourited(ques):
+		current_user.questions_fav.remove(ques)
+		msg = 'Favourite Removed'
+	else:
+		current_user.questions_fav.append(ques)
+		msg = 'Question Favourited'
+
+	add_to_db_ajax(current_user, 'Favourite Operation unsuccessful', 500)
+
+	return jsonify(message=msg)

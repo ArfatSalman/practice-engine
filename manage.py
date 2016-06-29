@@ -2,7 +2,13 @@
 
 import os
 from app import create_app, db
-from app.models import User, Question, Option, Tag
+from app.models import (User, Question, Option, Tag,
+						tags_assoc, user_tags_assoc,
+						solved_questions_assoc,
+						favourite_question_assoc,
+						upvote_question_assoc,
+						downvote_question_assoc)
+
 from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
 
@@ -16,7 +22,12 @@ def make_shell_context():
 				Question=Question,
 				User=User,
 				Option=Option,
-				Tag=Tag)
+				Tag=Tag,
+				tags_assoc=tags_assoc,user_tags_assoc=user_tags_assoc,
+				solved_questions_assoc=solved_questions_assoc,
+				favourite_question_assoc=favourite_question_assoc,
+				upvote_question_assoc=upvote_question_assoc,
+				downvote_question_assoc=downvote_question_assoc)
 
 manager.add_command("shell", Shell(make_context=make_shell_context))
 manager.add_command('db', MigrateCommand)

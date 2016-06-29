@@ -1,19 +1,3 @@
-/*MATHJax Configurations*/
-MathJax.Hub.Config({
-    extensions: ["tex2jax.js", "mml2jax.js", "asciimath2jax.js"],
-    tex2jax: {
-        inlineMath: [
-            ['$', '$'],
-            ['\\(', '\\)']
-        ]
-    },
-    asciimath2jax: {
-        delimiters: [
-            ['`', '`'],
-            ['$', '$']
-        ]
-    }
-});
 
 
 var showAlert = function (message, category = "success") {
@@ -55,6 +39,10 @@ var preview = function (inputElem, previewElem) {
     });
 }
 
+var error = function(jqxhr) {
+    var json = jqxhr.responseJSON;
+    showAlert(json.message, 'danger');
+}
 
 $(function () {
     $('#tags').tagit({
@@ -84,6 +72,128 @@ $(function () {
     });
 });
 
+$(function(){
+    var fav = $('#favourite');
+
+    fav.on('click', function(){
+        $.ajax({
+            url: '/favourite-question',
+            type: 'POST',
+            data: $('input[name="question-id"]').serialize(),
+            success: function(){
+                var fav_star = fav.children();
+
+                if (fav_star.hasClass('glyphicon-star-empty')) {
+                    
+                    fav_star.removeClass('glyphicon-star-empty')
+                        .addClass('glyphicon-star');
+
+                    fav.removeClass('btn-default')
+                        .addClass('btn-success');
+                }
+                else {
+
+                    fav_star.removeClass('glyphicon-star')
+                        .addClass('glyphicon-star-empty');
+
+                    fav.removeClass('btn-success')
+                        .addClass('btn-default');
+                }
+                
+            },
+            error: function(jqxhr) {
+                error(jqxhr);
+            }
+        });
+    });
+});
+
+$(function(){
+    /*Add or remove upvotes to a question. */
+
+    var upvote = $('#upvote');
+
+    if (upvote.hasClass('btn-success')) {
+        $('#downvote').attr('disabled', true);
+    }
+
+    upvote.on('click', function(){
+        $.ajax({
+            url: '/upvote',
+            type: 'POST',
+            data: $('input[name="question-id"]').serialize(),
+            success: function() {
+                var upvote_count = $('.upvote-count');
+                var currentUpvote = parseInt(upvote_count.text(), 10);
+
+                if (upvote.hasClass('btn-default')) {
+                    
+                    upvote.removeClass('btn-default')
+                        .addClass('btn-success');
+                    
+                    upvote_count.text(currentUpvote + 1);
+
+                    $('#downvote').attr('disabled', true);
+                }
+                else {
+                    upvote.removeClass('btn-success')
+                    .addClass('btn-default');
+
+                    upvote_count.text(currentUpvote-1);
+
+                    $('#downvote').attr('disabled', false);
+                }
+            },
+            error: function(jqxhr, textStatus, errorThrown) {
+                var json = jqxhr.responseJSON;
+                showAlert(json.message, 'danger');
+            }
+        });
+    });
+});
+
+
+$(function(){
+     /*Add or remove downvote*/
+    var downvote = $('#downvote');
+
+    if (downvote.hasClass('btn-success')) {
+        $('#upvote').attr('disabled', true);
+    }
+   
+    downvote.on('click', function(){
+        
+        $.ajax({
+            url: '/downvote',
+            type: 'POST',
+            data: $('input[name="question-id"]').serialize(),
+            success: function() {
+                var upvote_count = $('.upvote-count');
+                var currentUpvote = parseInt(upvote_count.text(), 10);
+
+                if (downvote.hasClass('btn-default')) {
+                    downvote.removeClass('btn-default')
+                            .addClass('btn-success');
+                    
+                    upvote_count.text(currentUpvote - 1);
+
+                    $('#upvote').attr('disabled', true);
+                }
+                else {
+                    downvote.removeClass('btn-success')
+                            .addClass('btn-default');
+
+                    upvote_count.text(currentUpvote+1);
+
+                    $('#upvote').attr('disabled', false);
+                }
+            },
+            error: function(jqxhr, textStatus, errorThrown) {
+                error(jqxhr);
+            }
+        });
+    });
+});
 
 $(function () {
     /*
@@ -153,7 +263,7 @@ $(function () {
             },
             error: function (jqxhr, textStatus, errorThrown) {
                 var json = jqxhr.responseJSON;
-                showAlert(json.message, 'danger')
+                showAlert(json.message, 'danger');
             }
         });
     });
@@ -282,4 +392,21 @@ $(function () {
 });
 
 
+
+/*MATHJax Configurations*/
+MathJax.Hub.Config({
+    extensions: ["tex2jax.js", "mml2jax.js", "asciimath2jax.js"],
+    tex2jax: {
+        inlineMath: [
+            ['$', '$'],
+            ['\\(', '\\)']
+        ]
+    },
+    asciimath2jax: {
+        delimiters: [
+            ['`', '`'],
+            ['$', '$']
+        ]
+    }
+});
 

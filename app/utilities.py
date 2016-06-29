@@ -9,11 +9,26 @@ def print_debug(*args, **kwargs):
 	return print(*args, file=sys.stderr, **kwargs)
 
 
-def add_to_database(obj, msg='Something went wrong', category='danger', supress_msg = False):
+def bad_request(message, status_code=403):
+    response = jsonify({'message': message})
+    response.status_code = status_code
+    return response
+
+
+def add_to_db_ajax(obj, msg='Something went wrong', status_code=403):
 	try:
 		db.session.add(obj)
 		db.session.commit()
 	except SQLAlchemyError:
-		if not supress_msg:
-			flash(msg, category)
+		db.session.rollback()
+		return bad_request(msg, status_code)
+
+
+def add_to_db(obj, msg='Something went wrong', category='danger'):
+	try:
+		db.session.add(obj)
+		db.session.commit()
+	except SQLAlchemyError:
+		db.session.rollback()
+		flash(msg, category)
 		return redirect(url_for('main.home'))

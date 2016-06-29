@@ -8,14 +8,9 @@ from . import question
 from .. import db
 
 from .forms import PostQuestionForm, UserTagsForm
-from ..utilities import add_to_database
+from ..utilities import add_to_db, bad_request
 
 '''Helper Functions'''
-def bad_request(message, status_code=403):
-    response = jsonify({'message': message})
-    response.status_code = status_code
-    return response
-
 def get_options(form):
 	options = []
 	for fieldname, value in form.data.items():
@@ -174,7 +169,7 @@ def check_answer():
 	if is_answered:
 		current_user.questions_solved = [ques]
 		msg = 'You have successfully solved this question'
-		add_to_database(current_user)
+		add_to_db(current_user, msg)
 	
 	return jsonify(result)
 

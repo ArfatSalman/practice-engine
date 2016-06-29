@@ -1,3 +1,8 @@
+.accessories {
+    margin: 15px 0 4px 15px;
+    padding-left: 0;
+    width: 40px;
+}
 
 #alert {
     position: fixed;

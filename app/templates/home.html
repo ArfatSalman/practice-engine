@@ -34,8 +34,15 @@
 		{% include "question/_question.html" %}
 	</div>
 	
-	<div class="col-md-3">
-		
+	<div class="sidebar col-md-3">
+		{% for ques in side_ques %}
+			<div class="row">
+				<div class="col-md-12">
+					<p>{{ques.body}}</p>
+					<span class="text-info">{{ques.description}}</span>
+				</div>
+			</div>
+		{% endfor %}
 	</div>
 
 </div>
