@@ -1,9 +1,26 @@
-.accessories {
-    margin: 15px 0 4px 15px;
-    padding-left: 0;
-    width: 40px;
-}
 
+.sidebar .col-md-11 > span {
+    font-size: 0.85em;
+    margin: 0px 3px;
+    padding: 2px;
+    display: inline-block;
+    color: gray;
+}
+.sidebar p {
+    font-family: Tahoma;
+    font-size: 1.15em;
+    margin: 0;
+}
+.sidebar .row {
+    border: 1px solid lightblue;
+    border-radius: 5px;
+    box-shadow: 1px 1px 3px lightblue;
+    margin: 0 0 10px 0;
+    padding: 3px 0px;
+}
+.accessories {
+ margin: 5% 0 0 0;
+}
 #alert {
     position: fixed;
     z-index: 1;

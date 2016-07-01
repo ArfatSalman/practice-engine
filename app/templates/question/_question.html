@@ -12,7 +12,7 @@
 				{% endfor %}
 			</div>
 			
-			<div class="accessories col-md-1 pull-left">
+			<div class="accessories col-md-1">
 				<div class="btn-group-vertical">
 
 					{% if current_user.has_upvoted(ques) %}
@@ -90,20 +90,24 @@
 				</form>
 			</div>
 
-		</div>
+			<div class="col-md-11">
+				<div class="row">
+					<div class="col-md-9">
+						<h5>Description</h5>
+						<p class="lead">{{ques.description}}</p>
+					</div>
 
-		<div class="row">
-			<div class="col-md-9">
-				<h5>Description</h5>
-				<p class="lead">{{ques.description}}</p>
+					<div class="user-box col-md-3">
+						<img width="50px" src="{{session['user_picture']}}" alt="{{session['username']}}" />
+						<a href="">{{session['username']}}</a>
+						<p>{{ques.timestamp.strftime('%a %b %Y %I:%M %p')}}</p> 
+					</div>
+				</div>
 			</div>
 
-			<div class="user-box col-md-3">
-				<img width="50px" src="{{session['user_picture']}}" alt="{{session['username']}}" />
-				<a href="">{{session['username']}}</a>
-				<p>{{ques.timestamp.strftime('%a %b %Y %I:%M %p')}}</p> 
-			</div>
 		</div>
+
+
 
 		
 {% else %}

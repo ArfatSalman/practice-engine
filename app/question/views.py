@@ -167,7 +167,7 @@ def check_answer():
 			is_answered = False
 
 	if is_answered:
-		current_user.questions_solved = [ques]
+		current_user.questions_solved.append(ques)
 		msg = 'You have successfully solved this question'
 		add_to_db(current_user, msg)
 	

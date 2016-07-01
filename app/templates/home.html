@@ -19,7 +19,7 @@
 		{% if tags %}
 			{% for tag in tags %}
 				<li class="list-group-item">{{tag.tagname}}
-					<a href="#" data-id="{{tag.id}}" class="close" type="button">x</a>
+					<a href="#" data-id="{{tag.id}}" class="close" type="button">&times;</a>
 				</li>
 			{% endfor %}
 		{% else %}
@@ -35,14 +35,21 @@
 	</div>
 	
 	<div class="sidebar col-md-3">
-		{% for ques in side_ques %}
-			<div class="row">
-				<div class="col-md-12">
-					<p>{{ques.body}}</p>
-					<span class="text-info">{{ques.description}}</span>
+		<h5>Related Questions</h5>
+		{% if side_ques %}
+			{% for ques in side_ques %}
+				<div class="row">
+					<div class="col-md-11">
+						<p>{{ques.body}}</p>
+						<span>Fav by: <span class="badge">{{ques.fav_by.count()}}</span></span>
+						<span>Votes: <span class="badge">{{ques.votes}}</span></span>
+						<span class="text-info">{{ques.description}}</span>
+					</div>
 				</div>
-			</div>
-		{% endfor %}
+			{% endfor %}
+		{% else %}
+		<h4>No related questions</h4>
+		{% endif %}
 	</div>
 
 </div>

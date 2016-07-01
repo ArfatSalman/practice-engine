@@ -13,7 +13,7 @@ import random
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
-	login_user(User.query.get(1))
+	login_user(User.query.get(2))
 	if current_user.is_authenticated:
 		print_debug('User is authenticated in /')
 		return redirect(url_for('.home'))
@@ -27,18 +27,21 @@ def home():
 	form = UserTagsForm()
 
 	tags = current_user.associated_tags.all()
-	
-	ques = random.sample(set(current_user.get_relevant_question()), 5)
 
-	for q in ques:
-		print_debug(q.id)
+	ques = current_user.get_relevant_question()
 
-	ques, sidebar = ques[0], ques[1:]
+	side_ques = []
+	if len(ques) != 1:
+		if len(ques) > 5:
+			ques = random.sample(set(ques), 5)
+		ques, side_ques = ques[0], ques[1:]
+	else:
+		ques = ques[0]
 
 	return render_template('home.html',
 							tags=tags, 
 							ques=ques,
-							side_ques=sidebar, 
+							side_ques=side_ques, 
 							form=form)
 
 
