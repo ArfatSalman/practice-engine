@@ -5,7 +5,8 @@ from wtforms import (SubmitField,
                      TextAreaField,
                      BooleanField,
                      FieldList, 
-                     FormField)
+                     FormField,
+                     HiddenField)
 from wtforms.validators import Required
 from wtforms.widgets import TextInput, ListWidget
 
@@ -36,9 +37,11 @@ class OptionForm(Form):
     option = TextAreaField('option')
     check_option = BooleanField()
 
+
 class UserTagsForm(Form):
     tags = TagListField('Tags', validators=[Required()])
     submit = SubmitField('Add')
+
 
 class PostQuestionForm(Form):
     body = TextAreaField('Question?', validators=[Required()])
@@ -59,3 +62,11 @@ class PostQuestionForm(Form):
     check_option4 = BooleanField('check4')
     
     submit = SubmitField('Submit')
+
+
+class EditQuestionForm(PostQuestionForm):
+    option1_id = HiddenField('option1_id')
+    option2_id = HiddenField('option2_id')
+    option3_id = HiddenField('option3_id')
+    option4_id = HiddenField('option4_id')
+

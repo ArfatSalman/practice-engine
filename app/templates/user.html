@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+	<div class="row">
+		
+	</div>
+
+	{{user.username}}
+
+	{% for ques in user.ques_solved %}
+		<h2>{{ques.id}}</h2>
+		<h2>{{ques.body}}</h2>
+
+	{% endfor %}
+{% endblock %}

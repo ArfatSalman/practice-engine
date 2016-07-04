@@ -1,4 +1,6 @@
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.orm.exc import NoResultFound
 from flask_login import UserMixin
 from . import db, login_manager
 from datetime import datetime
@@ -14,16 +16,6 @@ user_tags_assoc = db.Table('user_tags_assoc',
 	db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True)
 )
 
-solved_questions_assoc = db.Table('solved_questions_assoc',
-	db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
-	db.Column('question_id', db.Integer, db.ForeignKey('questions.id'), primary_key=True)
-)
-
-favourite_question_assoc = db.Table('favourite_question_assoc',
-	db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
-	db.Column('question_id', db.Integer, db.ForeignKey('questions.id'), primary_key=True)
-)
-
 upvote_question_assoc = db.Table('upvote_question_assoc',
 	db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
 	db.Column('question_id', db.Integer, db.ForeignKey('questions.id'), primary_key=True)
@@ -34,6 +26,36 @@ downvote_question_assoc = db.Table('downvote_question_assoc',
 	db.Column('question_id', db.Integer, db.ForeignKey('questions.id'), primary_key=True)
 )
 
+
+class FavouriteQuestionAssoc(db.Model):
+	__tablename__ = 'favourite_questions_assoc'
+
+	user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+	question_id = db.Column(db.Integer, db.ForeignKey('questions.id'), primary_key=True)
+	timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+	question = db.relationship('Question', backref=db.backref('fav_by', lazy='dynamic'))
+
+	def __init__(self, question):
+		self.question = question
+
+
+class SolvedQuestionsAssoc(db.Model):
+	'''
+	Parent(left-table): User. It references One->Many
+	Child(right-table): Question. It references Many->One
+	'''
+	__tablename__ = 'solved_questions_assoc'
+	user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+	question_id = db.Column(db.Integer, db.ForeignKey('questions.id'), primary_key=True)
+	timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+	question = db.relationship('Question', backref=db.backref('solved_by', lazy='dynamic'))
+
+	def __init__(self, question):
+		self.question = question
+
+
 class User(UserMixin, db.Model):
 	__tablename__ = 'users'
 	id = db.Column(db.Integer, primary_key=True)
@@ -43,6 +65,13 @@ class User(UserMixin, db.Model):
 	questions = db.relationship("Question", 
 					backref=db.backref('user'),
 					lazy='dynamic')
+
+	questions_solved = db.relationship('SolvedQuestionsAssoc',
+									backref='user',
+									order_by='desc(SolvedQuestionsAssoc.timestamp)',
+									cascade='all, delete, delete-orphan',
+									lazy='dynamic')
+	ques_solved = association_proxy('questions_solved', 'question')
 
 	questions_upvoted = db.relationship("Question", 
 										secondary=upvote_question_assoc,
@@ -56,17 +85,13 @@ class User(UserMixin, db.Model):
 														lazy='dynamic'),
 										lazy='dynamic')
 
-	questions_fav = db.relationship("Question", 
-										secondary=favourite_question_assoc,
-										backref=db.backref('fav_by', 
-														lazy='dynamic'),
-										lazy='dynamic')
+	questions_fav = db.relationship('FavouriteQuestionAssoc',
+									 backref='user',
+									 order_by='desc(FavouriteQuestionAssoc.timestamp)',
+									 cascade='all, delete-orphan',
+									 lazy='dynamic')
+	ques_fav = association_proxy('questions_fav', 'question')
 
-	questions_solved = db.relationship("Question",
-										secondary=solved_questions_assoc,
-										backref=db.backref('solved_by', 
-											lazy='dynamic'),
-										lazy='dynamic')
 
 	associated_tags = db.relationship("Tag",
 									  secondary=user_tags_assoc,
@@ -95,19 +120,30 @@ class User(UserMixin, db.Model):
 		return False
 
 	def has_favourited(self, ques):
-		u = self.questions_fav.filter(Question.id == ques.id).first()
-		if u:
-			return True
-		return False
+		FQ = FavouriteQuestionAssoc
+
+		try:
+			u = self.questions_fav.filter(FQ.question == ques).one()
+		except NoResultFound:
+			return False
+		return True
+
+	def has_solved(self, ques):
+		SQ = SolvedQuestionsAssoc
+
+		try:
+			u = self.questions_solved.filter(SQ.question == ques).one()
+		except NoResultFound:
+			return False
+		return True
 
 	def get_relevant_question(self):
 
-		# get the questions
+		SQA = SolvedQuestionsAssoc
 		ques = Question.query
 
-		''''''
-		sq = solved_questions_assoc
-		subquery =  db.session.query(sq.c.question_id).filter(sq.c.user_id == self.id)        
+		subquery = db.session.query(SQA.question_id).filter_by(user_id=self.id)
+		#subquery =  db.session.query(sq.c.question_id).filter(sq.c.user_id == self.id)        
 
 		'''Remove the questions which are already solved by the user
 			by using NOT IN subquery synatx.
@@ -150,19 +186,27 @@ class Question(db.Model):
 	
 	body_html = db.Column(db.Text)
 	
-	timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+	timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
 	author_id = db.Column(
 		db.Integer, db.ForeignKey('users.id'), nullable=False)
 
 	options = db.relationship("Option",
-							cascade="all, delete-orphan")
+							   order_by='Option.id',
+							   lazy='joined',
+							   cascade="all, delete, delete-orphan")
 
 	tags = db.relationship("Tag", 
 							secondary=tags_assoc,
 							backref=db.backref('questions', 
 												lazy='dynamic'),
 							lazy='dynamic')
+
+	# sol_by = db.relationship('SolvedQuestionsAssoc',
+	# 	backref='question',
+	# 						 lazy='dynamic')
+
+	# solby = association_proxy('sol_by', 'user')
 
 	'''
 	BACKREFS:
@@ -179,6 +223,8 @@ class Question(db.Model):
 		downvotes = self.downvoted_by.count()
 		return upvotes - downvotes
 
+	def __repr__(self):
+		return 'Question(body=%s, author_id=%d)' % (self.body, self.author_id)
 
 class Option(db.Model):
 	__tablename__='options'
@@ -200,4 +246,5 @@ class Tag(db.Model):
 	'''
 	BACKREFS: 
 	assoc_users-> Users associated with this tag
+	questions -> Collectio of Questions with this Tag
 	'''

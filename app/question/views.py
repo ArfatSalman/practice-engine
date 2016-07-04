@@ -7,16 +7,17 @@ from ..models import User, Question, Option, Tag
 from . import question
 from .. import db
 
-from .forms import PostQuestionForm, UserTagsForm
-from ..utilities import add_to_db, bad_request
+from .forms import PostQuestionForm, UserTagsForm, EditQuestionForm
+from ..utilities import add_to_db, bad_request, add_to_db_ajax
 
 '''Helper Functions'''
 def get_options(form):
 	options = []
 	for fieldname, value in form.data.items():
 		if fieldname.startswith('option'):
-			options.append(Option(body=value,
-				is_right=form.data.get('check_'+fieldname)))
+			if value:
+				options.append(Option(body=value,
+						is_right=form.data.get('check_'+fieldname)))
 	return options
 
 def associate_tags(form):
@@ -46,14 +47,13 @@ def post_question():
 		try:
 			db.session.add(ques)
 			db.session.commit()
-
 			flash('Question has been posted successfully.','success')
-			return redirect(url_for('main.home'))
-
+			return redirect(url_for('.questions', id=ques.id))
 		except SQLAlchemyError:
 			db.session.rollback()
 			flash('There was a problem posting the question.', 'danger')
 			return redirect(url_for('.post_question'))
+
 	return render_template('question/post-question.html', form=form)
 
 
@@ -63,39 +63,83 @@ def edit_question(id):
 	ques = Question.query.get_or_404(id)
 
 	if current_user != ques.user:
-		abort(403)
+		flash('You are not authorized to edit this question.', 'info')
+		return redirect(url_for('.question', id=ques.id))
 
-	form = PostQuestionForm()
+	form = EditQuestionForm()
+	
+	option_name = [
+					'option1',
+					'option2',
+					'option3',
+					'option4'
+					]
 
 	if form.validate_on_submit():
+		
 		ques.body = form.body.data
 		ques.description = form.body.description
-		
-		"""Delete all the previous options."""
-		try:
-			for option in ques.options:
+
+		for name in option_name:
+			value = form.data.get(name)
+			opt_id = form.data.get(name+'_id')
+			
+			if value:
+				# A new value has been obtained. Edit the option.	
+				option = Option.query.get(opt_id)
+
+				if option in ques.options:
+					option.body = value
+					option.is_right = form.data.get('check_'+name)
+				else:
+					flash('Option being edited is not part of the question.','info')
+					return redirect(url_for('main.home'))
+
+				db.session.add(option)
+			else:
+				# if value has been chnaged to None
+				# that means option has been removed
 				db.session.delete(option)
-			#db.session.commit()
-		except SQLAlchemyError:
-			db.session.rollback()
-			flash('There was a problem updating the question','danger')
-			return redirect(url_for('.edit_question', id=ques.id))
-		
-		"""Add new options"""	
-		ques.options = get_options(form)
+				db.session.commit()
 
 		ques.tags = associate_tags(form)
 
 		try:
 			db.session.add(ques)
 			db.session.commit()
-			flash('Question %s updated Successfully.' % ques.id, 'success')
-			return redirect(url_for('main.home'))
+			flash('Question updated successfully.', 'success')
+			return redirect(url_for('.questions', id=ques.id))
 		except SQLAlchemyError, e:
 			db.session.rollback()
-			flash('%s There was a problem updating the question ' % str(e), 'danger')
+			flash('There was a problem updating the question.', 'danger')
 			return redirect(url_for('.edit_question', id=ques.id))
+
+		# """Delete all the previous options."""
+		# try:
+		# 	for option in ques.options:
+		# 		db.session.delete(option)
+		# 	#db.session.commit()
+		# except SQLAlchemyError:
+		# 	db.session.rollback()
+		# 	flash('There was a problem updating the question','danger')
+		# 	return redirect(url_for('.edit_question', id=ques.id))
+		
+		# """Add new options"""	
+		# ques.options = get_options(form)
+
+		
+
+		# try:
+		# 	db.session.add(ques)
+		# 	db.session.commit()
+		# 	flash('Question %s updated Successfully.' % ques.id, 'success')
+		# 	return redirect(url_for('main.home'))
+		# except SQLAlchemyError, e:
+		# 	db.session.rollback()
+		# 	flash('%s There was a problem updating the question ' % str(e), 'danger')
+		# 	return redirect(url_for('.edit_question', id=ques.id))
 	
+	# Fill the form if the form is just displayed
 	form.body.data = ques.body
 	form.description.data = ques.description
 
@@ -103,12 +147,17 @@ def edit_question(id):
 	if options:
 		try:
 			if options[0]:
-				form.option1.data, form.check_option1.data = options[0].body, options[0].is_right
+				form.option1_id.data = options[0].id
+				form.option1.data = options[0].body
+				form.check_option1.data = options[0].is_right
 			if options[1]:
+				form.option2_id.data = options[1].id
 				form.option2.data, form.check_option2.data = options[1].body, options[1].is_right
 			if options[2]:
+				form.option3_id.data = options[2].id
 				form.option3.data, form.check_option3.data = options[2].body, options[2].is_right
 			if options[3]:
+				form.option4_id.data = options[3].id
 				form.option4.data, form.check_option4.data = options[3].body, options[3].is_right
 		except IndexError:
 			pass
@@ -125,7 +174,7 @@ def edit_question(id):
 
 @question.route('/question/<int:id>')
 @login_required
-def question_by_id(id):
+def questions(id):
 	ques = Question.query.get(id)
 
 	return render_template('question/question.html', 
@@ -167,9 +216,8 @@ def check_answer():
 			is_answered = False
 
 	if is_answered:
-		current_user.questions_solved.append(ques)
-		msg = 'You have successfully solved this question'
-		add_to_db(current_user, msg)
+		current_user.ques_solved.append(ques)
+		add_to_db_ajax(current_user, 'Operation Error while writing to DB')
 	
 	return jsonify(result)
 

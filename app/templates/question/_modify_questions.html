@@ -34,6 +34,10 @@
 			<div class="options row">
 				<div class="col-md-5">
 					{{macros.render_field(form.option1, class='form-control', rows=1)}}
+
+					{% if form.option1_id %}
+						{{form.option1_id()}}
+					{% endif %}
 				</div>
 				<div class="col-md-1">
 					<div class="custom-checkbox">
@@ -53,6 +57,10 @@
 			<div class="options row">
 				<div class="col-md-5">
 					{{macros.render_field(form.option2, class='form-control')}}
+
+					{% if form.option2_id %}
+						{{form.option2_id()}}
+					{% endif %}
 				</div>
 				<div class="col-md-1">
 					<div class="custom-checkbox">
@@ -72,6 +80,10 @@
 			<div class="options row">
 				<div class="col-md-5">
 					{{macros.render_field(form.option3, class='form-control')}}
+
+					{% if form.option3_id %}
+						{{form.option3_id()}}
+					{% endif %}
 				</div>
 
 				<div class="col-md-1">
@@ -92,6 +104,10 @@
 			<div class="options row">
 				<div class="col-md-5">
 					{{macros.render_field(form.option4, class='form-control')}}
+
+					{% if form.option4_id %}
+						{{form.option4_id()}}
+					{% endif %}
 				</div>
 
 				<div class="col-md-1">

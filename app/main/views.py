@@ -4,7 +4,7 @@ from flask_login import current_user, login_required, login_user
 from sqlalchemy.exc import SQLAlchemyError
 from . import main
 from .. import db
-from ..models import User, Question, Tag
+from ..models import User, Question, Tag, FavouriteQuestionAssoc as FQ
 from .forms import UserTagsForm
 from ..question.views import associate_tags
 from ..utilities import print_debug, bad_request, add_to_db, add_to_db_ajax
@@ -31,7 +31,7 @@ def home():
 	ques = current_user.get_relevant_question()
 
 	side_ques = []
-	if len(ques) != 1:
+	if len(ques) > 0:
 		if len(ques) > 5:
 			ques = random.sample(set(ques), 5)
 		ques, side_ques = ques[0], ques[1:]
@@ -153,12 +153,24 @@ def fav_ques():
 	ques = Question.query.get_or_404(ques_id)
 
 	if current_user.has_favourited(ques):
-		current_user.questions_fav.remove(ques)
+		# get the association
+		assoc = current_user.questions_fav.filter(FQ.question == ques).one()
+		current_user.questions_fav.remove(assoc)
 		msg = 'Favourite Removed'
 	else:
-		current_user.questions_fav.append(ques)
+		# Using association Proxy
+		current_user.ques_fav.append(ques)
 		msg = 'Question Favourited'
 
 	add_to_db_ajax(current_user, 'Favourite Operation unsuccessful', 500)
 
 	return jsonify(message=msg)
+
+
+@main.route('/user/<int:id>', methods=['GET'])
+@login_required
+def user(id):
+	user = User.query.get_or_404(id)
+
+	return render_template('user.html',
+							user = user)
