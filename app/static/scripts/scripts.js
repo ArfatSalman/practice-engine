@@ -1,4 +1,16 @@
+var QUESTION_LIST = {}
 
+var checks = function () {
+    if ($('#upvote').hasClass('btn-success')) {
+        $('#downvote').attr('disabled', true);
+    }
+
+    var downvote = $('#downvote');
+    if (downvote.hasClass('btn-success')) {
+        $('#upvote').attr('disabled', true);
+    }
+
+};
 
 var showAlert = function (message, category = "success") {
     /*
@@ -39,10 +51,12 @@ var preview = function (inputElem, previewElem) {
     });
 }
 
+
 var error = function(jqxhr) {
     var json = jqxhr.responseJSON;
     showAlert(json.message, 'danger');
 }
+
 
 $(function () {
     $('#tags').tagit({
@@ -57,7 +71,6 @@ $(function () {
                     },
                     success: function (data) {
                         response($.map(data, function (item) {
-                            console.log(item);
                             return {
                                 label: item,
                                 value: item
@@ -72,10 +85,11 @@ $(function () {
     });
 });
 
+
 $(function(){
     var fav = $('#favourite');
 
-    fav.on('click', function(){
+    $('.question-box').on('click', '#favourite' ,function(){
         $.ajax({
             url: '/favourite-question',
             type: 'POST',
@@ -108,16 +122,14 @@ $(function(){
     });
 });
 
+
 $(function(){
     /*Add or remove upvotes to a question. */
 
-    var upvote = $('#upvote');
+    $(document).on('click', '#upvote', function(){
+        
+        var upvote = $('#upvote');
 
-    if (upvote.hasClass('btn-success')) {
-        $('#downvote').attr('disabled', true);
-    }
-
-    upvote.on('click', function(){
         $.ajax({
             url: '/upvote',
             type: 'POST',
@@ -155,13 +167,7 @@ $(function(){
 
 $(function(){
      /*Add or remove downvote*/
-    var downvote = $('#downvote');
-
-    if (downvote.hasClass('btn-success')) {
-        $('#upvote').attr('disabled', true);
-    }
-   
-    downvote.on('click', function(){
+    $('.question-box').on('click', '#downvote', function(){
         
         $.ajax({
             url: '/downvote',
@@ -275,13 +281,14 @@ $(function () {
     This sets up an event where each option is checked for the selected
     class. If it has that class, the selected class is removed.
     HACK - Serialize() do not include fields which do not have names.
-    Hence, we remove the name attribute if the class is not selected
+    Hence, we remove the name attribute if the option is not selected
     to stop it from showing in the form.
     */
-    $('.options > p').on('click', function () {
+    $('.question-box').on('click','.options > p' ,function () {
         var p = $(this);
-        if (p.hasClass('selected')) {
+        if (p.hasClass('selected') || p.hasClass('incorrect')) {
             p.removeClass('selected');
+            p.removeClass('incorrect');
             p.next().removeAttr('name');
         } else {
             p.addClass('selected');
@@ -291,31 +298,75 @@ $(function () {
 });
 
 
+var load_next_question = function(){
+    
+    if ($.isEmptyObject(QUESTION_LIST)) {
+        
+        $.ajax({
+            url: '/get-questions',
+            data: {}, // To show solved or not
+            success: function(data, textStatus, jqxhr) {
+                QUESTION_LIST = data;
+            },
+            error: function(jqxhr, textStatus, errorThrown) {
+                error(jqxhr);
+            }
+        });
+
+    } 
+
+    for (var key in QUESTION_LIST) {
+            var data = QUESTION_LIST[key];
+            console.log(data);
+            $('.question-box').html(data); // Replaces all the descendants
+            
+            delete QUESTION_LIST[key];
+            break;
+        }
+
+    checks();
+
+    return;
+}
+
+
 $(function () {
-    $('.option-form').on('submit', function (event) {
+    $('.question-box').on('submit', '.option-form',function (event) {
         event.preventDefault();
+
+        var is_correct = false;
+        var submit = $('.option-form input[type="submit"]');
+
         $.ajax({
             url: '/check-answer',
             type: 'POST',
             data: $(this).serialize(),
             beforeSend: function () {
-                $('.option-form input[type="submit"]')
-                    .attr('value', 'Checking...')
-                    .prop('disabled', true);
+                submit.attr('value', 'Checking...')
+                      .prop('disabled', true);
             },
             complete: function () {},
             success: function (data, textStatus, jqxhr) {
+                
                 var options = $('.selected');
+                
                 $.each(data, function (key, value) {
-                    var option = $('input[value=' + key + ']')
-                        .prev()
-                        .removeClass('selected');
                     if (value) {
-                        option.addClass('correct');
+                        is_correct = true;
                     } else {
-                        option.addClass('incorrect');
+                        is_correct = false;
+                       return false; // To exit the loop
                     }
                 });
+
+
+                if (is_correct) {
+                    options.removeClass('selected')
+                           .addClass('correct'); 
+                } else {
+                    options.removeClass('selected')
+                            .addClass('incorrect'); 
+                }
             },
             error: function (jqxhr, textStatus, errorThrown) {
                 if (jqxhr.status === 406) {
@@ -323,18 +374,52 @@ $(function () {
                 } else {
                     showAlert('Something went wrong.', 'danger');
                 }
-                $('.option-form input[type="submit"]')
-                    .attr('value', 'Check')
-                    .prop('disabled', false);
+                submit.attr('value', 'Check')
+                      .prop('disabled', false);
             }
         }).done(function () {
-            $('.option-form input[type="submit"]')
-                .attr('value', 'Checked')
-                .attr('disabled', true);
+            var auto_load = true;            
+            
+            if (is_correct) {
+                submit.attr('disabled', true);
+
+                if (auto_load) {
+                    var counter = 5;
+                    
+                    var interval = setInterval(function(){
+                        counter--;
+
+                        submit.attr('value', 'Loading '+ counter)
+
+                        if (counter === 0) {
+                            clearInterval(interval);
+                            load_next_question();
+                        }
+                    }, 1000);
+
+                } else {
+
+                submit.attr('value', 'Next Question')
+                      .attr('disabled', false);
+                }
+
+
+            } else {
+                submit.attr('value', 'Recheck')
+                      .attr('disabled', false);
+            }
+
         });
     });
 });
 
+$(function(){
+    /*
+    For adding the disabled button on downvote if upvoted 
+    and vice versa
+    */
+    checks();
+});
 
 
 // close boxes using data dismiss
@@ -348,7 +433,7 @@ $(function () {
 // For showing the MathJax Preview
 $(function () {
     var elem = $('form #body');
-    if (elem.val() != "") {
+    if (elem.val() !== "") {
         UpdateMath(elem.val(), "MathQues").addClass('lead')
             .removeClass('placeholder-text');
     }

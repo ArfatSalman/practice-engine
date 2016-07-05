@@ -39,7 +39,7 @@
     background: lightblue none repeat scroll 0 0;
 }
 .correct {
-    background: lightgreen none repeat scroll 0 0;
+    background: lightgreen none repeat scroll 0 0; 
 }
 .incorrect {
     background: red none repeat scroll 0 0;

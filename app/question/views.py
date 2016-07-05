@@ -214,6 +214,7 @@ def check_answer():
 		else:
 			result[str(option.id)]=False
 			is_answered = False
+			break
 
 	if is_answered:
 		current_user.ques_solved.append(ques)
@@ -221,3 +222,13 @@ def check_answer():
 	
 	return jsonify(result)
 
+@question.route('/get-questions')
+@login_required
+def get_questions():
+
+	result = {}
+	
+	for ques in current_user.get_relevant_question():
+		result[str(ques.id)] = render_template('question/_question.html',
+												ques=ques)
+	return jsonify(result)
