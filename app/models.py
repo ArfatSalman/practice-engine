@@ -49,6 +49,9 @@ class SolvedQuestionsAssoc(db.Model):
 	user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
 	question_id = db.Column(db.Integer, db.ForeignKey('questions.id'), primary_key=True)
 	timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+	
+	attempted = db.Column(db.Integer, default=0)
+	solved = db.Column(db.Integer, default=False)
 
 	question = db.relationship('Question', backref=db.backref('solved_by', lazy='dynamic'))
 
@@ -61,7 +64,9 @@ class User(UserMixin, db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	password_hash = db.Column(db.String(128))
 	username = db.Column(db.String(128), unique=True, index=True)
-	#email = db.Column(db.String(128), unique=True, index=True)
+	email = db.Column(db.String(128), unique=True, index=True)
+	score = db.Column(db.Integer, default=0)
+	
 	questions = db.relationship("Question", 
 					backref=db.backref('user'),
 					lazy='dynamic')
@@ -137,18 +142,25 @@ class User(UserMixin, db.Model):
 			return False
 		return True
 
-	def get_relevant_question(self):
+	def get_relevant_question(self, remove_solved=1):
 
 		SQA = SolvedQuestionsAssoc
 		ques = Question.query
 
-		subquery = db.session.query(SQA.question_id).filter_by(user_id=self.id)
+		'''Subquery to determine the question which are
+			solved by a particualar user.
+		'''
+		subquery = db.session.query(SQA.question_id)\
+							 .filter_by(user_id=self.id)\
+							 .filter_by(solved=True)
 		#subquery =  db.session.query(sq.c.question_id).filter(sq.c.user_id == self.id)        
 
 		'''Remove the questions which are already solved by the user
 			by using NOT IN subquery synatx.
 		'''
-		ques = ques.filter(~Question.id.in_(subquery))
+		if remove_solved:
+			print_debug('removing solved questions')
+			ques = ques.filter(~Question.id.in_(subquery))
 		
 		'''
 		Get the questions where tags are filled.
@@ -181,8 +193,13 @@ class Question(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	body = db.Column(db.Text, nullable=False)
 	description = db.Column(db.Text)
+	
+	# No of Solved / No of Attempts 
+	difficulty_index = db.Column(db.Float, default=0.0)
 
 	disabled = db.Column(db.Boolean, default=False)
+
+	reported_wrong_ques = db.Column(db.Integer, default=0)
 	
 	body_html = db.Column(db.Text)
 	
@@ -201,12 +218,6 @@ class Question(db.Model):
 							backref=db.backref('questions', 
 												lazy='dynamic'),
 							lazy='dynamic')
-
-	# sol_by = db.relationship('SolvedQuestionsAssoc',
-	# 	backref='question',
-	# 						 lazy='dynamic')
-
-	# solby = association_proxy('sol_by', 'user')
 
 	'''
 	BACKREFS:
@@ -230,7 +241,7 @@ class Option(db.Model):
 	__tablename__='options'
 
 	id = db.Column(db.Integer, primary_key=True)
-	body = db.Column(db.Text)
+	body = db.Column(db.Text, nullable=False)
 	is_right = db.Column(db.Boolean, default=False)
 
 	question_id = db.Column(db.Integer, db.ForeignKey('questions.id'),

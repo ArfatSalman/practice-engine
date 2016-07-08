@@ -1,48 +1,78 @@
 
+#ques-control {
+    margin: 0 0 0 10px;
+    border: 0px;
+}
+
+p[id^="option_preview"] {
+    color: lightgray;
+    font-style: italic;
+}
+#modify-ques-form > .row {
+    box-shadow: 0 0 3px lightgray;
+    margin: 0 0 5px;
+}
+hr {
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+.options > .btn {
+    margin: 10px 4px;
+    text-align: left;
+}
+.control button {
+    float: right;
+    margin: 2px 5px;
+}
+.control {
+    margin: 2px 0 0 -15px;
+    padding: 3px 0;
+    position: absolute;
+    width: 100%;
+    z-index: 2;
+}
 .sidebar .col-md-11 > span {
-    font-size: 0.85em;
-    margin: 0px 3px;
-    padding: 2px;
-    display: inline-block;
     color: gray;
+    display: inline-block;
+    font-size: 0.85em;
+    margin: 0 3px;
+    padding: 2px;
+}
+.sidebar {
+    box-shadow: 0 0 10px lightgray;
+    width: 28.8%;
+    height: 564px;
+}
+.user-tags-col {
+    box-shadow: 1px 1px 5px lightgray;
+    height: 564px;
+    margin: 0 15px 0 10px;
+    padding: 5px;
 }
 .sidebar p {
     font-family: Tahoma;
     font-size: 1.15em;
     margin: 0;
 }
+.question-box .col-md-11 {
+    width: 89.1%;
+}
 .sidebar .row {
-    border: 1px solid lightblue;
-    border-radius: 5px;
-    box-shadow: 1px 1px 3px lightblue;
-    margin: 0 0 10px 0;
-    padding: 3px 0px;
+    box-shadow: 0 1px 3px lightgray;
+    margin: 0 0 10px;
+    padding: 3px 0;
 }
 .accessories {
- margin: 5% 0 0 0;
+    margin: 5% 15px 0;
+    padding: 0;
+    width: 25px;
 }
 #alert {
     position: fixed;
-    z-index: 1;
+    z-index: 999;
 }
 .options textarea {
     height: 34px;
-}
-.options > p {
-    border: 1px solid lightgray;
-    border-radius: 5px;
-    box-shadow: 0 0 3px lightblue;
-    cursor: pointer;
-    padding: 5px;
-}
-.selected {
-    background: lightblue none repeat scroll 0 0;
-}
-.correct {
-    background: lightgreen none repeat scroll 0 0; 
-}
-.incorrect {
-    background: red none repeat scroll 0 0;
 }
 .modal {
     background: rgba(255, 255, 255, 0.8) url("http://i.stack.imgur.com/FhHRx.gif") no-repeat scroll 50% 50%;
@@ -61,10 +91,10 @@
     display: block;
 }
 .question-box {
-    border: 1px solid lightblue;
-    border-radius: 5px;
-    box-shadow: 1px 2px 3px lightblue;
-    padding: 10px;
+    box-shadow: 0 0 5px lightgray;
+    margin: 0 15px 0 0;
+    padding: 0 10px;
+    height: 564px;
 }
 h5 {
     color: gray;
@@ -86,10 +116,9 @@ h5 {
     background-color: #6a8494;
     border: 3px solid #fff;
     border-radius: 100px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
     color: #fff;
     cursor: pointer;
-    display: block;
     margin: 21px 0 0;
     padding: 30px 25px 5px 19px;
     position: relative;
@@ -102,13 +131,14 @@ h5 {
     bottom: 9px;
     content: "";
     display: block;
+    margin: 0 0 0 -5px;
     position: absolute;
-    top: 10px;
+    top: 9px;
     transition: background-color 0.2s ease 0s;
     width: 17px;
 }
 .custom-checkbox label:hover, .container input:focus + label {
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
 }
 .custom-checkbox input:checked + label {
     background-color: lightgreen;

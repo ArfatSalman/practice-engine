@@ -4,43 +4,52 @@
 {% block content %}
 
 <div class="row">
-	<div class="col-md-2">
-		<form id="tags-form" method="post">
-			{{form.hidden_tag()}}
-			
-			{{macros.render_field(form.tags, class='form-control')}}
+	<div class="user-tags-col col-md-2">
+			<form id="tags-form" method="post">
+				{{form.hidden_tag()}}
+				
+				{{macros.render_field(form.tags, class='form-control')}}
 
-			{{form.submit(class='btn btn-primary btn-block')}}
-		</form>
+				{{form.submit(class='btn btn-primary btn-block')}}
+			</form>
 
-		<h4>My topics</h4>
+			<h4>My topics</h4>
 
-		<ul class="list-group">
-		{% if tags %}
-			{% for tag in tags %}
-				<li class="list-group-item">{{tag.tagname}}
-					<a href="#" data-id="{{tag.id}}" class="close" type="button">&times;</a>
-				</li>
-			{% endfor %}
-		{% else %}
-		</ul>
+			<ul class="list-group">
+			{% if tags %}
+				{% for tag in tags %}
+					<li class="list-group-item">{{tag.tagname}}
+						<a href="#" data-id="{{tag.id}}" class="close" type="button">&times;</a>
+					</li>
+				{% endfor %}
+			{% else %}
+			</ul>
 
-		<h3>Please choose at least one tag.</h3>
-		{% endif %}
-
+			<h3>Please choose at least one tag.</h3>
+			{% endif %}
 	</div>
 
-	<div class="question-box col-md-7">
+	<div class="question-box col-md-6">
+		<div class="control">
+					<button id="auto-load" class="btn btn-default">
+						Auto Load
+						<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+					</button>
+					<button id="keep-solved-ques" class="btn btn-default">
+						Show Solved Q's
+						<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+					</button>
+		</div>
 		{% include "question/_question.html" %}
 	</div>
 	
-	<div class="sidebar col-md-3">
+	<div class="sidebar col-md-4">
 		<h5>Related Questions</h5>
 		{% if side_ques %}
 			{% for ques in side_ques %}
 				<div class="row">
 					<div class="col-md-11">
-						<p>{{ques.body}}</p>
+						<p><a data-id="{{ques.id}}" href="{{url_for('question.questions', id=ques.id)}}">{{ques.body}}</a></p>
 						<span>Fav by: <span class="badge">{{ques.fav_by.count()}}</span></span>
 						<span>Votes: <span class="badge">{{ques.votes}}</span></span>
 						<span class="text-info">{{ques.description}}</span>

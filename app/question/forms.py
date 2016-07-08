@@ -7,7 +7,7 @@ from wtforms import (SubmitField,
                      FieldList, 
                      FormField,
                      HiddenField)
-from wtforms.validators import Required
+from wtforms.validators import Required, DataRequired, InputRequired
 from wtforms.widgets import TextInput, ListWidget
 
 class TagListField(Field):
@@ -47,7 +47,7 @@ class PostQuestionForm(Form):
     body = TextAreaField('Question?', validators=[Required()])
     description = TextAreaField('Description')
 
-    tags = TagListField('Tags', validators=[Required()])
+    tags = TagListField('Tags', validators=[InputRequired()])
 
     option1 = TextAreaField('option1', validators=[Required()])
     check_option1 = BooleanField()

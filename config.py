@@ -9,7 +9,7 @@ class Config:
 		It is inherited by other classes to add custom configurations.
 	"""
 	SECRET_KEY = "\x079Z\x9c%Z\xcf/f\x1f\x17\xad\x18\xcb+eIP%a-\x99M:\xaf\x82\x98\x9e\xe3B4"
-	SQLALCHEMY_COMMIT_ON_TEARDOWN = True
+	SQLALCHEMY_COMMIT_ON_TEARDOWN = False
 	SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 	@staticmethod
