@@ -1,23 +1,19 @@
 
+{% if not macros %}
+	{% import "_macros.html" as macros %}
+{% endif %}
+
 {% if ques %}
 
 		<!-- This is the question accessories -->
-
 		<div class="row">
-			<div class="col-md-12">
-				<h5>Tags</h5>
-				{% for tag in ques.tags %}
-					<span class="label label-info">{{tag.tagname}}</span>
-				{% endfor %}
-			</div>
-			
-			<div class="accessories col-md-1">
+			<div class="col-md-1 accessories ">
 				<div class="btn-group-vertical">
 
 					{% if current_user.has_upvoted(ques) %}
-						<button href="#" id="upvote" class="btn btn-success">
+						<button href="#" data-count="{{ques.upvoted_by.count()}}" id="upvote" class="btn btn-success">
 					{% else %}
-						<button href="#" id="upvote" class="btn btn-default">
+						<button href="#" data-count="{{ques.upvoted_by.count()}}" id="upvote" class="btn btn-default">
 					{% endif %}
 						<span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
 					</button>
@@ -26,18 +22,22 @@
 					<h4 class="upvote-count text-center">{{ques.votes}}</h4>
 
 					{% if current_user.has_downvoted(ques) %}
-						<button id="downvote" class="btn btn-success">
+						<button id="downvote" data-count="{{ques.downvoted_by.count()}}" class="btn btn-success">
 					{% else %}
-						<button id="downvote" class="btn btn-default">
+						<button id="downvote" data-count="{{ques.downvoted_by.count()}}" class="btn btn-default">
 					{% endif %}
 					<span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
 					</button>
 
+					<button id="difficulty" class="btn btn-default"> 
+						<p>5</p><p>34</p>
+					</button>
+
 					{% if current_user.has_favourited(ques) %}
-					<button id="favourite" class="btn btn-success">
+					<button id="favourite" data-count="{{ques.fav_by.count()}}" class="btn btn-success">
 						<span class="glyphicon glyphicon-star" aria-hidden="true"></span>
 					{% else %}
-						<button id="favourite" class="btn btn-default">
+					<button id="favourite" data-count="{{ques.fav_by.count()}}" class="btn btn-default">
 						<span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
 					{% endif %}
 					</button>
@@ -55,13 +55,20 @@
 					{% endif %}
 
 
-					<button id="flag-question" class="btn btn-default">
+					<button id="flag-question" data-count="{{ques.reported_wrong_ques}}" class="btn btn-default">
 						<span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>
 					</button>
 
 				</div>
 			</div>
 
+			<div class="col-md-11">
+				<h5>Tags</h5>
+				{% for tag in ques.tags %}
+					<span class="label label-info">{{tag.tagname}}</span>
+				{% endfor %}
+			</div>
+			
 			<div class="col-md-11">				
 				<h5>Question</h5>
 
@@ -96,16 +103,18 @@
 							<input id="submit-options" class="btn btn-primary btn-block" autocomplete="off" type="submit" value="Check">
 						</div>
 						<div class="col-md-1 col-md-offset-2 pull-right">
-							<div class="btn-group pull-right">
+
+							<div class="dropdown pull-right">
 								<button id="ques-control" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-									<span class="glyphicon glyphicon-menu-hamburger"></span>
+									<span class="caret"></span>
 								</button>
 
 								<ul class="dropdown-menu">
 									<li><a href="{{url_for('question.questions', id=ques.id)}}">Permalink</a></li>
 									<li><a href="#">Another</a></li>
-								</ul>								
+								</ul>
 							</div>
+
 						</div>
 					</div>
 				</form>
@@ -113,15 +122,15 @@
 
 
 			<div class="row">
-			<div class="col-md-12">
-				<hr>
-			</div>
+				<div class="col-md-12">
+					<hr>
+				</div>
 			</div>
 
-			<div class="col-md-11">
+			<div class="col-md-12">
 				
 				<div class="row">
-					<div class="col-md-9">
+					<div id="desc" class="col-md-9">
 						<h5>Description</h5>
 						<p class="lead">{{ques.description}}</p>
 					</div>
@@ -134,6 +143,61 @@
 					</div>
 				</div>
 			</div>
+
+			<div class="row">
+				<div class="col-md-12">
+					<hr>
+				</div>
+			</div>
+
+				<div class="col-md-12">
+					<div> 
+						<ul class="nav nav-tabs" role="tablist"> 
+							<li role="presentation" class="dropdown"> 
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown">Solutions <span class="caret"></span></a> 
+
+								<ul class="dropdown-menu"> 
+									<li><a href="#view-solutions" role="tab" data-toggle="tab">View Solutions</a>
+									</li> 
+
+									<li><a href="#post-solution" role="tab" data-toggle="tab">Post Solutions</a>
+									</li> 
+								</ul> 
+							</li> 
+						</ul> 
+						
+						<div class="tab-content"> 
+
+							<div role="tabpanel" class="tab-pane fade in active" id="view-solutions"> <p>Etsy
+										 mixtape wayfarers, ethical wes anderson tofu before they sold out 
+										mcsweeney's organic lomo retro fanny pack lo-fi farm-to-table readymade.
+										 Messenger bag gentrify pitchfork tattooed craft beer, iphone skateboard
+										 locavore carles etsy salvia banksy hoodie helvetica. DIY synth PBR 
+										banksy irony. Leggings gentrify squid 8-bit cred pitchfork. Williamsburg
+										 banh mi whatever gluten-free, carles pitchfork biodiesel fixie etsy 
+										retro mlkshk vice blog. Scenester cred you probably haven't heard of 
+										them, vinyl craft beer blog stumptown. Pitchfork sustainable tofu synth 
+										chambray yr.</p> 
+							</div> 
+
+							<div role="tabpanel" class="tab-pane fade" id="post-solution"> 
+								{% set sol = ques.solution_by_user(current_user)%}
+								
+								{% if sol %}
+									<p>sol.body</p>
+								{% else %}
+								<form id="solution-form" action="post">
+									{{sol_form.hidden_tag()}}
+
+									{{macros.render_field(sol_form.body, class='form-control', required='required')}}
+
+									{{sol_form.submit(class='btn btn-primary')}}
+								</form>
+								{% endif %}
+							</div> 
+						</div> 
+					</div>
+				</div>
 
 		</div>
 

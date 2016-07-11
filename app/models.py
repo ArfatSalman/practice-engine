@@ -1,4 +1,5 @@
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy import func
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm.exc import NoResultFound
 from flask_login import UserMixin
@@ -16,15 +17,50 @@ user_tags_assoc = db.Table('user_tags_assoc',
 	db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True)
 )
 
-upvote_question_assoc = db.Table('upvote_question_assoc',
-	db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
-	db.Column('question_id', db.Integer, db.ForeignKey('questions.id'), primary_key=True)
-)
+class UpvoteDownvoteSolutionAssoc(db.Model):
+	__tablename__ = 'upvote_downvote_solutions_assoc'
 
-downvote_question_assoc = db.Table('downvote_question_assoc',
-	db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
-	db.Column('question_id', db.Integer, db.ForeignKey('questions.id'), primary_key=True)
-)
+	user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+	solution_id = db.Column(db.Integer, db.ForeignKey('solutions.id'), primary_key=True)
+	timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+	is_upvote = db.Column(db.Boolean, default=True)
+
+	solution = db.relationship('Solution',
+								backref=db.backref('voted_by',
+													lazy='dynamic'))
+	
+	def __init__(self, solution):
+		self.solution = solution
+
+
+class DownvoteQuestionAssoc(db.Model):
+	__tablename__ = 'downvote_questions_assoc'
+
+	user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+	question_id = db.Column(db.Integer, db.ForeignKey('questions.id'), primary_key=True)
+	timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+	question = db.relationship('Question', 
+								backref=db.backref('downvoted_by', 
+													lazy='dynamic'))
+
+	def __init__(self, question):
+		self.question = question
+
+
+class UpvoteQuestionAssoc(db.Model):
+	__tablename__ = 'upvote_questions_assoc'
+
+	user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+	question_id = db.Column(db.Integer, db.ForeignKey('questions.id'), primary_key=True)
+	timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+	question = db.relationship('Question', 
+								backref=db.backref('upvoted_by', 
+													lazy='dynamic'))
+
+	def __init__(self, question):
+		self.question = question
 
 
 class FavouriteQuestionAssoc(db.Model):
@@ -34,7 +70,9 @@ class FavouriteQuestionAssoc(db.Model):
 	question_id = db.Column(db.Integer, db.ForeignKey('questions.id'), primary_key=True)
 	timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
-	question = db.relationship('Question', backref=db.backref('fav_by', lazy='dynamic'))
+	question = db.relationship('Question', 
+								backref=db.backref('fav_by', 
+													lazy='dynamic'))
 
 	def __init__(self, question):
 		self.question = question
@@ -69,7 +107,25 @@ class User(UserMixin, db.Model):
 	
 	questions = db.relationship("Question", 
 					backref=db.backref('user'),
+					order_by='desc(Question.timestamp)',
 					lazy='dynamic')
+
+	solutions = db.relationship('Solution',
+								backref='user',
+								order_by='desc(Solution.timestamp)',
+								lazy='dynamic')
+
+	solutions_voted = db.relationship('UpvoteDownvoteSolutionAssoc',
+									  backref='user',
+									  order_by='desc(Solution.timestamp)',
+									  lazy='dynamic')
+	sols_voted = association_proxy('solutions_voted', 'solution')
+
+	setting = db.relationship('UserSetting',
+							   backref='user',
+							   uselist=False,
+							   lazy='joined',
+							   cascade='all, delete-orphan')
 
 	questions_solved = db.relationship('SolvedQuestionsAssoc',
 									backref='user',
@@ -78,17 +134,20 @@ class User(UserMixin, db.Model):
 									lazy='dynamic')
 	ques_solved = association_proxy('questions_solved', 'question')
 
-	questions_upvoted = db.relationship("Question", 
-										secondary=upvote_question_assoc,
-										backref=db.backref('upvoted_by', 
-														lazy='dynamic'),
-										lazy='dynamic')
+	questions_upvoted = db.relationship('UpvoteQuestionAssoc',
+											 backref='user',
+											 order_by='desc(UpvoteQuestionAssoc.timestamp)',
+											 cascade='all, delete-orphan',
+											 lazy='dynamic')
+	ques_upvoted = association_proxy('questions_upvoted', 'question')
 
-	questions_downvoted = db.relationship("Question", 
-										secondary=downvote_question_assoc,
-										backref=db.backref('downvoted_by', 
-														lazy='dynamic'),
-										lazy='dynamic')
+	questions_downvoted = db.relationship('DownvoteQuestionAssoc',
+											   backref='user',
+											   order_by='desc(DownvoteQuestionAssoc.timestamp)',
+											   cascade='all, delete, delete-orphan',
+											   lazy='dynamic')
+	ques_downvoted = association_proxy('questions_downvoted', 'question')
+
 
 	questions_fav = db.relationship('FavouriteQuestionAssoc',
 									 backref='user',
@@ -113,16 +172,22 @@ class User(UserMixin, db.Model):
 		return check_password_hash(self.password_hash, password)
 
 	def has_upvoted(self, ques):
-		u = self.questions_upvoted.filter(Question.id==ques.id).first()
-		if u:
-			return True
-		return False
+		try:
+			u = self.questions_upvoted\
+					.filter(UpvoteQuestionAssoc.question == ques)\
+					.one()
+		except NoResultFound:
+			return False
+		return True
 
 	def has_downvoted(self, ques):
-		u = self.questions_downvoted.filter(Question.id == ques.id).first()
-		if u:
-			return True
-		return False
+		try:
+			u = self.questions_downvoted\
+					.filter(DownvoteQuestionAssoc == ques)\
+					.one()
+		except NoResultFound:
+			return False
+		return True
 
 	def has_favourited(self, ques):
 		FQ = FavouriteQuestionAssoc
@@ -137,7 +202,8 @@ class User(UserMixin, db.Model):
 		SQ = SolvedQuestionsAssoc
 
 		try:
-			u = self.questions_solved.filter(SQ.question == ques).one()
+			u = self.questions_solved.filter(SQ.question == ques)\
+									 .filter(SQ.solved == True).one()
 		except NoResultFound:
 			return False
 		return True
@@ -194,9 +260,6 @@ class Question(db.Model):
 	body = db.Column(db.Text, nullable=False)
 	description = db.Column(db.Text)
 	
-	# No of Solved / No of Attempts 
-	difficulty_index = db.Column(db.Float, default=0.0)
-
 	disabled = db.Column(db.Boolean, default=False)
 
 	reported_wrong_ques = db.Column(db.Integer, default=0)
@@ -206,7 +269,13 @@ class Question(db.Model):
 	timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
 	author_id = db.Column(
-		db.Integer, db.ForeignKey('users.id'), nullable=False)
+		db.Integer, db.ForeignKey('users.id'))
+
+	solutions = db.relationship('Solution',
+								order_by='desc(Solution.timestamp)',
+								backref='question',
+								lazy='joined',
+								cascade="all, delete-orphan")
 
 	options = db.relationship("Option",
 							   order_by='Option.id',
@@ -234,8 +303,53 @@ class Question(db.Model):
 		downvotes = self.downvoted_by.count()
 		return upvotes - downvotes
 
+	@property
+	def difficulty(self):
+		times_solved = db.session\
+						 .query(func.sum(SolvedQuestionsAssoc.solved))\
+						 .filter(SolvedQuestionsAssoc.question == self)\
+						 .scalar()
+		times_attempted = db.session\
+							.query(func.sum(SolvedQuestionsAssoc.attempted))\
+							.filter(SolvedQuestionsAssoc.question == self)\
+							.scalar()
+
+		try:
+			di = times_solved/times_attempted
+		except ZeroDivisionError:
+			return 0
+		except TypeError:
+			return None
+		return float(di)
+
+	def solution_by_user(self, user):
+		try:
+			sol = Solution.query.filter_by(user=user, question=self).one()
+		except NoResultFound:
+			return False
+		return sol
+
 	def __repr__(self):
 		return 'Question(body=%s, author_id=%d)' % (self.body, self.author_id)
+
+
+class Solution(db.Model):
+	__tablename__ = 'solutions'
+	id = db.Column(db.Integer, primary_key=True)
+	body = db.Column(db.Text, nullable=False)
+	timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+	question_id = db.Column(db.Integer, db.ForeignKey('questions.id'),
+							nullable=False)
+	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+	'''
+	BACKREFS:
+	voted_by -> collection of all the users who have upvoted or downvoted
+	question-> The question to which this solution belongs
+	user -> user who has written this question
+	'''
+
 
 class Option(db.Model):
 	__tablename__='options'
@@ -258,4 +372,20 @@ class Tag(db.Model):
 	BACKREFS: 
 	assoc_users-> Users associated with this tag
 	questions -> Collectio of Questions with this Tag
+	'''
+
+
+class UserSetting(db.Model):
+	__tablename__ = 'user_settings'
+	
+	id = db.Column(db.Integer, primary_key=True)
+	hide_difficulty = db.Column(db.Boolean, default=False)
+	repeat_solved_questions = db.Column(db.Boolean, default=False)
+	auto_load_questions = db.Column(db.Boolean, default=False)
+
+	user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+	'''
+	BACKREFS:
+	user -> User associated with this setting. One one user can exist.
 	'''

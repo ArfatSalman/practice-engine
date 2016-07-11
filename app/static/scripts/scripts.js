@@ -1,7 +1,6 @@
 var QUESTION_LIST = {};
 
 //jQuery Custom plugins
-
 (function($){
     $.fn.my_required = function(message=""){
         return this.each(function(){
@@ -119,6 +118,27 @@ var toggle_two_classes = function (elem, class1, class2) {
     }
 } 
 
+//Post Solutions
+$(function(){
+    $(document).on('submit', '#solution-form', function(event){
+        event.preventDefault();
+        var validate = true;
+
+        if (validate) {
+            $.ajax({
+                url: '/post-solution',
+                type: 'POST',
+                data: $('#solution-form, input[name="question-id"]').serialize(),
+                success: function() {
+                    showAlert('Solution Posted successfully.','success');
+                },
+                error: function(jqxhr){
+                    error(jqxhr);
+                }
+            });
+        }
+    });
+});
 
 // Modify Questions Validations 
 var validate_modify_questions = function() {
@@ -145,14 +165,6 @@ var validate_modify_questions = function() {
         has_error = true;
     }
 
-    // if ($('#tags').val() === "") {
-    //     $('.tagit').css({
-    //             border: '1px solid red'
-    //         })
-    //         .after('<p class="text-danger">Please fill this element.</p>');
-    //     has_error = true;
-    // }
-
     if ($.isEmptyObject(checked_options)) {
         options.each(function(){
             if ($(this).val() !== "") {
@@ -164,12 +176,13 @@ var validate_modify_questions = function() {
 
     return has_error;
 }
+
 $(function() {
 
     // Set Up validation checks
-    $('#body').my_required();
-    $('#option1').my_required();
-    $('#option2').my_required();
+    $('#modify-ques-form #body').my_required();
+    $('#modify-ques-form #option1').my_required();
+    $('#modify-ques-form #option2').my_required();
 
     $('#modify-ques-form').on('submit', function(event){
         var has_error = validate_modify_questions();
@@ -182,16 +195,16 @@ $(function() {
 });
 
 // Click Event on Keep Solved Questions
-$(function(){
-    $(document).on('click', '#keep-solved-ques', function(){
-        if ($(this).hasClass('btn-default')) {
-            add_success_class($(this));
-        } else {
-            add_default_class($(this));
-            QUESTION_LIST = {}
-        }
-    });
-});
+// $(function(){
+//     $(document).on('click', '#keep-solved-ques', function(){
+//         if ($(this).hasClass('btn-default')) {
+//             add_success_class($(this));
+//         } else {
+//             add_default_class($(this));
+//             QUESTION_LIST = {}
+//         }
+//     });
+// });
 
 var keep_solved_ques = function() {
     if ($('#keep-solved-ques').hasClass('btn-success')) {
@@ -201,10 +214,18 @@ var keep_solved_ques = function() {
 }
 
 
-// Auto load
-$(function() {
-    $(document).on('click', '#auto-load', function() {
-        toggle_two_classes($(this), 'btn-default', 'btn-success');
+// User settings 
+$(function(){
+    $('.dropdown-settings li>button').on('click', function(event){
+        var self = $(this);
+
+       toggle_two_classes(self, 'btn-default', 'btn-success');
+
+        if (self.attr('id') === "keep-solved-ques" && self.hasClass('btn-success')) {
+            QUESTION_LIST = {};
+        }
+        
+        event.stopPropagation();
     });
 });
 
@@ -237,8 +258,27 @@ $(function() {
     });
 });
 
+// Button Hover Settings
+var button_hover_effects = function(elemID) {
+    var child_html;
+    
+    $(document).on('mouseenter', elemID, function(){
+        var self = $(this);
+        child_html = self.html();
+        var count = self.data('count');
+        var new_html = '<b>'+count+'</b>';
+        self.html(new_html);
+    }).on('mouseout', elemID, function(){
+        var self = $(this);
+        self.html(child_html);
+    });
+}
+
 //Favourite AJAX Call
 $(function() {
+    
+    button_hover_effects('#favourite');
+
     $('.question-box').on('click', '#favourite', function() {
 
         var fav = $('#favourite');
@@ -248,23 +288,26 @@ $(function() {
             type: 'POST',
             data: $('input[name="question-id"]').serialize(),
             success: function() {
-                var fav_star = fav.children();
+                var fav_star = fav.children('.glyphicon');
 
-                if (fav_star.hasClass('glyphicon-star-empty')) {
+                toggle_two_classes(fav, 'btn-default', 'btn-success')
+                toggle_two_classes(fav_star, 'glyphicon-star-empty','glyphicon-star')
 
-                    fav_star.removeClass('glyphicon-star-empty')
-                        .addClass('glyphicon-star');
+                // if (fav_star.hasClass('glyphicon-star-empty')) {
 
-                    fav.removeClass('btn-default')
-                        .addClass('btn-success');
-                } else {
+                //     fav_star.removeClass('glyphicon-star-empty')
+                //         .addClass('glyphicon-star');
 
-                    fav_star.removeClass('glyphicon-star')
-                        .addClass('glyphicon-star-empty');
+                //     fav.removeClass('btn-default')
+                //         .addClass('btn-success');
+                // } else {
 
-                    fav.removeClass('btn-success')
-                        .addClass('btn-default');
-                }
+                //     fav_star.removeClass('glyphicon-star')
+                //         .addClass('glyphicon-star-empty');
+
+                //     fav.removeClass('btn-success')
+                //         .addClass('btn-default');
+                // }
 
             },
             error: function(jqxhr) {
@@ -276,7 +319,8 @@ $(function() {
 
 //Upvote Ajax
 $(function() {
-    /*Add or remove upvotes to a question. */
+    
+    button_hover_effects('#upvote');
 
     $(document).on('click', '#upvote', function() {
 
@@ -317,7 +361,12 @@ $(function() {
 
 /*Add or remove downvote*/
 $(function() {
+
+    button_hover_effects('#downvote');
+
     $('.question-box').on('click', '#downvote', function() {
+        
+        var downvote = $(this);
 
         $.ajax({
             url: '/downvote',
@@ -361,6 +410,7 @@ var validate_tags = function(){
     }
     return true;    
 }
+
 //Tags to user
 $(function() {
     /*
@@ -654,7 +704,7 @@ $(function() {
 
 // For showing the MathJax Preview
 $(function() {
-    var elem = $('form #body');
+    var elem = $('#modify-ques-form #body');
     if (elem.val() !== "") {
         UpdateMath(elem.val(), "MathQues").addClass('lead')
             .removeClass('placeholder-text');
@@ -668,11 +718,11 @@ $(function() {
 
 // For shwing the description preview
 $(function() {
-    var elem = $('form #description');
+    var elem = $('#modify-ques-form #description');
     if (elem.val() != "") {
         UpdateText(elem.val(), "#desc-preview");
     }
-    $('form #description').on('keyup', function() {
+    $('#modify-ques-form #description').on('keyup', function() {
         var text = $(this).val();
         UpdateText(text, "#desc-preview");
     });

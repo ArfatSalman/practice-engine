@@ -4,8 +4,15 @@ from flask_login import current_user, login_required, login_user
 from sqlalchemy.exc import SQLAlchemyError
 from . import main
 from .. import db
-from ..models import User, Question, Tag, FavouriteQuestionAssoc as FQ
+from ..models import (
+						User, 
+						Question, 
+						Tag,
+						FavouriteQuestionAssoc as FQ,
+						UpvoteQuestionAssoc as UQ,
+						DownvoteQuestionAssoc as DQ)
 from .forms import UserTagsForm
+from ..question.forms import SolutionForm
 from ..question.views import associate_tags
 from ..utilities import print_debug, bad_request, add_to_db, add_to_db_ajax
 import random
@@ -26,6 +33,8 @@ def index():
 def home():
 	form = UserTagsForm()
 
+	sol_form = SolutionForm()
+
 	tags = current_user.associated_tags.all()
 
 	ques = current_user.get_relevant_question()
@@ -42,7 +51,8 @@ def home():
 							tags=tags, 
 							ques=ques,
 							side_ques=side_ques, 
-							form=form)
+							form=form,
+							sol_form=sol_form)
 
 
 @main.route('/add-user-tags', methods=['POST'])
@@ -113,10 +123,11 @@ def upvote():
 		return bad_request(msg)
 
 	if current_user.has_upvoted(ques):
-		current_user.questions_upvoted.remove(ques)
+		assoc = current_user.questions_upvoted.filter(UQ.question == ques).one()
+		current_user.questions_upvoted.remove(assoc)
 		msg = 'Upvote Removed'
 	else:
-		current_user.questions_upvoted.append(ques)
+		current_user.ques_upvoted.append(ques)
 		msg = 'Upvoted'
 
 	add_to_db_ajax(current_user, 'Upvote unsuccessful', 500)
@@ -135,10 +146,12 @@ def downvote():
 		return bad_request(msg)
 
 	if current_user.has_downvoted(ques):
-		current_user.questions_downvoted.remove(ques)
+		assoc = current_user.questions_downvoted.filter(DQ.question == ques).one()
+
+		current_user.questions_downvoted.remove(assoc)
 		msg = 'Downvote Removed'
 	else:
-		current_user.questions_downvoted.append(ques)
+		current_user.ques_downvoted.append(ques)
 		msg = 'Downvoted'
 
 	add_to_db_ajax(current_user, 'Downvote unsuccessful', 500)
@@ -174,3 +187,9 @@ def user(id):
 
 	return render_template('user.html',
 							user = user)
+
+
+@main.route('/user/setting', methods=['POST'])
+@login_required
+def user_setting(id):
+	pass

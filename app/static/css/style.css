@@ -1,9 +1,16 @@
 
-#ques-control {
-    margin: 0 0 0 10px;
-    border: 0px;
+#desc {
+    min-height: 110px;
 }
-
+.dropdown-settings li > button {
+    border: 0 none;
+    border-radius: 0;
+    margin: 0 0 2px;
+}
+#ques-control {
+    border: 0 none;
+    margin: 0 0 0 10px;
+}
 p[id^="option_preview"] {
     color: lightgray;
     font-style: italic;
@@ -19,10 +26,6 @@ hr {
 .options > .btn {
     margin: 10px 4px;
     text-align: left;
-}
-.control button {
-    float: right;
-    margin: 2px 5px;
 }
 .control {
     margin: 2px 0 0 -15px;
@@ -40,8 +43,8 @@ hr {
 }
 .sidebar {
     box-shadow: 0 0 10px lightgray;
-    width: 28.8%;
     height: 564px;
+    width: 28.8%;
 }
 .user-tags-col {
     box-shadow: 1px 1px 5px lightgray;
@@ -63,9 +66,10 @@ hr {
     padding: 3px 0;
 }
 .accessories {
-    margin: 5% 15px 0;
+    border-right: 1px solid #eee;
+    margin: 5% -10px 0 10px;
     padding: 0;
-    width: 25px;
+    width: 50px;
 }
 #alert {
     position: fixed;
@@ -94,7 +98,6 @@ hr {
     box-shadow: 0 0 5px lightgray;
     margin: 0 15px 0 0;
     padding: 0 10px;
-    height: 564px;
 }
 h5 {
     color: gray;

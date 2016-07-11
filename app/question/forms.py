@@ -70,3 +70,7 @@ class EditQuestionForm(PostQuestionForm):
     option3_id = HiddenField('option3_id')
     option4_id = HiddenField('option4_id')
 
+
+class SolutionForm(Form):
+    body = TextAreaField('Solution', validators=[Required()])
+    submit = SubmitField('Post')

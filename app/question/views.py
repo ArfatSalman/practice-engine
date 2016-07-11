@@ -7,11 +7,15 @@ from ..models import (User,
 					  Question, 
 					  Option, 
 					  Tag, 
-					  SolvedQuestionsAssoc as SQ)
+					  SolvedQuestionsAssoc as SQ,
+					  Solution)
 from . import question
 from .. import db
-
-from .forms import PostQuestionForm, UserTagsForm, EditQuestionForm
+from .forms import (
+					PostQuestionForm, 
+					UserTagsForm, 
+					EditQuestionForm,
+					SolutionForm)
 from ..utilities import add_to_db, bad_request, add_to_db_ajax, print_debug
 
 '''Helper Functions'''
@@ -301,23 +305,67 @@ def check_answer():
 @question.route('/get-questions')
 @login_required
 def get_questions():
+	# This solution form is needed since _questions.html contains the form.
+	sol_form = SolutionForm()
 
-	remove_solved = request.args.get('remove_solved', 1, type=int)
-	ques_id = request.args.get('question_id', 0, type=int)
 	result = {}
-
-	ques = Question.query.get(ques_id)
-	if ques:
-		result[str(ques.id)] = render_template('question/_question.html',
-												ques=ques)
-		return(jsonify(result))
-	else:
-		return bad_request('The given does not exist.')
-
-	if current_user.get_relevant_question():
-		for ques in current_user.get_relevant_question(remove_solved):
+	ques_id = request.args.get('question_id', 0, type=int)
+	# if a particular question is given, then return only that
+	# question. 
+	if ques_id:
+		ques = Question.query.get(ques_id)
+		if ques:
 			result[str(ques.id)] = render_template('question/_question.html',
-													ques=ques)
+													ques=ques,
+													sol_form=sol_form)
+		else:
+			return bad_request('The given question does not exist.')
 	else:
-		return bad_request('No more questions. Add More topics.')
+		remove_solved = request.args.get('remove_solved', 1, type=int)
+		if current_user.get_relevant_question():
+			for ques in current_user.get_relevant_question(remove_solved):
+				result[str(ques.id)] = render_template('question/_question.html',
+													ques=ques,
+													sol_form=sol_form)
+		else:
+			return bad_request('No more questions. Add More topics.')
 	return jsonify(result)
+
+
+@question.route('/post-solution', methods=['POST'])
+@login_required
+def post_solution():
+	form = SolutionForm()
+
+	if form.validate_on_submit():
+		ques_id = request.form.get('question-id', 0, type=int)
+		body = request.form.get('body')
+
+		if ques_id:
+			ques = Question.query.get(ques_id)
+			sol = ques.solution_by_user(current_user)
+
+			# if Solution exists, edit it.
+			if sol:
+				sol.body = body
+				add_to_db_ajax(sol, 'An error occured while editing the solution')
+				
+				return jsonify(message='Solution edited successfully')
+			# else create it.	
+			solution = Solution(body=body,
+								user=current_user,
+								question=ques
+							)
+			add_to_db_ajax(solution, "An error occured while posting solution.")
+			return jsonify(message='Solution posted successfully.')
+		else:
+			return bad_request('Question does not exist. Solution cannot be posted.')
+	return bad_request('Form validation unsuccesful. Solution not posted.')
+
+
+
+@question.route('/report-question', methods=['POST'])
+@login_required
+def report_questions():
+	ques_id = request.form.get('question-id', 0, type=int)
+	
