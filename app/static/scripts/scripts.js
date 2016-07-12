@@ -1,49 +1,46 @@
 var QUESTION_LIST = {};
 
 //jQuery Custom plugins
-(function($){
-    $.fn.my_required = function(message=""){
-        return this.each(function(){
+(function($) {
+    $.fn.my_required = function(message = "") {
+        return this.each(function() {
 
             var elem = $(this);
-            
+
             if (!message) {
                 message = 'This is required';
             }
-            var msg_elem = '<p class="text-danger">'+message+'</p>';
+            var msg_elem = '<p class="text-danger">' + message + '</p>';
 
-            elem.on('blur', function(){
+            elem.on('blur', function() {
                 if (elem.val() === "") {
-                    show_input_error(elem, message)
-                    // elem.css({
-                    //     border: '1px solid red'
-                    // }).after(msg_elem);
+                    show_input_error(elem, message);
                 }
             });
 
-            elem.on('focus', function(){
+            elem.on('focus', function() {
                 elem.css({
                     border: '1px solid #ccc'
                 }).siblings('.text-danger').remove();
             });
         });
-    }
+    };
 
 }(jQuery));
 
 
-var show_input_error = function(elem, message="") {
+var show_input_error = function(elem, message = "") {
 
     if (!message) {
         message = 'This is required';
     }
-    
-    var msg_elem = '<p class="text-danger">'+message+'</p>';
-    
+
+    var msg_elem = '<p class="text-danger">' + message + '</p>';
+
     elem.css({
         border: '1px solid red'
     }).after(msg_elem);
-}
+};
 
 var checks = function() {
     if ($('#upvote').hasClass('btn-success')) {
@@ -79,7 +76,7 @@ var UpdateMath = function(TeX, elementID) {
 var UpdateText = function(text, elementID) {
     $(elementID).text(text);
     return (elementID);
-}
+};
 
 var preview = function(inputElem, previewElem) {
     var elem = $(inputElem);
@@ -90,39 +87,133 @@ var preview = function(inputElem, previewElem) {
         var text = $(this).val();
         UpdateMath(text, previewElem);
     });
-}
+};
 
 var error = function(jqxhr) {
     var json = jqxhr.responseJSON;
-    
+
     if (json) {
         showAlert(json.message, 'danger');
     } else {
-        showAlert(jqxhr.statusText, 'danger')
-    }    
-}
+        showAlert(jqxhr.statusText, 'danger');
+    }
+};
 
 var add_success_class = function(elem) {
     elem.removeClass('btn-default').addClass('btn-success');
-}
+};
 
 var add_default_class = function(elem) {
     elem.removeClass('btn-success').addClass('btn-default');
-}
+};
 
-var toggle_two_classes = function (elem, class1, class2) {
+var toggle_two_classes = function(elem, class1, class2) {
     if (elem.hasClass(class1)) {
         elem.removeClass(class1).addClass(class2);
     } else {
         elem.removeClass(class2).addClass(class1);
     }
-} 
+};
+
+//Kepresses bindings for options 
+$(function(){
+    $(document).on('keyup', function(event){
+        var key = String.fromCharCode(event.which);
+        var options = $('.options .btn');
+
+        if (key === "1" || key === "A" || key === "a") {
+            if ($(options[0]).hasClass('btn-danger')) {
+                toggle_two_classes($(options[0]), 'btn-danger', 'btn-default');
+            } else {
+                toggle_two_classes($(options[0]), 'btn-default', 'btn-info');
+            }
+        } else if (key === "2" || key === "B" || key === "b") {
+            if ($(options[1]).hasClass('btn-danger')) {
+                toggle_two_classes($(options[1]), 'btn-danger', 'btn-default');
+            } else {
+                toggle_two_classes($(options[1]), 'btn-default', 'btn-info');
+            }
+        } else if (key === "3" || key === "C" || key === "c") {
+            if ($(options[2]).hasClass('btn-danger')) {
+                toggle_two_classes($(options[2]), 'btn-danger', 'btn-default');
+            } else {
+                toggle_two_classes($(options[2]), 'btn-default', 'btn-info');
+            }
+
+        } else if (key === "4" || key === "D" || key === "d") {
+            if ($(options[3]).hasClass('btn-danger')) {
+                toggle_two_classes($(options[3]), 'btn-danger', 'btn-default');
+            } else {
+                toggle_two_classes($(options[3]), 'btn-default', 'btn-info');
+            }
+        } else if (event.which === 13) {
+            $('.option-form').trigger('submit');
+        }
+    });
+});
+
+//Solutions 
+$(function(){
+    $(document).on('click', '.sol-controls button:not("#edit-sol")', function(){
+        var self = $(this);
+
+        data = {
+            id: self.data('id'),
+            is_upvote: 1
+        };
+
+        if (self.hasClass('downvote-sol')) {
+            data.is_upvote = 0;
+        }
+
+        $.ajax({
+            url: '/vote-solution',
+            data: data,
+            type: 'POST',
+            success: function(){
+                toggle_two_classes(self, 'btn-default', 'btn-success');
+
+                if (data.is_upvote) {
+                    if (self.hasClass('btn-success')) {
+                        self.next().attr('disabled', true);
+                    } else {
+                        self.next().attr('disabled', false);
+                    }
+                } else {
+                    if (self.hasClass('btn-success')) {
+                        self.prev().attr('disabled', true);
+                    } else {
+                        self.prev().attr('disabled', false);
+                    }
+                }
+            },
+            error: function(jqxhr){
+                error(jqxhr);
+            }
+        });
+    });
+});
 
 //Post Solutions
 $(function(){
-    $(document).on('submit', '#solution-form', function(event){
+    $(document).on('click', '#edit-sol', function(){
+        var sol_form = $('#solution-form');
+        var val = $('#to-edit').text();
+        if (sol_form.css('display') === "none") {
+            sol_form.css('display', 'block');
+            $('#solution-form #body').val(val);
+            $('#sol-preview').text(val);
+        } else {
+            sol_form.css('display', 'none');
+        }
+    });
+});
+
+$(function() {
+    $(document).on('submit', '#solution-form', function(event) {
         event.preventDefault();
         var validate = true;
+        var sol_id = $(this).children('input[type="hidden"]');
 
         if (validate) {
             $.ajax({
@@ -130,9 +221,18 @@ $(function(){
                 type: 'POST',
                 data: $('#solution-form, input[name="question-id"]').serialize(),
                 success: function() {
-                    showAlert('Solution Posted successfully.','success');
+                    // Reload the question.
+                    var ques_id = $('input[name="question-id"]').val();
+                    get_questions(ques_id);
+                    //Show the appropriate message;
+                    if ($.isEmptyObject(sol_is)) {
+                        showAlert('Solution Posted Successfully.', 'success')
+                    } else {
+                        showAlert('Solution Edited successfully.', 'success');
+                    }
+                    
                 },
-                error: function(jqxhr){
+                error: function(jqxhr) {
                     error(jqxhr);
                 }
             });
@@ -144,18 +244,18 @@ $(function(){
 var validate_modify_questions = function() {
 
     var elem_to_check = [
-                            $('#body'),
-                            $('#option1'),
-                            $('#option2')
-                            ]
+        $('#body'),
+        $('#option1'),
+        $('#option2')
+    ]
 
     options = $('textarea[id^="option"]');
     checked_options = $('input[id^="check_option"]:checked');
     elem_msg = '<p class="text-danger">At least one options should be correct.</p>';
     has_error = false;
 
-    for (var i = 0; i < elem_to_check.length; i++ ) {
-        if (elem_to_check[i].val() ==="") {
+    for (var i = 0; i < elem_to_check.length; i++) {
+        if (elem_to_check[i].val() === "") {
             show_input_error(elem_to_check[i]);
             has_error = true;
         }
@@ -166,13 +266,13 @@ var validate_modify_questions = function() {
     }
 
     if ($.isEmptyObject(checked_options)) {
-        options.each(function(){
+        options.each(function() {
             if ($(this).val() !== "") {
                 $(this).after(elem_msg);
             }
         });
         has_error = true;
-    } 
+    }
 
     return has_error;
 }
@@ -180,11 +280,11 @@ var validate_modify_questions = function() {
 $(function() {
 
     // Set Up validation checks
-    $('#modify-ques-form #body').my_required();
+    $('#body').my_required();
     $('#modify-ques-form #option1').my_required();
     $('#modify-ques-form #option2').my_required();
 
-    $('#modify-ques-form').on('submit', function(event){
+    $('#modify-ques-form').on('submit', function(event) {
         var has_error = validate_modify_questions();
         console.log(has_error);
         if (has_error) {
@@ -194,17 +294,6 @@ $(function() {
     });
 });
 
-// Click Event on Keep Solved Questions
-// $(function(){
-//     $(document).on('click', '#keep-solved-ques', function(){
-//         if ($(this).hasClass('btn-default')) {
-//             add_success_class($(this));
-//         } else {
-//             add_default_class($(this));
-//             QUESTION_LIST = {}
-//         }
-//     });
-// });
 
 var keep_solved_ques = function() {
     if ($('#keep-solved-ques').hasClass('btn-success')) {
@@ -214,17 +303,38 @@ var keep_solved_ques = function() {
 }
 
 
-// User settings 
-$(function(){
-    $('.dropdown-settings li>button').on('click', function(event){
+// Set User settings 
+$(function() {
+    $('.dropdown-settings li>button').on('click', function(event) {
         var self = $(this);
+        var data = {
+            name: self.data('type')
+        };
+        var original_text;
 
-       toggle_two_classes(self, 'btn-default', 'btn-success');
+        $.ajax({
+            url: '/user-setting',
+            type: 'POST',
+            data: data,
+            beforeSend: function() {
+                original_text = self.text();
+                self.text('setting ...').attr('disabled', true);
 
-        if (self.attr('id') === "keep-solved-ques" && self.hasClass('btn-success')) {
-            QUESTION_LIST = {};
-        }
-        
+            },
+            success: function(){
+                toggle_two_classes(self, 'btn-default', 'btn-success');
+
+                if (self.data('type') === "KSQ" && self.hasClass('btn-success')) {
+                    QUESTION_LIST = {};
+                }
+
+                self.text(original_text).attr('disabled', false);
+            },
+            error: function(jqxhr) {
+                error(jqxhr);
+            }
+        });
+
         event.stopPropagation();
     });
 });
@@ -261,14 +371,14 @@ $(function() {
 // Button Hover Settings
 var button_hover_effects = function(elemID) {
     var child_html;
-    
-    $(document).on('mouseenter', elemID, function(){
+
+    $(document).on('mouseenter', elemID, function() {
         var self = $(this);
         child_html = self.html();
         var count = self.data('count');
-        var new_html = '<b>'+count+'</b>';
+        var new_html = '<b>' + count + '</b>';
         self.html(new_html);
-    }).on('mouseout', elemID, function(){
+    }).on('mouseout', elemID, function() {
         var self = $(this);
         self.html(child_html);
     });
@@ -276,7 +386,7 @@ var button_hover_effects = function(elemID) {
 
 //Favourite AJAX Call
 $(function() {
-    
+
     button_hover_effects('#favourite');
 
     $('.question-box').on('click', '#favourite', function() {
@@ -291,7 +401,7 @@ $(function() {
                 var fav_star = fav.children('.glyphicon');
 
                 toggle_two_classes(fav, 'btn-default', 'btn-success')
-                toggle_two_classes(fav_star, 'glyphicon-star-empty','glyphicon-star')
+                toggle_two_classes(fav_star, 'glyphicon-star-empty', 'glyphicon-star')
 
                 // if (fav_star.hasClass('glyphicon-star-empty')) {
 
@@ -319,7 +429,7 @@ $(function() {
 
 //Upvote Ajax
 $(function() {
-    
+
     button_hover_effects('#upvote');
 
     $(document).on('click', '#upvote', function() {
@@ -365,7 +475,7 @@ $(function() {
     button_hover_effects('#downvote');
 
     $('.question-box').on('click', '#downvote', function() {
-        
+
         var downvote = $(this);
 
         $.ajax({
@@ -399,7 +509,7 @@ $(function() {
     });
 });
 
-var validate_tags = function(){
+var validate_tags = function() {
 
     if ($('#tags').val() === "") {
         $('.tagit').css({
@@ -408,7 +518,7 @@ var validate_tags = function(){
             .after('<p class="text-danger">Please fill this element.</p>');
         return false;
     }
-    return true;    
+    return true;
 }
 
 //Tags to user
@@ -467,7 +577,7 @@ $(function() {
     });
 });
 
-// Removing
+// Removing tags
 $(function() {
     /*
     For removing tags from the User.
@@ -521,7 +631,7 @@ var get_questions = function(id = 0) {
         data.question_id = id;
     }
 
-    if (keep_solved_ques()) {
+    if (keep_solved_ques() || id) { // Don't remove solved on specific question too.
         data.remove_solved = 0; // don't remove solved
     }
 
@@ -533,7 +643,6 @@ var get_questions = function(id = 0) {
             load_next_question();
         },
         error: function(jqxhr, textStatus, errorThrown) {
-            console.log(jqxhr);
             error(jqxhr);
         }
     });
@@ -577,7 +686,7 @@ var auto_load = function() {
 }
 
 // Loading questions of Sidebar
-$(function(){
+$(function() {
     $('.sidebar').on('click', 'p > a', function(event) {
         event.preventDefault();
         id = $(this).data('id');
@@ -729,19 +838,23 @@ $(function() {
 });
 
 $(function() {
-    preview('form #option1', 'option_preview_1')
+    preview('#solution-form #body', 'sol-preview');
 });
 
 $(function() {
-    preview('form #option2', 'option_preview_2')
+    preview('form #option1', 'option_preview_1');
 });
 
 $(function() {
-    preview('form #option3', 'option_preview_3')
+    preview('form #option2', 'option_preview_2');
 });
 
 $(function() {
-    preview('form #option4', 'option_preview_4')
+    preview('form #option3', 'option_preview_3');
+});
+
+$(function() {
+    preview('form #option4', 'option_preview_4');
 });
 
 /*MATHJax Configurations*/

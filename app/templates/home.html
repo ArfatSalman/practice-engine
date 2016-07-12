@@ -38,14 +38,29 @@
 						</button>
 
 						<ul class="dropdown-menu" aria‐labelledby="dropdownMenu1">
+							{% set setting = current_user.setting %}
+
 							<li>
-								<button id="hide-difficulty" type="button" class="btn btn-default btn-block" autocomplete="off">Hide Difficulty</button>
+								{% if setting and setting.hide_difficulty %}
+									<button data-type="HD" id="hide-difficulty" type="button" class="btn btn-success btn-block" autocomplete="off">Hide Difficulty</button>
+								{% else %}
+									<button data-type="HD" id="hide-difficulty" type="button" class="btn btn-default btn-block" autocomplete="off">Hide Difficulty</button>
+								{% endif %}
+							</li>
+							
+							<li>
+								{% if setting and setting.repeat_solved_questions %}
+									<button data-type="KSQ" id="keep-solved-ques" type="button" class="btn btn-success btn-block" autocomplete="off">Show Solved Question</button>
+								{% else %}
+									<button data-type="KSQ" id="keep-solved-ques" type="button" class="btn btn-default btn-block" autocomplete="off">Show Solved Question</button>
+								{% endif %}
 							</li>
 							<li>
-								<button id="keep-solved-ques" type="button" class="btn btn-default btn-block" autocomplete="off">Show Solved Question</button>
-							</li>
-							<li>
-								<button id="auto-load" type="button" class="btn btn-default btn-block" autocomplete="off">Auto-Load</button>
+								{% if setting and setting.auto_load_questions %}
+									<button data-type="AL" id="auto-load" type="button" class="btn btn-success btn-block" autocomplete="off">Auto-Load</button>
+								{% else %}
+									<button data-type="AL" id="auto-load" type="button" class="btn btn-default btn-block" autocomplete="off">Auto-Load</button>
+								{% endif %}
 							</li>
 						</ul>
 					</div>
