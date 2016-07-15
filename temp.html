@@ -1,0 +1,56 @@
+<div class="col-md-12">
+                <p class="lead">
+                    <a href="#">{{ques.body}}</a>
+                </p>
+                
+                <div class="row">
+                    <div class="col-md-12">
+                        <hr>
+                    </div>
+                 </div>
+                {{caller(ques_assoc)}}
+                <div class="question-bar">
+                    
+                </div>
+            </div>
+
+{% if ques.solutions %}
+                    {% for sol in ques.solutions %}
+                    <div class="solution row">
+                        <div class="sol-user-info col-md-12">
+                            Posted by {{sol.user.username}}
+                        </div>
+                
+                        <div class="sol-body col-md-12">
+                            {{sol.body}}
+                        </div>
+                        
+                        <div class="sol-controls col-md-12">
+                            {% if current_user.has_upvoted(sol) %}
+                            <button data-id="{{sol.id}}" class="upvote-sol btn btn-success btn-xs">
+                            {% else %}
+                            <button data-id="{{sol.id}}" class="upvote-sol btn btn-default btn-xs"> 
+                            {% endif %}
+                                Upvote <span class="badge">{{sol.upvotes.count()}}</span>
+                            </button>
+                            
+                            {% if current_user.has_downvoted(sol) %}
+                            <button data-id="{{sol.id}}" class="downvote-sol btn btn-success btn-xs">
+                            {% else %}
+                            <button data-id="{{sol.id}}" class="downvote-sol btn btn-default btn-xs">
+                            {% endif %}
+                                Downvote <span class="badge">{{sol.downvotes.count()}}</span>
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %} 
+                {% else %}
+                <p> No Solution 
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                    cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+                    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                </p>
+                {% endif %}

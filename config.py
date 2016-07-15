@@ -24,10 +24,12 @@ class DevelopmentConfig(Config):
 	MAIL_USERNAME = ''
 	MAIL_PASSWORD = ''
 	SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root@localhost/test'
+	SQLALCHEMY_ECHO = False
 
 
 class TestingConfig(Config):
 	TESTING = True
+	SQLALCHEMY_ECHO = False
 	SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root@localhost/testing'
 
 

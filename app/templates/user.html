@@ -1,16 +1,58 @@
-{% extends "base.html" %}
+{% extends "base.html" %} 
 
-{% block content %}
+{% macro pagination_button() %}
+    <div class="col-md-12">
+        <button class="btn btn-default btn-block">
+            More Questions
+        </button>
+    </div>
+{% endmacro %}
 
-	<div class="row">
-		
-	</div>
+{% block content %}                        
+<div class="user row">
+    <div class="col-md-3 col-md-offset-1">
+        <img src="{{url_for('static', _external=True, filename='300x300.jpg')}}" alt="{{session['username']}}" />
+    </div>
+    <div class="col-md-6 col-md-offset-2">
+        <h1>{{user.username}}</h1>
+    </div>
 
-	{{user.username}}
+    <div class="col-md-10 col-md-offset-1">
+        <div>
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#posted" role="tab" data-toggle="tab">Posted</a></li>
+                <li role="presentation" class=""><a href="#solved" role="tab" data-toggle="tab">Solved</a></li>
+                <li role="presentation" class=""><a href="#favourite" role="tab" data-toggle="tab">Favourited</a></li>
+                <li role="presentation"><a href="#upvoted" role="tab" data-toggle="tab">Upvoted</a></li>
+                <li role="presentation"><a href="#downvoted" role="tab" data-toggle="tab">Downvoted</a></li>
+                <li role="presentation"><a href="#settings" role="tab" data-toggle="tab">Settings</a></li>
+            </ul>
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane in active" id="posted">
+                    {% include "_posted.html" %}
 
-	{% for ques in user.ques_solved %}
-		<h2>{{ques.id}}</h2>
-		<h2>{{ques.body}}</h2>
+                </div>
 
-	{% endfor %}
+                <div role="tabpanel" class="tab-pane fade in" id="solved">	
+                    {% include "_solved.html" %}                       
+                </div>
+
+                <div role="tabpanel" class="tab-pane" id="favourite">
+                    
+                </div>
+                
+                <div role="tabpanel" class="tab-pane" id="upvoted">
+                    
+                </div>
+
+                <div role="tabpanel" class="tab-pane" id="downvoted">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

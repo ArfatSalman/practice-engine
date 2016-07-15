@@ -1,8 +1,30 @@
+.navbar .user-box {
+    margin: 5px;
+}
 
+.question .lead {
+    margin-bottom: 5px;
+}
+.question {
+    box-shadow: 0 0 8px lightgray;
+    padding: 10px;
+}
 .posted-on {
     color: gray;
     font-size: 10px;
     text-align: right;
+}
+.question > .col-md-12 {
+    box-shadow: 0 0 3px lightgray;
+    margin: 6px 0;
+    padding: 0;
+}
+.question .question-bar {
+    background: rgba(0, 0, 0, 0.1) none repeat scroll 0 0;
+    padding: 2px;
+}
+.question p {
+    padding: 5px;
 }
 .user-box p, .user-box a {
     font-weight: bolder;

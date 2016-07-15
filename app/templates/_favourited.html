@@ -1,0 +1,14 @@
+{% from "_macros.html" import question with context %}
+
+{% if user %}
+	{% set obj = user.questions_fav %}
+{% else %}
+	{% set obj = pagination %}
+{% endif %}
+
+{% call(ques_assoc) question(obj) %}
+    <p>
+        Solved on {{ques_assoc.timestamp.strftime('%a %b %Y')}}
+        Attempts {{ques_assoc.attempted}}
+    </p>
+{% endcall %}

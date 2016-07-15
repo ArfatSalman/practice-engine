@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% macro question(ques_solved) %}
+                            <div class="question row">
+                            {% for ques_assoc in ques_solved %}
+                                {% if ques_assoc.question %}
+                                    {% set ques = ques_assoc.question %}
+                                {% else %}
+                                    {% set ques = ques_assoc %}
+                                {% endif %}
+                                <div class="col-md-12">
+                                    <p class="lead">
+                                        <a href="#">{{ques.body}}</a>
+                                    </p>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <hr>
+                                        </div>
+                                     </div>
+                                    {{caller(ques_assoc)}}
+                                    <div class="question-bar">
+                                        <button class="btn btn-default btn-sm">Upvote</button>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            </div>
+                        {% endmacro %}
+
+{% block content %}
+	{% call(obj) question(ques)%}
+
+	{% endcall %}
+{% endblock %}

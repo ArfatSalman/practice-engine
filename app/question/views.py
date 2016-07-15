@@ -156,31 +156,6 @@ def edit_question(id):
             db.session.rollback()
             flash('There was a problem updating the question.', 'danger')
             return redirect(url_for('.edit_question', id=ques.id))
-
-        # """Delete all the previous options."""
-        # try:
-        #   for option in ques.options:
-        #       db.session.delete(option)
-        #   #db.session.commit()
-        # except SQLAlchemyError:
-        #   db.session.rollback()
-        #   flash('There was a problem updating the question','danger')
-        #   return redirect(url_for('.edit_question', id=ques.id))
-        
-        # """Add new options""" 
-        # ques.options = get_options(form)
-
-        
-
-        # try:
-        #   db.session.add(ques)
-        #   db.session.commit()
-        #   flash('Question %s updated Successfully.' % ques.id, 'success')
-        #   return redirect(url_for('main.home'))
-        # except SQLAlchemyError, e:
-        #   db.session.rollback()
-        #   flash('%s There was a problem updating the question ' % str(e), 'danger')
-        #   return redirect(url_for('.edit_question', id=ques.id))
     
     # Fill the form if the form is just displayed
     form.body.data = ques.body
@@ -236,32 +211,6 @@ def get_tags():
     return jsonify(result)
 
 
-def calculate_score(ques, sq):
-    num_opts = len(ques.options)
-    trials = num_opts - 1
-    attempts = sq.attempted
-    points = range(1, num_opts+1)
-
-    score = 0
-
-    # if the questions is posted by the user
-    # then no points in solving 
-    if ques.user == current_user:
-        return score
-    # If the user has previously solved the 
-    # quention, then no points.
-    elif sq.solved:
-        return score
-    # if attempted more than trials allowed 
-    elif attempts > trials:
-        return score
-    else:
-        for x in points:
-            if attempts == x:
-                score = points[-x]
-    return score
-
-
 @question.route('/check-answer', methods=['POST'])
 @login_required
 def check_answer():
@@ -289,14 +238,11 @@ def check_answer():
                  .one_or_none()
     if not sq:
         sq = SQ(question=ques) # So that it complies with proxy
-        sq.attempted = 0 # because a new assoc. 
         sq.user = current_user
     sq.attempted += 1
-    
+
     if is_solved:
-        current_user.score += calculate_score(ques, sq) 
         sq.solved = is_solved
-        
     
     add_to_db_ajax(sq, 'Check-Answer: Operation Error while writing to DB')
 
@@ -310,8 +256,10 @@ def get_questions():
 
     result = {}
     ques_id = request.args.get('question_id', 0, type=int)
+
     # if a particular question is given, then return only that
     # question. 
+
     if ques_id:
         ques = Question.query.get(ques_id)
         if ques:
@@ -321,14 +269,14 @@ def get_questions():
         else:
             return bad_request('The given question does not exist.')
     else:
-        remove_solved = request.args.get('remove_solved', 1, type=int)
         if current_user.get_relevant_question():
-            for ques in current_user.get_relevant_question(remove_solved):
+            for ques in current_user.get_relevant_question():
                 result[str(ques.id)] = render_template('question/_question.html',
                                                     ques=ques,
                                                     sol_form=sol_form)
         else:
             return bad_request('No more questions. Add More topics.')
+    
     return jsonify(result)
 
 

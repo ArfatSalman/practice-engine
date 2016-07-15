@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% import "_macros.html" as macros %}
+{% import "_macros.html" as macros with context %}
 
 {% block content %}
 
@@ -78,7 +78,9 @@
 						<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
 					</button> -->
 		</div>
+
 		{% include "question/_question.html" %}
+		
 	</div>
 	
 	<div class="sidebar col-md-4">

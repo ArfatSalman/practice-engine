@@ -226,8 +226,33 @@ def user(id):
     user = User.query.get_or_404(id)
 
     return render_template('user.html',
-                            user = user)
+                            user = user,
+                            per_page_limit=2)
 
+
+@main.route('/user/<int:id>/<ques_type>')
+@login_required
+def user_questions(id, ques_type):
+    user = User.query.get_or_404(id)
+
+    if ques_type == 'posted':
+        page = 2
+        pagination = user.questions.paginate(page, per_page=2)
+        return render_template("_posted.html",
+                                pagination=pagination)
+
+    return ""
+
+@main.route('/tags/<tagname>')
+@login_required
+def tags(tagname):
+    tag = Tag.query.filter_by(tagname=tagname).first()
+    ques = None
+    if tag:
+        ques = tag.questions
+
+    return render_template('tags.html',
+                            ques=ques)
 
 @main.route('/user-setting', methods=['POST'])
 @login_required

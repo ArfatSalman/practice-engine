@@ -43,13 +43,14 @@ var show_input_error = function(elem, message = "") {
 };
 
 var checks = function() {
-    if ($('#upvote').hasClass('btn-success')) {
-        $('#downvote').attr('disabled', true);
+    if ($('.upvote-btn').hasClass('btn-success')) {
+        $('.upvote-btn').siblings('.downvote-btn')
+                        .attr('disabled', true);
     }
 
-    var downvote = $('#downvote');
-    if (downvote.hasClass('btn-success')) {
-        $('#upvote').attr('disabled', true);
+    if ($('.downvote-btn').hasClass('btn-success')) {
+        $('.downvote-btn').siblings('.upvote-btn')
+                          .attr('disabled', true);
     }
 };
 
@@ -116,8 +117,8 @@ var toggle_two_classes = function(elem, class1, class2) {
 };
 
 //Kepresses bindings for options 
-$(function(){
-    $(document).on('keyup', function(event){
+$(function() {
+    $(document).on('keyup', function(event) {
         var key = String.fromCharCode(event.which);
         var options = $('.options .btn');
 
@@ -153,8 +154,8 @@ $(function(){
 });
 
 //Solutions 
-$(function(){
-    $(document).on('click', '.sol-controls button:not("#edit-sol")', function(){
+$(function() {
+    $(document).on('click', '.sol-controls button:not("#edit-sol")', function() {
         var self = $(this);
 
         data = {
@@ -170,7 +171,7 @@ $(function(){
             url: '/vote-solution',
             data: data,
             type: 'POST',
-            success: function(){
+            success: function() {
                 toggle_two_classes(self, 'btn-default', 'btn-success');
 
                 if (data.is_upvote) {
@@ -187,7 +188,7 @@ $(function(){
                     }
                 }
             },
-            error: function(jqxhr){
+            error: function(jqxhr) {
                 error(jqxhr);
             }
         });
@@ -195,8 +196,8 @@ $(function(){
 });
 
 //Post Solutions
-$(function(){
-    $(document).on('click', '#edit-sol', function(){
+$(function() {
+    $(document).on('click', '#edit-sol', function() {
         var sol_form = $('#solution-form');
         var val = $('#to-edit').text();
         if (sol_form.css('display') === "none") {
@@ -230,7 +231,7 @@ $(function() {
                     } else {
                         showAlert('Solution Edited successfully.', 'success');
                     }
-                    
+
                 },
                 error: function(jqxhr) {
                     error(jqxhr);
@@ -321,7 +322,7 @@ $(function() {
                 self.text('setting ...').attr('disabled', true);
 
             },
-            success: function(){
+            success: function() {
                 toggle_two_classes(self, 'btn-default', 'btn-success');
 
                 if (self.data('type') === "KSQ" && self.hasClass('btn-success')) {
@@ -384,123 +385,61 @@ var button_hover_effects = function(elemID) {
     });
 }
 
-//Favourite AJAX Call
+
+//Favourite Upvote and downvote Ajax
 $(function() {
 
-    button_hover_effects('#favourite');
+    button_hover_effects('.upvote-btn');
+    button_hover_effects('.downvote-btn');
+    button_hover_effects('.favourite-btn');
 
-    $('.question-box').on('click', '#favourite', function() {
+    $(document).on('click', '.upvote-btn, .downvote-btn, .favourite-btn', function() {
 
-        var fav = $('#favourite');
-
-        $.ajax({
-            url: '/favourite-question',
-            type: 'POST',
-            data: $('input[name="question-id"]').serialize(),
-            success: function() {
-                var fav_star = fav.children('.glyphicon');
-
-                toggle_two_classes(fav, 'btn-default', 'btn-success')
-                toggle_two_classes(fav_star, 'glyphicon-star-empty', 'glyphicon-star')
-
-                // if (fav_star.hasClass('glyphicon-star-empty')) {
-
-                //     fav_star.removeClass('glyphicon-star-empty')
-                //         .addClass('glyphicon-star');
-
-                //     fav.removeClass('btn-default')
-                //         .addClass('btn-success');
-                // } else {
-
-                //     fav_star.removeClass('glyphicon-star')
-                //         .addClass('glyphicon-star-empty');
-
-                //     fav.removeClass('btn-success')
-                //         .addClass('btn-default');
-                // }
-
-            },
-            error: function(jqxhr) {
-                error(jqxhr);
-            }
-        });
-    });
-});
-
-//Upvote Ajax
-$(function() {
-
-    button_hover_effects('#upvote');
-
-    $(document).on('click', '#upvote', function() {
-
-        var upvote = $('#upvote');
+        var btn = $(this);
+        var data = {
+            "question-id": btn.data('id')
+        };
+        
+        var url = '/upvote';
+        if (btn.hasClass('downvote-btn')) {
+            url = '/downvote';
+        } else if (btn.hasClass('favourite-btn')) {
+            url = '/favourite-question';
+        }
 
         $.ajax({
-            url: '/upvote',
+            url: url,
             type: 'POST',
-            data: $('input[name="question-id"]').serialize(),
+            data: data,
             success: function() {
-                var upvote_count = $('.upvote-count');
-                var currentUpvote = parseInt(upvote_count.text(), 10);
+                var vote_count = $('.upvote-count');
+                var currentvote = parseInt(vote_count.text(), 10);
 
-                if (upvote.hasClass('btn-default')) {
-
-                    upvote.removeClass('btn-default')
-                        .addClass('btn-success');
-
-                    upvote_count.text(currentUpvote + 1);
-
-                    $('#downvote').attr('disabled', true);
+                if (btn.hasClass('upvote-btn')) {
+                    if (btn.hasClass('btn-default')) {
+                        add_success_class(btn);
+                        vote_count.text(currentvote + 1);
+                        btn.siblings('.downvote-btn').attr('disabled', true);
+                    } else {
+                        add_default_class(btn);
+                        vote_count.text(currentvote - 1);
+                        btn.siblings('.downvote-btn').attr('disabled', false);
+                    }
+                } else if (btn.hasClass('favourite-btn')) {
+                    var fav_star = btn.children('.glyphicon');
+                    toggle_two_classes(btn, 'btn-default', 'btn-success')
+                    toggle_two_classes(fav_star, 'glyphicon-star-empty', 'glyphicon-star')
                 } else {
-                    upvote.removeClass('btn-success')
-                        .addClass('btn-default');
-
-                    upvote_count.text(currentUpvote - 1);
-
-                    $('#downvote').attr('disabled', false);
-                }
-            },
-            error: function(jqxhr, textStatus, errorThrown) {
-                var json = jqxhr.responseJSON;
-                showAlert(json.message, 'danger');
-            }
-        });
-    });
-});
-
-/*Add or remove downvote*/
-$(function() {
-
-    button_hover_effects('#downvote');
-
-    $('.question-box').on('click', '#downvote', function() {
-
-        var downvote = $(this);
-
-        $.ajax({
-            url: '/downvote',
-            type: 'POST',
-            data: $('input[name="question-id"]').serialize(),
-            success: function() {
-                var upvote_count = $('.upvote-count');
-                var currentUpvote = parseInt(upvote_count.text(), 10);
-
-                if (downvote.hasClass('btn-default')) {
-                    downvote.removeClass('btn-default')
-                        .addClass('btn-success');
-
-                    upvote_count.text(currentUpvote - 1);
-
-                    $('#upvote').attr('disabled', true);
-                } else {
-                    downvote.removeClass('btn-success')
-                        .addClass('btn-default');
-
-                    upvote_count.text(currentUpvote + 1);
-
-                    $('#upvote').attr('disabled', false);
-                }
+                    if (btn.hasClass('btn-default')) {
+                        add_success_class(btn);
+                        vote_count.text(currentvote - 1);
+                        btn.siblings('.upvote-btn').attr('disabled', true);
+                     } else {
+                        add_default_class(btn);
+                        vote_count.text(currentvote + 1);
+                        btn.siblings('.upvote-btn').attr('disabled', false);
+                     }
+                }                
             },
             error: function(jqxhr, textStatus, errorThrown) {
                 error(jqxhr);
@@ -629,10 +568,6 @@ var get_questions = function(id = 0) {
 
     if (id) {
         data.question_id = id;
-    }
-
-    if (keep_solved_ques() || id) { // Don't remove solved on specific question too.
-        data.remove_solved = 0; // don't remove solved
     }
 
     $.ajax({

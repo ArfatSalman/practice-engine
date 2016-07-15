@@ -1,8 +1,8 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy import func
+from sqlalchemy import func, event
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm.exc import NoResultFound
-from flask_login import UserMixin
+from flask_login import UserMixin, current_user
 from . import db, login_manager
 from datetime import datetime
 from .utilities import print_debug
@@ -95,6 +95,19 @@ class SolvedQuestionsAssoc(db.Model):
 
     def __init__(self, question):
         self.question = question
+        self.attempted = 0
+
+
+# class Point(db.Model):
+#     __tablename__ = 'points'
+
+#     by_upvote = db.Column(db.Integer, default=0)
+#     by_downvote = db.Column(db.Integer, default=0)
+#     by_solution = db.Column(db.Integer, default=0)
+
+#     user_id = db.Column(db.Integer, 
+#                         db.ForeignKey('users.id'),
+#                         primary_key=True)
 
 
 class User(UserMixin, db.Model):
@@ -102,7 +115,8 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     password_hash = db.Column(db.String(128))
     username = db.Column(db.String(128), unique=True, index=True)
-    email = db.Column(db.String(128), unique=True, index=True)
+    email = db.Column(db.String(128), unique=True, index=True) # nullable
+
     score = db.Column(db.Integer, default=0)
     
     questions = db.relationship("Question", 
@@ -189,13 +203,24 @@ class User(UserMixin, db.Model):
             return False
         return u
 
+    def has_authoured(self, obj):
+        try:
+            if isinstance(obj, Question):
+                u = self.questions.filter(Question.id == obj.id)\
+                                  .one()
+            else:
+                pass
+        except NoResultFound:
+            return False 
+        return u
+
     def has_downvoted(self, obj):
         UDS = UpvoteDownvoteSolutionAssoc
 
         try:
             if isinstance(obj, Question):
                 u = self.questions_downvoted\
-                        .filter(DownvoteQuestionAssoc == obj)\
+                        .filter(DownvoteQuestionAssoc.question == obj)\
                         .one()
             else:
                 u = self.solutions_voted\
@@ -225,7 +250,7 @@ class User(UserMixin, db.Model):
             return False
         return True
 
-    def get_relevant_question(self, remove_solved=1):
+    def get_relevant_question(self):
 
         SQA = SolvedQuestionsAssoc
         ques = Question.query
@@ -241,7 +266,7 @@ class User(UserMixin, db.Model):
         '''Remove the questions which are already solved by the user
             by using NOT IN subquery synatx.
         '''
-        if remove_solved:
+        if not self.setting.repeat_solved_questions:
             print_debug('removing solved questions')
             ques = ques.filter(~Question.id.in_(subquery))
         
@@ -276,6 +301,7 @@ class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text, nullable=False)
     description = db.Column(db.Text)
+    #views = db.Column(db.Integer, default=0)
     
     disabled = db.Column(db.Boolean, default=False)
 
@@ -347,8 +373,80 @@ class Question(db.Model):
         return sol
 
     def __repr__(self):
-        return 'Question(body=%s, author_id=%d)' % (self.body, self.author_id)
+        return 'Question(body="%s", author_id=%d)' % (self.body, self.author_id)
 
+# @event.listens_for(User.questions_upvoted, 'append')
+# def upvote_append(target, value, initiator):
+#     # target is the User instance (i.e who upvotes the question)
+#     # value is the UpvoteQuestionAssoc event (i.e which question is upvoted)
+
+#     if not target.has_authoured(value.question):
+#         target.points.by_upvote += 1
+
+# @event.listens_for(User.questions_upvoted, 'remove')
+# def upvote_remove(target, value, initiator):
+#     if not target.has_authoured(value.question):
+#         target.points.by_upvote -= 1 
+
+# @event.listens_for(User.questions_downvoted, 'append')
+# def downvote_append(target, value, initiator):
+#     if not target.has_authoured(value.question):
+#         target.points.by_downvote += 1
+
+# @event.listens_for(User.questions_downvoted, 'remove')
+# def downvote_remove(target, value, initiator):
+#     if not target.has_authoured(value.question):
+#         target.points.by_downvote -= 1
+
+def calculate_score(ques, sq):
+    print_debug("CALC SCORE called")
+    print_debug("SQ attempted", sq.attempted)
+
+    num_opts = len(ques.options)
+    trials = num_opts - 1
+    points = range(1, num_opts+1)
+
+    score = 0
+
+    # if the questions is posted by the user
+    # then no points in solving 
+    if ques.user == current_user:
+        return score
+    # If the user has previously solved the 
+    # quention, then no points.
+    # For catching the first attempt at solving.
+    elif sq.solved:
+        return score
+    # if attempted more than trials allowed 
+    elif sq.attempted > trials:
+        return score
+    else:
+        for x in points:
+            if sq.attempted == x:
+                score = points[-x]
+    print_debug("SCORE Calculated is : ", score)
+    return score    
+
+@event.listens_for(SolvedQuestionsAssoc.solved, 'set')
+def set_event(target, value, oldvalue, initiator):
+    # target is an instance of SolvedQuestionAssoc
+    print_debug("ATTEMPTED: ", target.attempted)
+    print_debug("IS SOLVED", target.solved)
+    print_debug('set called on update called')
+
+    ques = target.question
+    if value:
+        current_user.score += calculate_score(ques, target)
+    
+
+@event.listens_for(User, 'init')
+def load_user(target, args, kwargs):
+    # target is the instance that is created and attached to the User.
+    # Receive an instance when its constructor is called.
+    # Auto initialises the Point and Setting for every user.
+    target.points = Point()
+    target.setting = UserSetting()
+    
 
 class Solution(db.Model):
     __tablename__ = 'solutions'

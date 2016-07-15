@@ -1,6 +1,6 @@
 
 {% if not macros %}
-	{% import "_macros.html" as macros %}
+	{% import "_macros.html" as macros with context %}
 {% endif %}
 
 {% if ques %}
@@ -10,37 +10,17 @@
 			<div class="col-md-1 accessories ">
 				<div class="btn-group-vertical">
 
-					{% if current_user.has_upvoted(ques) %}
-						<button href="#" data-count="{{ques.upvoted_by.count()}}" id="upvote" class="btn btn-success">
-					{% else %}
-						<button href="#" data-count="{{ques.upvoted_by.count()}}" id="upvote" class="btn btn-default">
-					{% endif %}
-						<span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
-					</button>
-
+					{{macros.upvote()}}
 
 					<h4 class="upvote-count text-center">{{ques.votes}}</h4>
-
-					{% if current_user.has_downvoted(ques) %}
-						<button id="downvote" data-count="{{ques.downvoted_by.count()}}" class="btn btn-success">
-					{% else %}
-						<button id="downvote" data-count="{{ques.downvoted_by.count()}}" class="btn btn-default">
-					{% endif %}
-					<span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
-					</button>
+					
+					{{macros.downvote()}}
 
 					<button id="difficulty" class="btn btn-default"> 
 						<p>5</p><p>34</p>
 					</button>
 
-					{% if current_user.has_favourited(ques) %}
-					<button id="favourite" data-count="{{ques.fav_by.count()}}" class="btn btn-success">
-						<span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-					{% else %}
-					<button id="favourite" data-count="{{ques.fav_by.count()}}" class="btn btn-default">
-						<span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
-					{% endif %}
-					</button>
+					{{macros.favourite()}}
 
 					{% if current_user.id == ques.author_id %}
 					<a href="{{url_for('question.edit_question', id=ques.id)}}" id="edit" class="btn btn-info">
@@ -117,19 +97,13 @@
 							Posted on {{ques.timestamp.strftime('%a %b %Y')}}
 							</span>
 						</div>
+						
 						<div class="col-md-4">
 							<input id="submit-options" class="btn btn-primary btn-block" autocomplete="off" type="submit" value="Check">
 						</div>
 						
-						<div class="user-box col-md-4 pull-right">
-							<div>
-								<a href="">Arfat Salman</a>
-								<p>{{current_user.score}}</p> 
-							</div>
-							
-							<img width="40px" src="{{url_for('static', _external=True, filename='300x300.jpg')}}" alt="{{session['username']}}" />
-							
-						</div>	
+						{{macros.user_box(current_user, class="col-md-4 pull-right")}}
+
 					</div>
 				</form>
 			</div>

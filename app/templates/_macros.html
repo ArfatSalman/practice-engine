@@ -33,6 +33,78 @@
 		</ul>
 	</div>	
 {% endmacro %}
+	
+{% macro user_box(user, class="") %}
+	<div class="user-box {{class}}">
+		<div>
+			<a href="">Arfat Salman</a>
+			<p>{{user.score}}</p> 
+		</div>
+		
+		<img width="40px" src="{{url_for('static', _external=True, filename='300x300.jpg')}}" alt="{{session['username']}}" />
+							
+	</div>	
+{% endmacro %}
+
+
+{% macro question(obj) %}
+
+	<div class="question row">
+
+		{% if obj.items %}
+			{% set questions = obj.items %}
+		{% else %}
+			{% set questions = obj.limit(per_page_limit) %}
+		{% endif %}
+
+		{% for ques_assoc in questions %}
+
+            {% if ques_assoc.question %}
+                {% set ques = ques_assoc.question %}
+            {% else %}
+                {% set ques = ques_assoc %}
+            {% endif %}
+			
+			<div class="panel panel-default">
+			  
+			  <div class="panel-body">
+			    <p class="lead">{{ques.body}}</p>
+			    {{caller(ques_assoc)}}
+			  </div>
+			
+			  <div class="panel-footer">
+			  	<div class="row">
+			  		<div class="col-md-6">
+			  			<button class="btn btn-default btn-sm">Upvote</button>
+						
+						
+			  		</div>
+			  		
+			  		{{user_box(ques.user, class="pull-right")}}
+			  	</div>
+			  	
+			  </div>
+			</div>
+            
+            
+        {% else %}
+        	No quetions to display.
+        {% endfor %}
+		
+		<nav>
+  			<ul class="pager">
+		        {% if obj.has_prev %}
+		        	<li class="previous"><a href="#"><span aria-hidden="true">&larr;</span> Older</a></li>
+		        {% endif %}
+
+		        {% if obj.has_next or obj.count() > per_page_limit %}
+		        	<li class="next"><a href="#">Newer <span aria-hidden="true">&rarr;</span></a></li>
+		        {% endif %}
+          	</ul>
+		</nav>
+    </div>
+{% endmacro %}
+
 
 {% macro render_field(field) %}
 	{% if field.errors %}		
@@ -50,4 +122,39 @@
 			{{field(**kwargs)}}
 		</div>
 	{% endif %}
+{% endmacro %}
+
+{% macro upvote(text="", btn_size="") %}
+	{% if current_user.has_upvoted(ques) %}
+		<button href="#" data-id="{{ques.id}}" data-count="{{ques.upvoted_by.count()}}" class="upvote-btn btn btn-success {{btn_size}}">
+	{% else %}
+		<button href="#" data-id="{{ques.id}}" data-count="{{ques.upvoted_by.count()}}" class="upvote-btn btn btn-default {{btn_size}}">
+	{% endif %}
+		{{text}}
+			<span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
+		</button>
+{% endmacro %}
+
+{% macro downvote(text="", btn_size="") %}
+	{% if current_user.has_downvoted(ques) %}
+		<button data-id="{{ques.id}}" data-count="{{ques.downvoted_by.count()}}" class="downvote-btn btn btn-success {{btn_size}}">
+	{% else %}
+		<button data-id="{{ques.id}}" data-count="{{ques.downvoted_by.count()}}" class="downvote-btn btn btn-default {{btn_size}}">
+	{% endif %}
+		{{text}}
+			<span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+		</button>
+{% endmacro %}
+
+{% macro favourite(text='', btn_size="") %}
+	{% if current_user.has_favourited(ques) %}
+		<button data-id="{{ques.id}}" data-count="{{ques.fav_by.count()}}" class="favourite-btn btn btn-success">
+			{{text}}
+			<span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+	{% else %}
+		<button data-id="{{ques.id}}" data-count="{{ques.fav_by.count()}}" class="favourite-btn btn btn-default">
+			{{text}}
+			<span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
+	{% endif %}
+		</button>
 {% endmacro %}
