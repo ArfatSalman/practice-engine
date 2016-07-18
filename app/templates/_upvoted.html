@@ -6,7 +6,7 @@
 	{% set obj = pagination %}
 {% endif %}
 
-{% call(ques_assoc) question(obj) %}
+{% call(ques_assoc) question(obj, type='upvoted') %}
     <p>
         Solved on {{ques_assoc.timestamp.strftime('%a %b %Y')}}
         Attempts {{ques_assoc.attempted}}

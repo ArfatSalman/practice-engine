@@ -1,4 +1,4 @@
-{% from "_macros.html" import question with context %}
+{% from "_macros.html" import question, upvote, downvote, favourite, delete_button with context %}
 
 {% if user %}
 	{% set obj = user.questions %}
@@ -6,9 +6,19 @@
 	{% set obj = pagination %}
 {% endif %}
 
-{% call(ques_assoc) question(obj) %}
-    <p>
-        Posted {{ques_assoc.timestamp.strftime('%a %b %Y')}}
-        Attempts {{ques_assoc.attempted}}
-    </p>
+{% call(ques_assoc) question(obj, type='posted') %}
+	<div class="col-md-4">
+		{{upvote(current_user, ques_assoc)}}
+		{{downvote(current_user, ques_assoc)}}
+		{{favourite(current_user, ques_assoc)}}
+		{{delete_button(current_user, ques_assoc)}}
+    </div>
+                    
+    <div class="col-md-4">
+        <small>
+        	Posted on {{ques_assoc.timestamp.strftime('%a %b %Y')}}
+    	</small>
+    </div>
+
+    
 {% endcall %}

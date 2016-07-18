@@ -1,7 +1,17 @@
+
+.user-tabs {
+    margin-top: 10px;
+    padding-top: 10px;
+}
+.panel {
+    margin: 5px 0;
+}
+.list-group-item .badge {
+    float: none;
+}
 .navbar .user-box {
     margin: 5px;
 }
-
 .question .lead {
     margin-bottom: 5px;
 }

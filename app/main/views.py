@@ -1,5 +1,5 @@
 from flask import render_template, session, redirect, url_for
-from flask import request, jsonify, flash
+from flask import request, jsonify, flash, current_app
 from flask_login import current_user, login_required, login_user
 from sqlalchemy.exc import SQLAlchemyError
 from . import main
@@ -18,12 +18,17 @@ from .forms import UserTagsForm
 from ..question.forms import SolutionForm
 from ..question.views import associate_tags
 from ..utilities import print_debug, bad_request, add_to_db, add_to_db_ajax
-import random
+import random, datetime
+
+@main.before_app_request
+def ping():
+    current_user.last_seen = datetime.datetime.utcnow()
+    add_to_db(current_user)
 
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
-    login_user(User.query.get(2))
+    login_user(User.query.get(3))
     if current_user.is_authenticated:
         print_debug('User is authenticated in /')
         return redirect(url_for('.home'))
@@ -47,8 +52,6 @@ def home():
         if len(ques) > 5:
             ques = random.sample(set(ques), 5)
         ques, side_ques = ques[0], ques[1:]
-    else:
-        ques = ques[0]
 
     return render_template('home.html',
                            tags=tags, 
@@ -226,22 +229,29 @@ def user(id):
     user = User.query.get_or_404(id)
 
     return render_template('user.html',
-                            user = user,
-                            per_page_limit=2)
+                            user = user)
 
 
 @main.route('/user/<int:id>/<ques_type>')
 @login_required
 def user_questions(id, ques_type):
     user = User.query.get_or_404(id)
-
-    if ques_type == 'posted':
-        page = 2
-        pagination = user.questions.paginate(page, per_page=2)
-        return render_template("_posted.html",
-                                pagination=pagination)
-
-    return ""
+    page = request.args.get('page', 2, type=int)
+    pagination = None
+    filename = None
+    
+    if ques_type == 'posted':    
+        pagination = user.questions.paginate(page,
+                                            per_page=current_app.config['PER_PAGE_LIMIT'])
+        filename = "_posted.html"
+    elif ques_type == 'solved':
+        pagination = user.questions_solved.paginate(page,
+                                                    per_page=current_app.config['PER_PAGE_LIMIT'])
+        filename = "_solved.html"
+    else:
+        return bad_request("Wrong request format.")
+    return jsonify(content=render_template(filename,
+                                            pagination=pagination))
 
 @main.route('/tags/<tagname>')
 @login_required

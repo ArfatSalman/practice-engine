@@ -1,0 +1,14 @@
+{% from "_macros.html" import solution with context %}
+
+{% if ques %}
+	{% set obj = ques.solutions %}
+{% else %}
+	{% set obj = pagination %}
+{% endif %}
+
+{% call(sol_assoc) solution(obj, type='view-solutions') %}
+    <small>
+        Posted {{sol_assoc.timestamp.strftime('%a %b %Y')}}
+        
+    </small>
+{% endcall %}

@@ -46,15 +46,29 @@
 	</div>	
 {% endmacro %}
 
+{% macro pager(obj, type='') %}
+	<nav>
+		<ul class="{{type}} pager">
+			{% if obj.has_next or (obj.count and obj.count() > 2) %}
+        	<li data-page="{{obj.page or 1}}" class="next"><a href="#">Older <span aria-hidden="true">&rarr;</span></a></li>
+        {% endif %}
 
-{% macro question(obj) %}
+        {% if obj.has_prev %}
+        	<li data-page="{{obj.page}}" class="previous"><a href="#"><span aria-hidden="true">&larr;</span> Newer</a></li>
+        {% endif %}
+        
+  		</ul>
+	</nav>
+{% endmacro %}
+
+
+{% macro question(obj, type='') %}
 
 	<div class="question row">
-
 		{% if obj.items %}
 			{% set questions = obj.items %}
 		{% else %}
-			{% set questions = obj.limit(per_page_limit) %}
+			{% set questions = obj.limit(config['PER_PAGE_LIMIT']) %}
 		{% endif %}
 
 		{% for ques_assoc in questions %}
@@ -66,45 +80,80 @@
             {% endif %}
 			
 			<div class="panel panel-default">
-			  
-			  <div class="panel-body">
-			    <p class="lead">{{ques.body}}</p>
-			    {{caller(ques_assoc)}}
-			  </div>
-			
-			  <div class="panel-footer">
-			  	<div class="row">
-			  		<div class="col-md-6">
-			  			<button class="btn btn-default btn-sm">Upvote</button>
+              
+              <div class="panel-body">
+
+                <p class="lead">
+                	<a href="{{url_for('question.questions', id=ques.id)}}">{{ques.body}}</a>
+                </p>
+              </div>
+            
+              <div class="panel-footer">
+                <div class="row">
+                    {{caller(ques_assoc)}}
 						
-						
-			  		</div>
-			  		
-			  		{{user_box(ques.user, class="pull-right")}}
-			  	</div>
-			  	
-			  </div>
-			</div>
+                    {{user_box(ques.user, class="pull-right")}}
+                </div>
+                
+              </div>
+            </div>
             
             
         {% else %}
-        	No quetions to display.
+        	<div class="panel panel-default">
+        		<div class="panel-body">
+                	<p class="lead">No questions to display</p>
+              </div>
+        	</div>
         {% endfor %}
 		
-		<nav>
-  			<ul class="pager">
-		        {% if obj.has_prev %}
-		        	<li class="previous"><a href="#"><span aria-hidden="true">&larr;</span> Older</a></li>
-		        {% endif %}
+		{{pager(obj, type)}}
 
-		        {% if obj.has_next or obj.count() > per_page_limit %}
-		        	<li class="next"><a href="#">Newer <span aria-hidden="true">&rarr;</span></a></li>
-		        {% endif %}
-          	</ul>
-		</nav>
     </div>
 {% endmacro %}
 
+{% macro solution(obj, type='') %}
+	
+	{% if obj.items %}
+		{% set solutions = obj.items %}
+	{% else %}
+		{% set solutions = obj.limit(config['PER_PAGE_LIMIT']) %}
+	{% endif %}
+
+    {% for sol in solutions %}
+        <div class="panel panel-info">
+            
+            <div class="panel-body">
+
+           		{{sol.body}}
+            </div>
+
+            <div class="panel-footer">
+                <div class="row">
+                    <div class="col-md-2">
+                        <button class="btn btn-default btn-sm">Upvote</button>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        {{caller(sol)}}
+                    </div>
+
+                    {{user_box(sol.question.user, class="pull-right")}}
+                </div>
+                
+              </div>
+        </div> 
+    {% else %}
+    <div class="panel panel-danger">
+        <div class="panel-body">
+            No Solutions
+        </div>
+    </div>
+    {% endfor %}
+
+    {{pager(obj, type)}}
+
+{% endmacro %}
 
 {% macro render_field(field) %}
 	{% if field.errors %}		
@@ -124,8 +173,8 @@
 	{% endif %}
 {% endmacro %}
 
-{% macro upvote(text="", btn_size="") %}
-	{% if current_user.has_upvoted(ques) %}
+{% macro upvote(user, ques, text="", btn_size="") %}
+	{% if user.has_upvoted(ques) %}
 		<button href="#" data-id="{{ques.id}}" data-count="{{ques.upvoted_by.count()}}" class="upvote-btn btn btn-success {{btn_size}}">
 	{% else %}
 		<button href="#" data-id="{{ques.id}}" data-count="{{ques.upvoted_by.count()}}" class="upvote-btn btn btn-default {{btn_size}}">
@@ -135,8 +184,8 @@
 		</button>
 {% endmacro %}
 
-{% macro downvote(text="", btn_size="") %}
-	{% if current_user.has_downvoted(ques) %}
+{% macro downvote(user, ques, text="", btn_size="") %}
+	{% if user.has_downvoted(ques) %}
 		<button data-id="{{ques.id}}" data-count="{{ques.downvoted_by.count()}}" class="downvote-btn btn btn-success {{btn_size}}">
 	{% else %}
 		<button data-id="{{ques.id}}" data-count="{{ques.downvoted_by.count()}}" class="downvote-btn btn btn-default {{btn_size}}">
@@ -146,8 +195,8 @@
 		</button>
 {% endmacro %}
 
-{% macro favourite(text='', btn_size="") %}
-	{% if current_user.has_favourited(ques) %}
+{% macro favourite(user, ques, text='', btn_size="") %}
+	{% if user.has_favourited(ques) %}
 		<button data-id="{{ques.id}}" data-count="{{ques.fav_by.count()}}" class="favourite-btn btn btn-success">
 			{{text}}
 			<span class="glyphicon glyphicon-star" aria-hidden="true"></span>
@@ -157,4 +206,31 @@
 			<span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
 	{% endif %}
 		</button>
+{% endmacro %}
+
+{% macro delete_button(user, ques, btn_size='') %}
+	{% if ques.user == user %}
+		<button data-id="{{ques.id}}" class="btn btn-danger {{btn_size}}" >Delete</button>
+	{% endif %}
+{% endmacro %}
+
+{% macro unsolve_button(user, ques, btn_size='') %}
+	{% if user.has_solved(ques) %}
+		<button data-id="{{ques.id}}" class="btn btn-danger {{btn_size}}" >Unsolve</button>
+	{% endif %}
+{% endmacro %}
+
+{% macro tags(user, tags) %}
+	<ul class="list-group">
+		{% for tag in tags.limit(10) %}
+			<li class="list-group-item"><a href="{{url_for('main.tags', tagname=tag.tagname)}}">{{tag.tagname}}</a>
+				<span class="badge">{{tag.questions.count()}}</span>
+
+			{% if user == current_user %}
+				<a href="#" data-id="{{tag.id}}" class="close" type="button">&times;</a>
+			{% endif %}
+		{% else %}
+			<h3>Please choose at least one tag.</h3>
+		{% endfor %}
+	</ul>
 {% endmacro %}

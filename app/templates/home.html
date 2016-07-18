@@ -14,19 +14,8 @@
 			</form>
 
 			<h4>My topics</h4>
-
-			<ul class="list-group">
-			{% if tags %}
-				{% for tag in tags %}
-					<li class="list-group-item">{{tag.tagname}}
-						<a href="#" data-id="{{tag.id}}" class="close" type="button">&times;</a>
-					</li>
-				{% endfor %}
-			{% else %}
-			</ul>
-
-			<h3>Please choose at least one tag.</h3>
-			{% endif %}
+			
+			{{macros.tags(current_user, current_user.associated_tags)}}
 	</div>
 
 	<div class="question-box col-md-6">

@@ -153,6 +153,53 @@ $(function() {
     });
 });
 
+$(function(){
+    $(document).on('click', '.previous, .next', function(event){
+        event.preventDefault();
+        
+        var self = $(this);
+        var user_id = $('input[name="user-id"]').val();
+        var question_id = $('input[name="question-id"]').val();
+        var type = self.parent().attr('class').split(' ')[0];
+
+        var url = '/user/'+ user_id + '/' + type;
+        var data = {
+            page: self.data('page')
+        };
+
+        if (type === 'view-solutions') {
+            url = '/question/' + question_id + '/' + type;
+        }
+        if (self.hasClass('previous')) {
+            data.page -= 1;
+        } else {
+            data.page += 1;
+        }
+
+        $.ajax({
+            url: url,
+            data: data,
+            beforeSend: function() {
+                self.addClass('disabled');
+            },
+            complete: function() {
+                self.removeClass('disabled');
+            },
+            success: function(data, textStatus, jqxhr){
+                var html = data['content'];
+                var elem = '#'+type;
+
+                if (html) {
+                    $(elem).html(html);
+                }
+            },
+            error: function(jqxhr){
+                error(jqxhr)
+            }
+        });
+    });
+});
+
 //Solutions 
 $(function() {
     $(document).on('click', '.sol-controls button:not("#edit-sol")', function() {
@@ -511,7 +558,6 @@ $(function() {
                     }
                 }
             });
-
         }
     });
 });

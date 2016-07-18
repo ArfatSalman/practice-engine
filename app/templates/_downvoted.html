@@ -6,9 +6,17 @@
 	{% set obj = pagination %}
 {% endif %}
 
-{% call(ques_assoc) question(obj) %}
-    <p>
-        Solved on {{ques_assoc.timestamp.strftime('%a %b %Y')}}
-        Attempts {{ques_assoc.attempted}}
-    </p>
+{% call(ques_assoc) question(obj, type='downvoted') %}
+   {% set ques = ques_assoc.question %}
+    <div class="col-md-4">
+		{{upvote(current_user, ques)}}
+		{{downvote(current_user, ques)}}
+		{{favourite(current_user, ques)}}
+    </div>
+                    
+    <div class="col-md-4">
+        <small>
+        	Downvoted on {{ques_assoc.timestamp.strftime('%a %b %Y')}}
+    	</small>
+    </div>
 {% endcall %}

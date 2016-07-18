@@ -10,17 +10,17 @@
 			<div class="col-md-1 accessories ">
 				<div class="btn-group-vertical">
 
-					{{macros.upvote()}}
+					{{macros.upvote(current_user, ques)}}
 
 					<h4 class="upvote-count text-center">{{ques.votes}}</h4>
 					
-					{{macros.downvote()}}
+					{{macros.downvote(current_user, ques)}}
 
 					<button id="difficulty" class="btn btn-default"> 
-						<p>5</p><p>34</p>
+						<span></span>
 					</button>
 
-					{{macros.favourite()}}
+					{{macros.favourite(current_user, ques)}}
 
 					{% if current_user.id == ques.author_id %}
 					<a href="{{url_for('question.edit_question', id=ques.id)}}" id="edit" class="btn btn-info">
@@ -45,7 +45,8 @@
 			<div class="col-md-11">
 				<h5>Tags</h5>
 				{% for tag in ques.tags %}
-					<span class="label label-info">{{tag.tagname}}</span>
+					<span class="label label-info">
+						<a href="{{url_for('main.tags', tagname=tag.tagname)}}">{{tag.tagname}}</a></span>
 				{% endfor %}
 			</div>
 			

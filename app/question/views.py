@@ -1,5 +1,5 @@
 from flask import render_template, flash, url_for
-from flask import request, redirect, jsonify
+from flask import request, redirect, jsonify, current_app
 from flask_login import current_user, login_required
 
 from sqlalchemy.exc import SQLAlchemyError
@@ -194,9 +194,11 @@ def edit_question(id):
 @login_required
 def questions(id):
     ques = Question.query.get(id)
+    sol_form = SolutionForm()
 
     return render_template('question/question.html', 
-                            ques=ques)
+                            ques=ques,
+                            sol_form=sol_form)
 
 
 @question.route('/get-tags', methods=['GET'])
@@ -310,6 +312,19 @@ def post_solution():
             return bad_request('Question does not exist. Solution cannot be posted.')
     return bad_request('Form validation unsuccesful. Solution not posted.')
 
+
+@question.route('/question/<int:id>/<type_data>')
+@login_required
+def question_solutions(id, type_data):
+    ques = Question.query.get_or_404(id)
+    page = request.args.get('page', 2, type=int)
+    pagination = None
+    
+    if type_data == 'view-solutions':
+        pagination = ques.solutions.paginate(page,
+                                            per_page=current_app.config['PER_PAGE_LIMIT'])
+        return jsonify(content=render_template('_solutions.html',
+                                                pagination=pagination))
 
 
 @question.route('/report-question', methods=['POST'])

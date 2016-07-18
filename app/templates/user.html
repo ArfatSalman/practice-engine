@@ -1,54 +1,54 @@
 {% extends "base.html" %} 
+{% from "_macros.html" import tags with context %}
+{% block content %}
 
-{% macro pagination_button() %}
-    <div class="col-md-12">
-        <button class="btn btn-default btn-block">
-            More Questions
-        </button>
-    </div>
-{% endmacro %}
-
-{% block content %}                        
 <div class="user row">
-    <div class="col-md-3 col-md-offset-1">
+    <input type="hidden" name="user-id" value="{{user.id}}" />
+    
+    <div class="user-tags-col col-md-2">
+        <h5 class="text-center">Subscribed tags</h5>
+        {{tags(user, user.associated_tags)}}
+    </div>
+
+    <div class="col-md-3">
         <img src="{{url_for('static', _external=True, filename='300x300.jpg')}}" alt="{{session['username']}}" />
     </div>
-    <div class="col-md-6 col-md-offset-2">
+    <div class="col-md-5 col-md-offset-1">
         <h1>{{user.username}}</h1>
+        <h3>{{user.last_seen}}</h3>
     </div>
+    
 
-    <div class="col-md-10 col-md-offset-1">
+    <div class="user-tabs col-md-9">
         <div>
             <!-- Nav tabs -->
             <ul class="nav nav-tabs" role="tablist">
                 <li role="presentation" class="active"><a href="#posted" role="tab" data-toggle="tab">Posted</a></li>
                 <li role="presentation" class=""><a href="#solved" role="tab" data-toggle="tab">Solved</a></li>
-                <li role="presentation" class=""><a href="#favourite" role="tab" data-toggle="tab">Favourited</a></li>
+                <li role="presentation" class=""><a href="#favourited" role="tab" data-toggle="tab">Favourited</a></li>
                 <li role="presentation"><a href="#upvoted" role="tab" data-toggle="tab">Upvoted</a></li>
                 <li role="presentation"><a href="#downvoted" role="tab" data-toggle="tab">Downvoted</a></li>
-                <li role="presentation"><a href="#settings" role="tab" data-toggle="tab">Settings</a></li>
             </ul>
             <!-- Tab panes -->
             <div class="tab-content">
                 <div role="tabpanel" class="tab-pane in active" id="posted">
                     {% include "_posted.html" %}
-
                 </div>
 
                 <div role="tabpanel" class="tab-pane fade in" id="solved">	
                     {% include "_solved.html" %}                       
                 </div>
 
-                <div role="tabpanel" class="tab-pane" id="favourite">
-                    
+                <div role="tabpanel" class="tab-pane" id="favourited">
+                    {% include "_favourited.html" %}  
                 </div>
                 
                 <div role="tabpanel" class="tab-pane" id="upvoted">
-                    
+                    {% include "_upvoted.html" %} 
                 </div>
 
                 <div role="tabpanel" class="tab-pane" id="downvoted">
-                    
+                    {% include "_downvoted.html" %}
                 </div>
             </div>
         </div>

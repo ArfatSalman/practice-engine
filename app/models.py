@@ -6,6 +6,8 @@ from flask_login import UserMixin, current_user
 from . import db, login_manager
 from datetime import datetime
 from .utilities import print_debug
+from markdown import markdown
+import bleach
 
 tags_assoc = db.Table('tags_assoc',
     db.Column('tag_id', db.Integer, db.ForeignKey('tags.id'), primary_key=True),
@@ -98,26 +100,14 @@ class SolvedQuestionsAssoc(db.Model):
         self.attempted = 0
 
 
-# class Point(db.Model):
-#     __tablename__ = 'points'
-
-#     by_upvote = db.Column(db.Integer, default=0)
-#     by_downvote = db.Column(db.Integer, default=0)
-#     by_solution = db.Column(db.Integer, default=0)
-
-#     user_id = db.Column(db.Integer, 
-#                         db.ForeignKey('users.id'),
-#                         primary_key=True)
-
-
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     password_hash = db.Column(db.String(128))
     username = db.Column(db.String(128), unique=True, index=True)
     email = db.Column(db.String(128), unique=True, index=True) # nullable
-
-    score = db.Column(db.Integer, default=0)
+    score = db.Column(db.Integer, default=0) # Only from correct solution
+    last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     
     questions = db.relationship("Question", 
                     backref=db.backref('user'),
@@ -301,7 +291,7 @@ class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text, nullable=False)
     description = db.Column(db.Text)
-    #views = db.Column(db.Integer, default=0)
+    views = db.Column(db.Integer, default=0)
     
     disabled = db.Column(db.Boolean, default=False)
 
@@ -317,7 +307,7 @@ class Question(db.Model):
     solutions = db.relationship('Solution',
                                 order_by='desc(Solution.timestamp)',
                                 backref='question',
-                                lazy='joined',
+                                lazy='dynamic',
                                 cascade="all, delete-orphan")
 
     options = db.relationship("Option",
@@ -414,7 +404,6 @@ def calculate_score(ques, sq):
         return score
     # If the user has previously solved the 
     # quention, then no points.
-    # For catching the first attempt at solving.
     elif sq.solved:
         return score
     # if attempted more than trials allowed 
@@ -426,6 +415,15 @@ def calculate_score(ques, sq):
                 score = points[-x]
     print_debug("SCORE Calculated is : ", score)
     return score    
+
+@event.listens_for(Question.body, 'set')
+def markdown_to_html(target, value, oldvalue, initiator):
+    allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
+                    'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul', 
+                    'h1', 'h2', 'h3', 'p']
+    target.body_html = bleach.linkify(bleach.clean(markdown(value,
+                                                    output_format='html'),
+                                            tags=allowed_tags, strip=True))
 
 @event.listens_for(SolvedQuestionsAssoc.solved, 'set')
 def set_event(target, value, oldvalue, initiator):
@@ -440,7 +438,7 @@ def set_event(target, value, oldvalue, initiator):
     
 
 @event.listens_for(User, 'init')
-def load_user(target, args, kwargs):
+def load_user_init(target, args, kwargs):
     # target is the instance that is created and attached to the User.
     # Receive an instance when its constructor is called.
     # Auto initialises the Point and Setting for every user.
@@ -497,10 +495,17 @@ class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     tagname = db.Column(db.String(64), unique=True, nullable=False)
 
+    def has_user(self, user):
+        try:
+            u = self.assoc_users.filter(User.id == user.id).one()
+        except NoResultFound:
+            return False
+        return u
+
     '''
     BACKREFS: 
     assoc_users-> Users associated with this tag
-    questions -> Collectio of Questions with this Tag
+    questions -> Collection of Questions with this Tag
     '''
 
 
