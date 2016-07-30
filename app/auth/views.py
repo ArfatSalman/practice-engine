@@ -6,6 +6,8 @@ from .. import db, google
 from ..models import User
 import requests
 
+from ..utilities import print_debug
+
 GOOGLE_OAUTH_USERINFO_URL = 'https://www.googleapis.com/oauth2/v1/userinfo'
 
 @auth.route('/google-login')
@@ -22,7 +24,8 @@ def google_authorized(resp):
 	next_url = request.args.get('next') or url_for('main.index')
 
 	if resp is None:
-		return 'Access Denied %s' % (request.args['error_reason'])
+		flash('Access Denied for the reason: %s.' % (request.args['error_reason']), 'danger')
+		return redirect(url_for('main.index'))
 
 	'''
 	The tokengetter return either None or a tuple (token, secret).
@@ -33,13 +36,14 @@ def google_authorized(resp):
 	userinfo = requests.get(GOOGLE_OAUTH_USERINFO_URL,
 		params=dict(access_token=resp['access_token'])).json()
 
-	session['user_picture'] = userinfo['picture']
-	session['username'] = userinfo['name']
-
-	user = User.query.filter_by(username=userinfo['email']).first()
+	user = User.query.filter_by(email=userinfo['email']).first()
 
 	if not user:
-		user = User(userinfo['email'])
+		user = User()
+		user.username = userinfo['name']
+		user.email = userinfo['email']
+		user.picture = userinfo['picture']
+
 		db.session.add(user)
 		db.session.commit()
 

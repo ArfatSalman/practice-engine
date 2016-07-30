@@ -327,6 +327,22 @@ def question_solutions(id, type_data):
                                                 pagination=pagination))
 
 
+
+@question.route('/delete-question/<int:id>')
+@login_required
+def delete_question(id):
+    ques = Question.query.get_or_404(id)
+
+    if ques.user == current_user:
+        db.session.delete(ques)
+        db.session.commit()
+    else:
+        return bad_request('You are not authorized to delete this question', 
+                            redir=url_for('.questions', id=ques.id))
+    flash('The question with ID %s has been successfully deleted.' % ques.id, 'success')
+    return redirect(url_for('main.home'))
+
+
 @question.route('/report-question', methods=['POST'])
 @login_required
 def report_questions():

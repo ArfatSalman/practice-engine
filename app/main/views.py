@@ -22,15 +22,15 @@ import random, datetime
 
 @main.before_app_request
 def ping():
-    current_user.last_seen = datetime.datetime.utcnow()
-    add_to_db(current_user)
+    if current_user.is_authenticated:
+        current_user.last_seen = datetime.datetime.utcnow()
+        add_to_db(current_user, 'Last Seen Unsuccessful.')
 
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
-    login_user(User.query.get(3))
+    #login_user(User.query.get(1), remember=True) 
     if current_user.is_authenticated:
-        print_debug('User is authenticated in /')
         return redirect(url_for('.home'))
     else:
         return render_template('index.html')

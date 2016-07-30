@@ -15,6 +15,7 @@ class BasicsTestCase(unittest.TestCase):
 		self.app_context.pop()
 
 	def test_app_exists(self):
+		print 'test_app_exists'
 		self.assertFalse(current_app is None)
 
 	def test_app_is_testing(self):

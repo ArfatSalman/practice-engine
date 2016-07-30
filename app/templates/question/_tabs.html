@@ -1,3 +1,4 @@
+{% from "_macros.html" import user_box with context %}
 <div>
     <ul class="nav nav-tabs" role="tablist">
         <li role="presentation" class="active">
@@ -5,7 +6,7 @@
         </li>
 
         <li role="presentation" class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Solutions <span class="caret"></span></a>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Solutions <span class="badge">{{ques.solutions.count()}}</span><span class="caret"></span></a>
             <ul class="dropdown-menu">
                 <li><a href="#view-solutions" role="tab" data-toggle="tab">View Solutions</a>
                 </li>
@@ -36,36 +37,34 @@
             
             {% if sol %}
             <div class="solution row">
-                <div class="sol-user-info col-md-12">
-                            You posted a solution by {{sol.timestamp}}
-                </div>
+                
+                <div class="panel panel-info">
 
-                <div id="to-edit" class="sol-body col-md-12">
-                            {{sol.body}}
-                </div>
+                    <div class="panel-heading">
+                        You have already posted to solution to this question.
+                    </div>
+                    
+                    <div id="to-edit" class="panel-body">
+                        {{sol.body}}
+                    </div>
 
-                <div class="sol-controls col-md-12">
-                    {% if current_user.has_upvoted(sol) %}
-                            <button data-id="{{sol.id}}" class="upvote-sol btn btn-success btn-xs">
-                            {% else %}
-                            <button data-id="{{sol.id}}" class="upvote-sol btn btn-default btn-xs">
+                    <div class="panel-footer">
+                        
+                        <div class="row">
+                            <div class="col-md-2">
+                            {% if sol.user == current_user %}
+                                <button id="edit-sol" data-id="{{sol.id}}" class="downvote-sol btn btn-default">Edit</button>
                             {% endif %}
-                                Upvote
-                            </button>
-                            
-                            {% if current_user.has_downvoted(sol) %}
-                            <button data-id="{{sol.id}}" class="downvote-sol btn btn-success btn-xs">
-                            {% else %}
-                            <button data-id="{{sol.id}}" class="downvote-sol btn btn-default btn-xs">
-                            {% endif %}
-                                Downvote
-                            </button>
-                    {% if sol.user == current_user %}
-                        <button id="edit-sol" data-id="{{sol.id}}" class="downvote-sol btn btn-default btn-xs">Edit</button>
-                    {% endif %}
+                            </div>
+
+                            {{user_box(current_user, class="pull-right")}}
+                        </div>
+                        
+                        
+                    </div>
+
                 </div>
             </div>
-
             {% endif %}
             
             {% if sol %}

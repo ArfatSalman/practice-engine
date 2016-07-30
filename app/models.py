@@ -104,9 +104,12 @@ class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     password_hash = db.Column(db.String(128))
+
     username = db.Column(db.String(128), unique=True, index=True)
     email = db.Column(db.String(128), unique=True, index=True) # nullable
+    picture = db.Column(db.String(128))
     score = db.Column(db.Integer, default=0) # Only from correct solution
+    
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     
     questions = db.relationship("Question", 
@@ -240,6 +243,10 @@ class User(UserMixin, db.Model):
             return False
         return True
 
+    def total_score(self):
+        pass
+
+
     def get_relevant_question(self):
 
         SQA = SolvedQuestionsAssoc
@@ -346,14 +353,10 @@ class Question(db.Model):
                             .query(func.sum(SolvedQuestionsAssoc.attempted))\
                             .filter(SolvedQuestionsAssoc.question == self)\
                             .scalar()
+        if times_solved is None:
+            return 0, 0
 
-        try:
-            di = times_solved/times_attempted
-        except ZeroDivisionError:
-            return 0
-        except TypeError:
-            return None
-        return float(di)
+        return int(times_attempted), int(times_solved)
 
     def solution_by_user(self, user):
         try:
@@ -416,14 +419,15 @@ def calculate_score(ques, sq):
     print_debug("SCORE Calculated is : ", score)
     return score    
 
-@event.listens_for(Question.body, 'set')
-def markdown_to_html(target, value, oldvalue, initiator):
-    allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
-                    'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul', 
-                    'h1', 'h2', 'h3', 'p']
-    target.body_html = bleach.linkify(bleach.clean(markdown(value,
-                                                    output_format='html'),
-                                            tags=allowed_tags, strip=True))
+# This event is used for Markdown to HTML conversion.
+# @event.listens_for(Question.body, 'set')
+# def markdown_to_html(target, value, oldvalue, initiator):
+#     allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
+#                     'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul', 
+#                     'h1', 'h2', 'h3', 'p']
+#     target.body_html = bleach.linkify(bleach.clean(markdown(value,
+#                                                     output_format='html'),
+#                                             tags=allowed_tags, strip=True))
 
 @event.listens_for(SolvedQuestionsAssoc.solved, 'set')
 def set_event(target, value, oldvalue, initiator):
@@ -442,7 +446,6 @@ def load_user_init(target, args, kwargs):
     # target is the instance that is created and attached to the User.
     # Receive an instance when its constructor is called.
     # Auto initialises the Point and Setting for every user.
-    target.points = Point()
     target.setting = UserSetting()
     
 

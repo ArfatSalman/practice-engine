@@ -3,16 +3,22 @@ import sys
 
 from . import db
 from sqlalchemy.exc import SQLAlchemyError
-from flask import flash, redirect, jsonify, url_for
+from flask import flash, redirect, jsonify, url_for, request
 
 def print_debug(*args, **kwargs):
 	return print(*args, file=sys.stderr, **kwargs)
 
 
-def bad_request(message, status_code=403):
-    response = jsonify({'message': message})
-    response.status_code = status_code
-    return response
+def bad_request(message, status_code=403, redir=''):
+	if request.is_xhr:
+		response = jsonify({'message': message})
+		response.status_code = status_code
+	else:
+		flash(message, 'danger')
+		if redir:
+			return redirect(redir)
+		return redirect(url_for('main.index'))
+	return response
 
 
 def add_to_db_ajax(obj, msg='Something went wrong', status_code=403):

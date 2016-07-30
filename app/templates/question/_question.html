@@ -16,10 +16,10 @@
 					
 					{{macros.downvote(current_user, ques)}}
 
-					<button id="difficulty" class="btn btn-default"> 
-						<span></span>
+<!-- 					<button id="difficulty" class="btn btn-default"> 
+						
 					</button>
-
+ -->
 					{{macros.favourite(current_user, ques)}}
 
 					{% if current_user.id == ques.author_id %}
@@ -50,8 +50,16 @@
 				{% endfor %}
 			</div>
 			
-			<div class="col-md-11">			
+			<div class="col-md-11">	
+
+				<div class="difficulty pull-right">
+					<p>Solved {{ques.difficulty[1]}} times</p>
+					<p>Attempted {{ques.difficulty[0]}} times</p> 
+				</div>
+
 				<h5>Question</h5>
+
+
 
 				<div>
 					<p class="lead">{{ques.body}}</p>
@@ -88,7 +96,6 @@
 
 								<ul class="dropdown-menu">
 									<li><a href="{{url_for('question.questions', id=ques.id)}}">Permalink</a></li>
-									<li><a href="#">Another</a></li>
 								</ul>
 							</div>
 

@@ -35,7 +35,7 @@ var show_input_error = function(elem, message = "") {
         message = 'This is required';
     }
 
-    var msg_elem = '<p class="text-danger">' + message + '</p>';
+    var msg_elem = '<span class="text-danger">' + message + '</span>';
 
     elem.css({
         border: '1px solid red'
@@ -43,15 +43,24 @@ var show_input_error = function(elem, message = "") {
 };
 
 var checks = function() {
-    if ($('.upvote-btn').hasClass('btn-success')) {
-        $('.upvote-btn').siblings('.downvote-btn')
-                        .attr('disabled', true);
-    }
 
-    if ($('.downvote-btn').hasClass('btn-success')) {
-        $('.downvote-btn').siblings('.upvote-btn')
-                          .attr('disabled', true);
-    }
+    $('.upvote-btn').each(function(){
+        var obj = $(this);
+        
+        if (obj.hasClass('btn-success')) {
+            obj.siblings('.downvote-btn')
+               .attr('disabled', true);
+        }
+    });
+
+    $('.downvote-btn').each(function(){
+        var obj = $(this);
+        
+        if (obj.hasClass('btn-success')) {
+            obj.siblings('.upvote-btn')
+               .attr('disabled', true);
+        }
+    });
 };
 
 var showAlert = function(message, category = "success") {
@@ -76,17 +85,28 @@ var UpdateMath = function(TeX, elementID) {
 
 var UpdateText = function(text, elementID) {
     $(elementID).text(text);
-    return (elementID);
+    return $(elementID);
 };
 
 var preview = function(inputElem, previewElem) {
+
+    var css = {
+        color: '#000',
+        'font-style': 'normal'
+    };
     var elem = $(inputElem);
-    if (elem.val() != "") {
-        UpdateMath(elem.val(), previewElem);
+
+    if (elem.val() !== "") {
+        UpdateMath(elem.val(), previewElem).css(css);
     }
+
     elem.on('keyup', function() {
-        var text = $(this).val();
-        UpdateMath(text, previewElem);
+        var self = $(this);
+        var text = self.val();
+
+        
+        UpdateMath(text, previewElem).css(css);
+
     });
 };
 
@@ -116,43 +136,9 @@ var toggle_two_classes = function(elem, class1, class2) {
     }
 };
 
-//Kepresses bindings for options 
-$(function() {
-    $(document).on('keyup', function(event) {
-        var key = String.fromCharCode(event.which);
-        var options = $('.options .btn');
 
-        if (key === "1" || key === "A" || key === "a") {
-            if ($(options[0]).hasClass('btn-danger')) {
-                toggle_two_classes($(options[0]), 'btn-danger', 'btn-default');
-            } else {
-                toggle_two_classes($(options[0]), 'btn-default', 'btn-info');
-            }
-        } else if (key === "2" || key === "B" || key === "b") {
-            if ($(options[1]).hasClass('btn-danger')) {
-                toggle_two_classes($(options[1]), 'btn-danger', 'btn-default');
-            } else {
-                toggle_two_classes($(options[1]), 'btn-default', 'btn-info');
-            }
-        } else if (key === "3" || key === "C" || key === "c") {
-            if ($(options[2]).hasClass('btn-danger')) {
-                toggle_two_classes($(options[2]), 'btn-danger', 'btn-default');
-            } else {
-                toggle_two_classes($(options[2]), 'btn-default', 'btn-info');
-            }
 
-        } else if (key === "4" || key === "D" || key === "d") {
-            if ($(options[3]).hasClass('btn-danger')) {
-                toggle_two_classes($(options[3]), 'btn-danger', 'btn-default');
-            } else {
-                toggle_two_classes($(options[3]), 'btn-default', 'btn-info');
-            }
-        } else if (event.which === 13) {
-            $('.option-form').trigger('submit');
-        }
-    });
-});
-
+// pagination 
 $(function(){
     $(document).on('click', '.previous, .next', function(event){
         event.preventDefault();
@@ -246,13 +232,21 @@ $(function() {
 $(function() {
     $(document).on('click', '#edit-sol', function() {
         var sol_form = $('#solution-form');
-        var val = $('#to-edit').text();
+        var val = $.trim($('#to-edit').text());
+        var css = {
+                display: 'none',
+            };
+
         if (sol_form.css('display') === "none") {
-            sol_form.css('display', 'block');
+            css.display = 'block';
+
+            sol_form.css(css);
             $('#solution-form #body').val(val);
-            $('#sol-preview').text(val);
+            $('#sol-preview').text(val).css({
+                height: '130px'
+            });
         } else {
-            sol_form.css('display', 'none');
+            sol_form.css(css);
         }
     });
 });
@@ -296,10 +290,15 @@ var validate_modify_questions = function() {
         $('#option1'),
         $('#option2')
     ]
+    var check_option_names = [
+        '#check_option1',
+        '#check_option2',
+        '#check_option3',
+        '#check_option4'
+    ]
 
     options = $('textarea[id^="option"]');
     checked_options = $('input[id^="check_option"]:checked');
-    elem_msg = '<p class="text-danger">At least one options should be correct.</p>';
     has_error = false;
 
     for (var i = 0; i < elem_to_check.length; i++) {
@@ -313,13 +312,20 @@ var validate_modify_questions = function() {
         has_error = true;
     }
 
-    if ($.isEmptyObject(checked_options)) {
-        options.each(function() {
-            if ($(this).val() !== "") {
-                $(this).after(elem_msg);
+    if (checked_options.length === 0) {
+        showAlert('At least one option should be selected as correct.', 'danger');
+        has_error = true;
+    } else {
+        options.each(function(index){
+            
+            var checked = false;
+            var self = $(this);
+
+            if (self.val() === '' && 
+                $(check_option_names[index]).is(':checked')) {
+                showAlert('A correct option should contain text.', 'danger');
             }
         });
-        has_error = true;
     }
 
     return has_error;
@@ -334,7 +340,6 @@ $(function() {
 
     $('#modify-ques-form').on('submit', function(event) {
         var has_error = validate_modify_questions();
-        console.log(has_error);
         if (has_error) {
             event.preventDefault();
             return;
@@ -424,7 +429,7 @@ var button_hover_effects = function(elemID) {
         var self = $(this);
         child_html = self.html();
         var count = self.data('count');
-        var new_html = '<b>' + count + '</b>';
+        var new_html = '<span class="glyphicon"><b>' + count + '</b></span>';
         self.html(new_html);
     }).on('mouseout', elemID, function() {
         var self = $(this);
@@ -587,25 +592,54 @@ $(function() {
     });
 });
 
-// Event on Selecting Options
-$(function() {
-    /*
+var select_option = function($btn){
+
+       /*
     This sets up an event where each option is checked for the selected
     class. If it has that class, the selected class is removed.
     HACK - Serialize() do not include fields which do not have names.
     Hence, we remove the name attribute if the option is not selected
     to stop it from showing in the form.
     */
-    $('.question-box').on('click', '.options > .btn', function() {
-        var btn = $(this);
-        if (btn.hasClass('btn-info') || btn.hasClass('btn-danger')) {
-            btn.removeClass('btn-info').addClass('btn-default');
-            btn.removeClass('btn-danger').addClass('btn-default');
-            btn.next().removeAttr('name');
-        } else {
-            btn.removeClass('btn-default').addClass('btn-info');
-            btn.next().attr('name', 'opt');
+    
+    if ($btn.hasClass('btn-info') || $btn.hasClass('btn-danger')) {
+        $btn.removeClass('btn-info').addClass('btn-default');
+        $btn.removeClass('btn-danger').addClass('btn-default');
+        $btn.next().removeAttr('name');
+    } else {
+        $btn.removeClass('btn-default').addClass('btn-info');
+        $btn.next().attr('name', 'opt');
+    }
+}
+
+//Kepresses bindings for options 
+$(function() {
+    $(document).on('keyup', function(event) {
+        var key = String.fromCharCode(event.which);
+        var options = $('.options .btn');
+
+        if (event.target.nodeName !== "TEXTAREA" && event.target.nodeName !== "INPUT") {
+            if (key === "1" || key === "A" || key === "a") {
+                select_option($(options[0]));
+            } else if (key === "2" || key === "B" || key === "b") {
+                select_option($(options[1]));
+            } else if (key === "3" || key === "C" || key === "c") {
+                select_option($(options[2]));
+            } else if (key === "4" || key === "D" || key === "d") {
+                select_option($(options[3]));
+            } else if (event.which === 13) {
+                $('.option-form').trigger('submit');
+            }
         }
+    });
+});
+
+// Event on Selecting Options
+$(function() {
+ 
+    $('.question-box').on('click', '.options > .btn', function() {
+        var $btn = $(this);
+        select_option($btn);
     });
 });
 
@@ -784,6 +818,11 @@ $(function() {
     }
 });
 
+var markdown = function(){
+    var convert = new Markdown.getSanitizingConverter().makeHtml;
+
+};
+
 // close boxes using data dismiss
 $(function() {
     $('.close').on('click', function() {
@@ -796,12 +835,12 @@ $(function() {
 $(function() {
     var elem = $('#modify-ques-form #body');
     if (elem.val() !== "") {
-        UpdateMath(elem.val(), "MathQues").addClass('lead')
+        UpdateMath(elem.val(), "MathQues")
             .removeClass('placeholder-text');
     }
     elem.on('keyup', function() {
         var text = $(this).val();
-        UpdateMath(text, "MathQues").addClass('lead')
+        UpdateMath(text, "MathQues")
             .removeClass('placeholder-text');
     });
 });

@@ -7,6 +7,7 @@ from flask_login import LoginManager
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
 login_manager.login_view = 'main.index'
+login_manager.login_message_category = 'danger'
 
 db = SQLAlchemy()
 

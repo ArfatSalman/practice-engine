@@ -115,7 +115,7 @@ class QuestionsTestCase(unittest.TestCase):
 		db.session.commit()
 
 		u = User.query.all()
-		self.assertFlase(u) # User should be deleted
+		self.assertFalse(u) # User should be deleted
 
 		q = Question.query.all()
 		self.assertTrue(q) # But the question shouldn't 

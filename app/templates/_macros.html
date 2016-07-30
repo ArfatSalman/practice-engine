@@ -37,11 +37,11 @@
 {% macro user_box(user, class="") %}
 	<div class="user-box {{class}}">
 		<div>
-			<a href="">Arfat Salman</a>
+			<a href="{{url_for('main.user', id=user.id)}}">{{user.username}}</a>
 			<p>{{user.score}}</p> 
 		</div>
 		
-		<img width="40px" src="{{url_for('static', _external=True, filename='300x300.jpg')}}" alt="{{session['username']}}" />
+		<img width="40px" src="{% if user.picture %} {{user.picture}} {% else %} {{url_for('static', _external=True, filename='anon_user.jpg')}} {% endif %} " alt="{{user.username}}" />
 							
 	</div>	
 {% endmacro %}
@@ -174,7 +174,11 @@
 {% endmacro %}
 
 {% macro upvote(user, ques, text="", btn_size="") %}
+	{% set disabled = False %}
+
 	{% if user.has_upvoted(ques) %}
+		{% set disbaled = True %}
+
 		<button href="#" data-id="{{ques.id}}" data-count="{{ques.upvoted_by.count()}}" class="upvote-btn btn btn-success {{btn_size}}">
 	{% else %}
 		<button href="#" data-id="{{ques.id}}" data-count="{{ques.upvoted_by.count()}}" class="upvote-btn btn btn-default {{btn_size}}">
@@ -210,7 +214,7 @@
 
 {% macro delete_button(user, ques, btn_size='') %}
 	{% if ques.user == user %}
-		<button data-id="{{ques.id}}" class="btn btn-danger {{btn_size}}" >Delete</button>
+		<a href="{{url_for('question.delete_question', id=ques.id)}}" data-id="{{ques.id}}" class="btn btn-danger {{btn_size}}" >Delete</a>
 	{% endif %}
 {% endmacro %}
 

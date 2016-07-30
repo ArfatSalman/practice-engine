@@ -1,4 +1,29 @@
-
+.difficulty p {
+    font-family: monospace;
+    font-size: 0.9em;
+    margin: -4px 0;
+    padding: 0;
+}
+.difficulty {
+    color: gray;
+    margin: 0 -8px;
+    padding: 2px;
+}
+.footer {
+    background: rgba(0, 0, 0, 0.06) none repeat scroll 0 0;
+    box-shadow: 0 -1px 3px lightgray;
+    height: 50px;
+    margin-top: 20px;
+    padding-top: 15px;
+}
+.options .col-md-5 {
+    height: 80px;
+}
+.navbar {
+    background: white none repeat scroll 0 0;
+    box-shadow: 0 0 3px lightgray;
+    margin-top: 5px;
+}
 .user-tabs {
     margin-top: 10px;
     padding-top: 10px;
@@ -167,7 +192,7 @@ hr {
 .question-box {
     box-shadow: 0 0 5px lightgray;
     margin: 0 15px 0 0;
-    padding: 0 10px;
+    padding: 0 10px 15px;
 }
 h5 {
     color: gray;

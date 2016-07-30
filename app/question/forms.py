@@ -49,16 +49,16 @@ class PostQuestionForm(Form):
 
     tags = TagListField('Tags', validators=[InputRequired()])
 
-    option1 = TextAreaField('option1', validators=[Required()])
+    option1 = TextAreaField('Option 1', validators=[Required()])
     check_option1 = BooleanField()
     
-    option2 = TextAreaField('option2', validators=[Required()])
+    option2 = TextAreaField('Option 2', validators=[Required()])
     check_option2 = BooleanField('check2')
     
-    option3 = TextAreaField('option3')
+    option3 = TextAreaField('Option 3')
     check_option3 = BooleanField('check3')
     
-    option4 = TextAreaField('option4')
+    option4 = TextAreaField('Option 4')
     check_option4 = BooleanField('check4')
     
     submit = SubmitField('Submit')

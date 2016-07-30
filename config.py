@@ -26,12 +26,14 @@ class DevelopmentConfig(Config):
 	MAIL_PASSWORD = ''
 	SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root@localhost/test'
 	SQLALCHEMY_ECHO = False
+	REMEMBER_COOKIE_HTTPONLY = True
 
 
 class TestingConfig(Config):
 	TESTING = True
 	SQLALCHEMY_ECHO = False
 	SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root@localhost/testing'
+	SERVER_NAME = 'localhost:5000'
 
 
 class ProductionConfig(Config):
