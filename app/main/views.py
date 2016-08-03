@@ -13,7 +13,8 @@ from ..models import (
                         DownvoteQuestionAssoc as DQ,
                         Solution,
                         UpvoteDownvoteSolutionAssoc as UDS,
-                        UserSetting as US)
+                        UserSetting as US,
+                        SolvedQuestionsAssoc as SQ)
 from .forms import UserTagsForm
 from ..question.forms import SolutionForm
 from ..question.views import associate_tags
@@ -29,7 +30,7 @@ def ping():
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
-    #login_user(User.query.get(1), remember=True) 
+    #login_user(User.query.get(1), remember=True)
     if current_user.is_authenticated:
         return redirect(url_for('.home'))
     else:
@@ -245,8 +246,9 @@ def user_questions(id, ques_type):
                                             per_page=current_app.config['PER_PAGE_LIMIT'])
         filename = "_posted.html"
     elif ques_type == 'solved':
-        pagination = user.questions_solved.paginate(page,
-                                                    per_page=current_app.config['PER_PAGE_LIMIT'])
+        pagination = user.questions_solved\
+                         .paginate(page,
+                                   per_page=current_app.config['PER_PAGE_LIMIT'])
         filename = "_solved.html"
     else:
         return bad_request("Wrong request format.")
@@ -256,13 +258,19 @@ def user_questions(id, ques_type):
 @main.route('/tags/<tagname>')
 @login_required
 def tags(tagname):
+    page = request.args.get('page', 0, type=int)
+
     tag = Tag.query.filter_by(tagname=tagname).first()
-    ques = None
-    if tag:
-        ques = tag.questions
+    
+    if page:
+        pagination = tag.questions.paginate(page, 
+                              per_page=current_app.config['PER_PAGE_LIMIT'])
+        return jsonify(content=render_template('_tags.html',
+                                pagination=pagination))
 
     return render_template('tags.html',
-                            ques=ques)
+                            tag=tag,
+                            ques=tag.questions)
 
 @main.route('/user-setting', methods=['POST'])
 @login_required
@@ -294,6 +302,8 @@ def user_setting():
             setting.hide_solutions = False
         else:
             setting.hide_solutions = True
+    elif name == 'HO':
+        pass
     else:
         return bad_request('Setting Not Found')
 

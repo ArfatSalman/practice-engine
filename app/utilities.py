@@ -8,6 +8,12 @@ from flask import flash, redirect, jsonify, url_for, request
 def print_debug(*args, **kwargs):
 	return print(*args, file=sys.stderr, **kwargs)
 
+def dual_response(message, category='success', redir=''):
+	if request.is_xhr:
+		return jsonify(message=message)
+	else:
+		flash(message, 'success')
+		return redirect('main.home')
 
 def bad_request(message, status_code=403, redir=''):
 	if request.is_xhr:
@@ -36,5 +42,4 @@ def add_to_db(obj, msg='Something went wrong', category='danger'):
 		db.session.commit()
 	except SQLAlchemyError:
 		db.session.rollback()
-		flash(msg, category)
-		return redirect(url_for('main.home'))
+		return bad_request(msg, 403)

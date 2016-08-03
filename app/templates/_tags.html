@@ -1,0 +1,11 @@
+{% from "_macros.html" import question, upvote, downvote, favourite, unsolve_button with context %}
+
+{% if tag %}
+	{% set ques = tag.questions %}
+{% else %}
+	{% set ques = pagination %}
+{% endif %}
+
+{% call(obj) question(ques, type='tag-ques')%}
+
+{% endcall %}

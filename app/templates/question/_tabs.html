@@ -36,6 +36,8 @@
             {% set sol = ques.solution_by_user(current_user)%} 
             
             {% if sol %}
+
+
             <div class="solution row">
                 
                 <div class="panel panel-info">
@@ -57,7 +59,7 @@
                             {% endif %}
                             </div>
 
-                            {{user_box(current_user, class="pull-right")}}
+                            {{user_box(sol.user, class="pull-right")}}
                         </div>
                         
                         

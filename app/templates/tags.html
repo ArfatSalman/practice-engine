@@ -1,34 +1,33 @@
 {% extends "base.html" %}
-
-{% macro question(ques_solved) %}
-                            <div class="question row">
-                            {% for ques_assoc in ques_solved %}
-                                {% if ques_assoc.question %}
-                                    {% set ques = ques_assoc.question %}
-                                {% else %}
-                                    {% set ques = ques_assoc %}
-                                {% endif %}
-                                <div class="col-md-12">
-                                    <p class="lead">
-                                        <a href="#">{{ques.body}}</a>
-                                    </p>
-                                    
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <hr>
-                                        </div>
-                                     </div>
-                                    {{caller(ques_assoc)}}
-                                    <div class="question-bar">
-                                        <button class="btn btn-default btn-sm">Upvote</button>
-                                    </div>
-                                </div>
-                            {% endfor %}
-                            </div>
-                        {% endmacro %}
+{% from "_macros.html" import question, tags, user_box with context %}
 
 {% block content %}
-	{% call(obj) question(ques)%}
+    
+    <div class="row">
+        <div class=" user-tags-col col-md-2">
+                <h4>My topics</h4>
+                
+                {{tags(current_user, current_user.associated_tags)}}
+        </div>
 
-	{% endcall %}
+        <div class="col-md-7">
+            <h1>{{tag.tagname}}</h1>
+            <h2>Followed: {{tag.assoc_users.count()}}</h2>
+            <h2>Questions: {{ques.count()}}</h2>
+        </div>
+
+        <div class="active-user-list col-md-3 pull-right">
+            <h5>Most</h5>
+            <div class="row">
+                {{user_box(current_user, class='pull-right')}}
+            </div>
+            
+        </div>
+
+        <div id="tag-ques" class="col-md-7">
+            {% include "_tags.html" %}
+        </div>
+
+
+    </div>
 {% endblock %}

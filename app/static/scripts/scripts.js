@@ -137,6 +137,31 @@ var toggle_two_classes = function(elem, class1, class2) {
 };
 
 
+var hide_options = function() {
+    var options = $('.options');
+    options.css('visibility', 'hidden');
+    $('.hide-option-layer').show('fast');
+
+};
+
+var show_options = function() {
+    var options = $('.options');
+    $('.hide-option-layer').hide('fast');
+    options.css('visibility', '');
+};
+
+$(function() {
+    var hide_options = $('#hide-options');
+
+    if (hide_options.hasClass('btn-success')) {
+        hide_options();
+    }
+
+    $(".question-box").on('click', '#show-options-btn', function(e){
+        show_options();
+        e.preventDefault();
+    });
+});
 
 // pagination 
 $(function(){
@@ -155,7 +180,10 @@ $(function(){
 
         if (type === 'view-solutions') {
             url = '/question/' + question_id + '/' + type;
+        } else if (type === 'tag-ques') {
+            url = $(location).attr('pathname');
         }
+
         if (self.hasClass('previous')) {
             data.page -= 1;
         } else {
@@ -188,15 +216,15 @@ $(function(){
 
 //Solutions 
 $(function() {
-    $(document).on('click', '.sol-controls button:not("#edit-sol")', function() {
+    $(document).on('click', '.sol-upvote-btn, .sol-downvote-btn', function() {
         var self = $(this);
 
         data = {
-            id: self.data('id'),
+            id: self.data('id'), // Solution ID
             is_upvote: 1
         };
 
-        if (self.hasClass('downvote-sol')) {
+        if (self.hasClass('sol-downvote-btn')) {
             data.is_upvote = 0;
         }
 
@@ -204,22 +232,29 @@ $(function() {
             url: '/vote-solution',
             data: data,
             type: 'POST',
+            beforeSend: function(){
+                self.attr('disabled', true);
+            },
             success: function() {
                 toggle_two_classes(self, 'btn-default', 'btn-success');
 
                 if (data.is_upvote) {
                     if (self.hasClass('btn-success')) {
-                        self.next().attr('disabled', true);
+                        self.siblings('.sol-downvote-btn')
+                            .attr('disabled', true);
                     } else {
-                        self.next().attr('disabled', false);
+                        self.siblings('.sol-downvote-btn')
+                            .attr('disabled', false);
                     }
                 } else {
                     if (self.hasClass('btn-success')) {
-                        self.prev().attr('disabled', true);
+                        self.siblings('.sol-upvote-btn').attr('disabled', true);
                     } else {
-                        self.prev().attr('disabled', false);
+                        self.siblings('.sol-upvote-btn').attr('disabled', false);
                     }
                 }
+
+                self.attr('disabled', false);
             },
             error: function(jqxhr) {
                 error(jqxhr);
@@ -381,6 +416,10 @@ $(function() {
                     QUESTION_LIST = {};
                 }
 
+                if (self.data('type') === "HO" && self.hasClass('btn-success')) {
+                    hide_options();
+                }
+
                 self.text(original_text).attr('disabled', false);
             },
             error: function(jqxhr) {
@@ -437,6 +476,39 @@ var button_hover_effects = function(elemID) {
     });
 }
 
+//UnSolved Questions
+$(function(){
+    $(document).on('click', '.unsolve-btn', function(e){
+        
+        var self = $(this);
+        var data = {
+            'question-id' : self.data('id')
+        }
+        
+        $.ajax({
+            url: '/unsolve',
+            data: data,
+            type: 'POST',
+            beforeSend: function() {
+                self.attr('disabled', true);
+            },
+            success: function(data, textStatus, jqxhr) {
+
+                if (self.has('span').length === 0) {
+                    self.parents('.panel').remove();
+                } else {
+                    self.remove();
+                }
+
+                showAlert(jqxhr.responseJSON.message, 'success');
+            },
+            error: function(jqxhr) {
+                error(jqxhr);
+            }
+        });
+        e.stopPropagation();
+    });
+}); 
 
 //Favourite Upvote and downvote Ajax
 $(function() {

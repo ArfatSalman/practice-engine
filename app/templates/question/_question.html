@@ -7,7 +7,7 @@
 
 		<!-- This is the question accessories -->
 		<div class="row">
-			<div class="col-md-1 accessories ">
+			<div class="col-md-1 accessories">
 				<div class="btn-group-vertical">
 
 					{{macros.upvote(current_user, ques)}}
@@ -16,10 +16,6 @@
 					
 					{{macros.downvote(current_user, ques)}}
 
-<!-- 					<button id="difficulty" class="btn btn-default"> 
-						
-					</button>
- -->
 					{{macros.favourite(current_user, ques)}}
 
 					{% if current_user.id == ques.author_id %}
@@ -29,7 +25,7 @@
 					{% endif %}
 
 					{% if current_user.has_solved(ques) %}
-					<button id="solved-question" class="btn btn-success">
+					<button data-id="{{ques.id}}" class="unsolve-btn btn btn-success">
 						<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
 					</button>
 					{% endif %}
@@ -73,7 +69,12 @@
 					
 					<h5>Options</h5>
 					
+					<div class="hide-option-layer">
+						
+						<button id="show-options-btn" class=
+						"btn btn-primary">Show Options</button>
 
+					</div>
 					{% set options = ques.options %}
 					{% for option in options %}
 						{% if option.body %}
@@ -85,6 +86,7 @@
 							</div>
 						{% endif %}
 					{% endfor %}
+
 
 					<div class="row">
 

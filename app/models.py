@@ -1,6 +1,7 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy import func, event
+from sqlalchemy import func, event, desc
 from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm.exc import NoResultFound
 from flask_login import UserMixin, current_user
 from . import db, login_manager
@@ -18,6 +19,21 @@ user_tags_assoc = db.Table('user_tags_assoc',
     db.Column('tag_id', db.Integer, db.ForeignKey('tags.id'), primary_key=True),
     db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True)
 )
+
+class ReportQuestionAssoc(db.Model):
+    __tablename__ = 'report_questions_assoc'
+
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    question_id = db.Column(db.Integer, db.ForeignKey('questions.id'), primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    message = db.Column(db.Text)
+
+    question = db.relationship('Question', 
+                                backref=db.backref('reported_by', 
+                                                    lazy='dynamic'))
+    def __init__(self, question):
+        self.question = question
+
 
 class UpvoteDownvoteSolutionAssoc(db.Model):
     __tablename__ = 'upvote_downvote_solutions_assoc'
@@ -93,6 +109,12 @@ class SolvedQuestionsAssoc(db.Model):
     attempted = db.Column(db.Integer, default=0)
     solved = db.Column(db.Integer, default=False)
 
+    # For when the user wants to unsolve just a prticualr question.
+    # The solved will be changed to Flase, and is_set_unsolved
+    # will be changed to True. In Score calculation, if a 
+    # question is_set_unsolved, score = 0
+    is_set_unsolved = db.Column(db.Boolean, default=False)
+
     question = db.relationship('Question', backref=db.backref('solved_by', lazy='dynamic'))
 
     def __init__(self, question):
@@ -135,12 +157,12 @@ class User(UserMixin, db.Model):
                                lazy='joined',
                                cascade='all, delete-orphan')
 
-    questions_solved = db.relationship('SolvedQuestionsAssoc',
+    questions_activity = db.relationship('SolvedQuestionsAssoc',
                                     backref='user',
                                     order_by='desc(SolvedQuestionsAssoc.timestamp)',
                                     cascade='all, delete, delete-orphan',
                                     lazy='dynamic')
-    ques_solved = association_proxy('questions_solved', 'question')
+    ques_solved = association_proxy('questions_activity', 'question')
 
     questions_upvoted = db.relationship('UpvoteQuestionAssoc',
                                              backref='user',
@@ -174,6 +196,16 @@ class User(UserMixin, db.Model):
     def __init__(self, username, password=''):
         self.username = username
         self.password_hash = generate_password_hash(password)
+
+    @property
+    def questions_solved(self):
+        return self.questions_activity\
+                   .filter(SolvedQuestionsAssoc.solved == True)
+
+    @property
+    def questions_attempted(self):
+        return self.questions_activity\
+                   .filter(SolvedQuestionsAssoc.solved==False)
 
     def check_password(self, password):
         print_debug('check password called')
@@ -237,7 +269,7 @@ class User(UserMixin, db.Model):
         SQ = SolvedQuestionsAssoc
 
         try:
-            u = self.questions_solved.filter(SQ.question == ques)\
+            u = self.questions_activity.filter(SQ.question == ques)\
                                      .filter(SQ.solved == True).one()
         except NoResultFound:
             return False
@@ -312,7 +344,6 @@ class Question(db.Model):
         db.Integer, db.ForeignKey('users.id'))
 
     solutions = db.relationship('Solution',
-                                order_by='desc(Solution.timestamp)',
                                 backref='question',
                                 lazy='dynamic',
                                 cascade="all, delete-orphan")
@@ -337,6 +368,10 @@ class Question(db.Model):
     solved_by -> collection of Users who've solved this question
 
     '''
+    @property
+    def solution_by_upvotes(self):
+        return self.solutions.order_by(desc(Solution.upvotes))
+
     @property
     def votes(self):
         upvotes = self.upvoted_by.count()
@@ -405,7 +440,12 @@ def calculate_score(ques, sq):
     # then no points in solving 
     if ques.user == current_user:
         return score
-    # If the user has previously solved the 
+    # when the user has solved-> and hen unsolved
+    # is_set_unsolved will become True. Score will be 0
+    # in that case.
+    elif sq.is_set_unsolved:
+        return score
+    # If the user has previously been solved the 
     # quention, then no points.
     elif sq.solved:
         return score
@@ -460,18 +500,32 @@ class Solution(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     @property
+    def upvoted_by(self):
+        UDS = UpvoteDownvoteSolutionAssoc
+        return self.voted_by.filter(UDS.is_upvote == True)
+
+    @property
+    def downvoted_by(self):
+        UDS = UpvoteDownvoteSolutionAssoc
+        return self.voted_by.filter(UDS.is_upvote == False)
+    
+    @hybrid_property
     def upvotes(self):
-        upvotes = UpvoteDownvoteSolutionAssoc.query\
-                                             .filter_by(solution=self)\
-                                             .filter_by(is_upvote=True)
-        return upvotes
+        UDS = UpvoteDownvoteSolutionAssoc
+        return self.voted_by.filter(UDS.is_upvote == True).count()
+
+    @upvotes.expression
+    def upvotes(cls):
+        UDS = UpvoteDownvoteSolutionAssoc
+        a = db.session.query(func.sum(UDS.is_upvote))\
+                         .filter(UDS.is_upvote == True)\
+                         .filter(cls.id == UDS.solution_id)
+        return a
 
     @property
     def downvotes(self):
-        downvotes = UpvoteDownvoteSolutionAssoc.query\
-                                               .filter_by(solution=self)\
-                                               .filter_by(is_upvote=False)
-        return downvotes
+        UDS = UpvoteDownvoteSolutionAssoc
+        return self.voted_by.filter(UDS.is_upvote == False).count()
 
     '''
     BACKREFS:

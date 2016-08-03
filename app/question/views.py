@@ -16,7 +16,7 @@ from .forms import (
                     UserTagsForm, 
                     EditQuestionForm,
                     SolutionForm)
-from ..utilities import add_to_db, bad_request, add_to_db_ajax, print_debug
+from ..utilities import add_to_db, bad_request, add_to_db_ajax, print_debug, dual_response
 
 '''Helper Functions'''
 def get_options(form):
@@ -245,6 +245,7 @@ def check_answer():
 
     if is_solved:
         sq.solved = is_solved
+        sq.is_set_unsolved = False
     
     add_to_db_ajax(sq, 'Check-Answer: Operation Error while writing to DB')
 
@@ -341,6 +342,29 @@ def delete_question(id):
                             redir=url_for('.questions', id=ques.id))
     flash('The question with ID %s has been successfully deleted.' % ques.id, 'success')
     return redirect(url_for('main.home'))
+
+
+
+@question.route('/unsolve', methods=['POST'])
+@login_required
+def unsolve_question():
+    id = request.form.get('question-id', 0, type=int)
+    ques = Question.query.get_or_404(id)
+    ques_assoc = SQ.query.filter_by(question=ques).one_or_none()
+
+    ques_link = '<a href="%s"class="alert-link">Question %d</a>' % (url_for('.questions', id=ques.id), ques.id)
+
+    if not ques_assoc:
+        return bad_request('You have not yet solved or attempted %s.' % ques_link)
+
+    if not ques_assoc.solved:
+        return bad_request('You have not yet solved %s' % ques_link)
+
+    ques_assoc.is_set_unsolved = True
+    ques_assoc.solved = False
+    add_to_db(ques_assoc,'%s cannot be unsolved. Please try again.' % ques_link)
+
+    return dual_response('You have successfully unsolved %s' % ques_link)
 
 
 @question.route('/report-question', methods=['POST'])
