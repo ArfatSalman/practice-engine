@@ -150,6 +150,61 @@ var show_options = function() {
     options.css('visibility', '');
 };
 
+var report_questions = function(self, _data) {
+    var report_btn = $('#report-question');
+    var data = {
+        "question-id": $('input[name="question-id"]').val()
+    };
+
+    $.extend(data, _data);
+    
+    $.ajax({
+        url: '/report-question',
+        type: 'POST',
+        data: data,
+        beforeSend: function(){
+            self.prop('disabled', true);
+        },
+        success: function() {
+            toggle_two_classes(report_btn, 'btn-default', 'btn-success');
+
+            self.prop('disabled', false);
+            // Hide the modal
+            $('#report-ques-modal').modal('hide');
+        },
+        error: function(jqxhr) {
+            error(jqxhr);
+        }
+    });
+};
+
+// Report Questions
+$(function(){
+    $('.question-box').on('click', '#report-question', function(e){
+        var self = $(this);
+        
+        if (self.hasClass('btn-default')) {
+            $('#report-ques-modal').modal();
+        } else {
+            report_questions(self);
+        }
+    });
+
+    $('.modal').on('click', '#report-ques-btn', function(e){
+        var data = {
+            message: $('#report-message').val()
+        };
+        var self = $(this);
+
+        if (data.message) {
+            report_questions(self, data);
+        } else {
+            report_questions(self);
+        }        
+    })
+});
+
+// Hide options 
 $(function() {
     var hide_options = $('#hide-options');
 
@@ -206,6 +261,9 @@ $(function(){
                 if (html) {
                     $(elem).html(html);
                 }
+
+                // For rendering the Math again.
+                MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
             },
             error: function(jqxhr){
                 error(jqxhr)

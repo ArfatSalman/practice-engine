@@ -30,7 +30,6 @@ def ping():
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
-    #login_user(User.query.get(1), remember=True)
     if current_user.is_authenticated:
         return redirect(url_for('.home'))
     else:

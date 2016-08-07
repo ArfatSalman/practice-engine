@@ -186,6 +186,12 @@ class User(UserMixin, db.Model):
                                      lazy='dynamic')
     ques_fav = association_proxy('questions_fav', 'question')
 
+    questions_reported = db.relationship('ReportQuestionAssoc', 
+                                         backref='user',
+                                         order_by='desc(ReportQuestionAssoc.timestamp)',
+                                         cascade= 'all, delete, delete-orphan',
+                                         lazy='dynamic')
+
 
     associated_tags = db.relationship("Tag",
                                       secondary=user_tags_assoc,
@@ -330,7 +336,6 @@ class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text, nullable=False)
     description = db.Column(db.Text)
-    views = db.Column(db.Integer, default=0)
     
     disabled = db.Column(db.Boolean, default=False)
 

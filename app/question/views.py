@@ -3,14 +3,15 @@ from flask import request, redirect, jsonify, current_app
 from flask_login import current_user, login_required
 
 from sqlalchemy.exc import SQLAlchemyError
+from . import question
+from .. import db
 from ..models import (User,
                       Question, 
                       Option, 
                       Tag, 
                       SolvedQuestionsAssoc as SQ,
-                      Solution)
-from . import question
-from .. import db
+                      Solution,
+                      ReportQuestionAssoc as RQ)
 from .forms import (
                     PostQuestionForm, 
                     UserTagsForm, 
@@ -371,4 +372,28 @@ def unsolve_question():
 @login_required
 def report_questions():
     ques_id = request.form.get('question-id', 0, type=int)
+    msg = request.form.get('message', '')
+
+    ques = Question.query.get_or_404(ques_id)
+    ques_assoc = RQ.query\
+                   .filter_by(question=ques, user=current_user)\
+                   .first()
+    ques_link = '<a href="%s"class="alert-link">Question %d</a>' % (url_for('.questions', id=ques.id), ques.id)
+
+    if ques_assoc:
+        db.session.delete(ques_assoc)
+        db.session.commit()
+        message = '%s was unreported successfully.' % ques_link
+        return jsonify(message=message) 
+
+    rq = RQ(question=ques)
+
+    if msg:
+        rq.message = msg
+
+    current_user.questions_reported.append(rq)
+
+    add_to_db(current_user, '%s reporting failed. Please try again.' % ques_link)    
     
+    message = '%s reported successfully.' % ques_link
+    return dual_response(message)

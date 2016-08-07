@@ -84,6 +84,7 @@
 
 			<div class="container-fluid">
 
+
 				<div class="row">
 					<div id="alert" class="col-md-6 col-md-offset-3">
 						{% with messages = get_flashed_messages(with_categories=True) %}
@@ -107,7 +108,29 @@
 	  		<div class="footer">
 	  			<p class="text-center"> Practice Engine &copy;</p>
 	  		</div>
-	  		<div class="modal"></div>
+	  		
+	  		<div id="report-ques-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="">
+			  <div class="modal-dialog" role="document">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			        <h4 class="modal-title">Report Question</h4>
+			      </div>
+			      <div class="modal-body">
+			      	<div class="form-group">
+			      		<label>Reason(s)</label>
+			      		<textarea id="report-message" class="form-control" rows="3" placeholder="Please specify the reasons ..."></textarea>
+			      	</div>
+			        
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			        <button id="report-ques-btn" type="button" class="btn btn-primary">Report</button>
+			      </div>
+			    </div><!-- /.modal-content -->
+			  </div><!-- /.modal-dialog -->
+			</div>
+
 	  	</body>
 
 </html>
