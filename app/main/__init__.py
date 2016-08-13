@@ -11,4 +11,10 @@ with the Blueprint.
 Modules are imported at the end to avoid circular dependecies
 since views.py and errors.py need to import main Blueprint.
 '''
+
+@main.app_template_filter('time')
+def format_time(time):
+    fmt = "%b %d '%y at %H:%M"
+    return time.strftime(fmt)
+
 from . import views, errors

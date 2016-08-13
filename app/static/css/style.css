@@ -1,3 +1,19 @@
+.streak {
+    background: #9f84bd none repeat scroll 0 0;
+    border-radius: 2px;
+    box-shadow: 1px 1px 3px #9f84bd;
+    font-size: 14px;
+}
+
+.last-seen {
+    font-size: 12px;
+    color: gray;
+    margin: 0 0 0 10px;
+}
+
+.badge {
+    margin: 0 5px;
+}
 .hide-option-layer {
     display: none;
 }
@@ -12,6 +28,9 @@
 }
 .active-user-list {
     width: 22%;
+}
+.active-user-list .user-box {
+    margin: 7px 20px;
 }
 .difficulty p {
     font-family: monospace;
@@ -62,6 +81,7 @@
 .posted-on {
     color: gray;
     font-size: 10px;
+    margin: 0 -15px 0 15px;
     text-align: right;
 }
 .question > .col-md-12 {

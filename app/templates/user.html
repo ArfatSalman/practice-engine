@@ -10,24 +10,41 @@
         {{tags(user, user.associated_tags)}}
     </div>
 
-    <div class="col-md-3">
-        <img src="{{url_for('static', _external=True, filename='300x300.jpg')}}" alt="{{session['username']}}" />
-    </div>
-    <div class="col-md-5 col-md-offset-1">
-        <h1>{{user.username}}</h1>
-        <h3>{{user.last_seen}}</h3>
-    </div>
-    
+    <div class="col-md-9">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <img class="img-responsive" src="{{user.picture}}" width="250px" alt="{{session['username']}}" />
+                    </div>
+
+                    <div class="col-md-8">
+                        <h2>{{user.username}}<span class=
+                            "last-seen">Last Seen {{user.last_seen|time}}</span></h2>
+
+                        
+                        <p id="user-desc"> {% if not user.description %} No Description {% else %} {{user.description}} {% endif %} {% if user == current_user %} <button id="edit-desc-btn" class="btn btn-info btn-xs">Edit</button>{% endif %}</p>                   
+                        
+                    </div>
+                </div>
+                
+                
+            </div>
+            <div class="panel-footer">
+                
+            </div>
+        </div>
+    </div>    
 
     <div class="user-tabs col-md-9">
         <div>
             <!-- Nav tabs -->
             <ul class="nav nav-tabs" role="tablist">
-                <li role="presentation" class="active"><a href="#posted" role="tab" data-toggle="tab">Posted</a></li>
-                <li role="presentation" class=""><a href="#solved" role="tab" data-toggle="tab">Solved</a></li>
-                <li role="presentation" class=""><a href="#favourited" role="tab" data-toggle="tab">Favourited</a></li>
-                <li role="presentation"><a href="#upvoted" role="tab" data-toggle="tab">Upvoted</a></li>
-                <li role="presentation"><a href="#downvoted" role="tab" data-toggle="tab">Downvoted</a></li>
+                <li role="presentation" class="active"><a href="#posted" role="tab" data-toggle="tab">Posted<span class="badge">{{user.questions.count()}}</span></a></li>
+                <li role="presentation" class=""><a href="#solved" role="tab" data-toggle="tab">Solved<span class="badge">{{user.questions_solved.count()}}</span></a></li>
+                <li role="presentation" class=""><a href="#favourited" role="tab" data-toggle="tab">Favourited<span class="badge">{{user.questions_fav.count()}}</span></a></li>
+                <li role="presentation"><a href="#upvoted" role="tab" data-toggle="tab">Upvoted<span class="badge">{{user.questions_upvoted.count()}}</span></a></li>
+                <li role="presentation"><a href="#downvoted" role="tab" data-toggle="tab">Downvoted<span class="badge">{{user.questions_downvoted.count()}}</span></a></li>
             </ul>
             <!-- Tab panes -->
             <div class="tab-content">

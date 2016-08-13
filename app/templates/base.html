@@ -64,6 +64,7 @@
 
 			        
 			        {% if current_user.is_authenticated %}
+			        	<p class="navbar-text">Streak: <span class="streak badge">{{current_user.streak}} {%if current_user.streak == 1 %} day {% else %} days {% endif %}</span></p>
 						<li>{{user_box(current_user, class="")}}</li>
 						<li class="dropdown">
 							

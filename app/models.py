@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import func, event, desc
 from sqlalchemy.ext.associationproxy import association_proxy
@@ -5,7 +7,6 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm.exc import NoResultFound
 from flask_login import UserMixin, current_user
 from . import db, login_manager
-from datetime import datetime
 from .utilities import print_debug
 from markdown import markdown
 import bleach
@@ -126,12 +127,12 @@ class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     password_hash = db.Column(db.String(128))
-
-    username = db.Column(db.String(128), unique=True, index=True)
-    email = db.Column(db.String(128), unique=True, index=True) # nullable
+    description = db.Column(db.Text())
+    username = db.Column(db.String(128), index=True, default='User')
+    email = db.Column(db.String(128), unique=True, index=True, nullable=False)
     picture = db.Column(db.String(128))
     score = db.Column(db.Integer, default=0) # Only from correct solution
-    
+    streak = db.Column(db.Integer, default=1)
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     
     questions = db.relationship("Question", 
@@ -199,9 +200,8 @@ class User(UserMixin, db.Model):
                                                     lazy='dynamic'),
                                       lazy='dynamic')
 
-    def __init__(self, username, password=''):
-        self.username = username
-        self.password_hash = generate_password_hash(password)
+    def __init__(self, email):
+        self.email = email
 
     @property
     def questions_solved(self):
@@ -212,6 +212,13 @@ class User(UserMixin, db.Model):
     def questions_attempted(self):
         return self.questions_activity\
                    .filter(SolvedQuestionsAssoc.solved==False)
+
+    def total_solved_in_tag(self, tag):
+        # Those questions which are solved by a particular user in 
+        # a specific tag.
+        return self.questions_solved.join(Question)\
+                                 .join(tags_assoc)\
+                                 .filter(tags_assoc.c.tag_id==tag.id)
 
     def check_password(self, password):
         print_debug('check password called')
@@ -281,6 +288,22 @@ class User(UserMixin, db.Model):
             return False
         return True
 
+    def update_streak(self):
+        one_day = timedelta(days=1)
+        two_days = timedelta(days=2)
+        
+        time_difference = datetime.utcnow() - current_user.last_seen
+
+        if time_difference >= one_day and time_difference <= two_days:
+            current_user.streak = current_user.streak + 1
+        elif time_difference > two_days:
+            current_user.streak = 1
+        else:
+            return
+
+        db.session.add(self)
+        db.session.commit()
+    
     def total_score(self):
         pass
 
@@ -338,8 +361,6 @@ class Question(db.Model):
     description = db.Column(db.Text)
     
     disabled = db.Column(db.Boolean, default=False)
-
-    reported_wrong_ques = db.Column(db.Integer, default=0)
     
     body_html = db.Column(db.Text)
     
@@ -373,6 +394,11 @@ class Question(db.Model):
     solved_by -> collection of Users who've solved this question
 
     '''
+
+    def recently_solved_by(self):
+        return self.solved_by\
+                   .order_by(desc(SolvedQuestionsAssoc.timestamp))\
+                   .limit(5).all()
     @property
     def solution_by_upvotes(self):
         return self.solutions.order_by(desc(Solution.upvotes))
@@ -445,7 +471,7 @@ def calculate_score(ques, sq):
     # then no points in solving 
     if ques.user == current_user:
         return score
-    # when the user has solved-> and hen unsolved
+    # when the user has solved-> and then unsolved
     # is_set_unsolved will become True. Score will be 0
     # in that case.
     elif sq.is_set_unsolved:
@@ -555,6 +581,7 @@ class Option(db.Model):
 class Tag(db.Model):
     __tablename__ = 'tags'
     id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.Text()) 
     tagname = db.Column(db.String(64), unique=True, nullable=False)
 
     def has_user(self, user):
@@ -563,6 +590,28 @@ class Tag(db.Model):
         except NoResultFound:
             return False
         return u
+
+    def top_users(self, limit=5):
+        SA = SolvedQuestionsAssoc
+        return db.session.query(User)\
+                 .filter(user_tags_assoc.c.tag_id==self.id)\
+                 .filter(User.id == user_tags_assoc.c.user_id)\
+                 .order_by(
+                    desc(
+                        db.session.query(func.count(SA.question_id))\
+                          .join(Question)\
+                          .join(tags_assoc)\
+                          .filter(User.id == SA.user_id)\
+                          .filter(SA.solved == True)\
+                          .filter(tags_assoc.c.tag_id == user_tags_assoc.c.tag_id)))\
+                 .limit(limit).all()
+
+    @property
+    def solved_questions(self):
+        return self.questions\
+                   .join(SA)\
+                   .filter(SA.solved==True)
+
 
     '''
     BACKREFS: 
@@ -578,9 +627,9 @@ class UserSetting(db.Model):
     hide_difficulty = db.Column(db.Boolean, default=False)
     repeat_solved_questions = db.Column(db.Boolean, default=False)
     auto_load_questions = db.Column(db.Boolean, default=False)
-    hide_solutions = db.Column(db.Boolean, default=False)
+    hide_options = db.Column(db.Boolean, default=False)
 
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id')) # nullable = false
 
     '''
     BACKREFS:

@@ -144,6 +144,17 @@ var hide_options = function() {
 
 };
 
+var toggle_difficulty = function() {
+    var difficulty = $('.difficulty');
+    var difficulty_btn = $('#hide-difficulty');
+
+    if (difficulty_btn.hasClass('btn-success')) {
+        difficulty.hide('fast');
+    } else {
+        difficulty.show('fast');
+    }
+};
+
 var show_options = function() {
     var options = $('.options');
     $('.hide-option-layer').hide('fast');
@@ -202,6 +213,20 @@ $(function(){
             report_questions(self);
         }        
     })
+});
+
+// Updating description.
+$(function(){
+    $(document).on('click','#edit-desc-btn', function(e){
+        var markup = '<textarea id="desc-text" class="form-control" rows="3"></textarea>';
+        var save_btn = '<button id="save-desc-btn" class="btn btn-default">Update</button>'
+
+        var self = $(this);
+        var text = self.val();
+        $('#user-desc').replaceWith(markup+save_btn);
+        
+
+    });
 });
 
 // Hide options 
@@ -343,7 +368,7 @@ $(function() {
         }
     });
 });
-
+// Submit solution
 $(function() {
     $(document).on('submit', '#solution-form', function(event) {
         event.preventDefault();
@@ -469,13 +494,18 @@ $(function() {
             },
             success: function() {
                 toggle_two_classes(self, 'btn-default', 'btn-success');
-
+                // keep Solved Questions
                 if (self.data('type') === "KSQ" && self.hasClass('btn-success')) {
                     QUESTION_LIST = {};
                 }
-
+                // Hide Options
                 if (self.data('type') === "HO" && self.hasClass('btn-success')) {
                     hide_options();
+                }
+
+                // Hide Difficulty
+                if (self.data('type') === 'HD') {
+                    toggle_difficulty();
                 }
 
                 self.text(original_text).attr('disabled', false);
@@ -677,10 +707,17 @@ $(function() {
 
                     list.children().remove();
                     $.each(data, function(key, value) {
-                        var firstHalf = '<a href="#" data-id="';
-                        var secondHalf = '" class="close" type="button">';
-                        var link = firstHalf + value + secondHalf + 'x</a>';
-                        list.append('<li class="list-group-item">' + key + link);
+                        var badge = '<span class="badge">' + value.count + '</span>';
+                        var cross = '<a href="#" data-id="' + value['id'] + '" class="close" type="button">&times;</a>';
+                        var link = '/tags/' + key;
+                        var tag = '<a href="' + link + '">' + key +'</a>'
+                        
+                        var elem = '<list class="list-group-item">' + 
+                                    tag + 
+                                    badge +
+                                    cross+
+                                    '</li>'
+                        list.append(elem);
                     });
 
                     $('.tagit-choice').remove();

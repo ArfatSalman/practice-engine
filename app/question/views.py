@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from flask import render_template, flash, url_for
 from flask import request, redirect, jsonify, current_app
 from flask_login import current_user, login_required
@@ -18,6 +20,7 @@ from .forms import (
                     EditQuestionForm,
                     SolutionForm)
 from ..utilities import add_to_db, bad_request, add_to_db_ajax, print_debug, dual_response
+
 
 '''Helper Functions'''
 def get_options(form):
@@ -247,6 +250,7 @@ def check_answer():
     if is_solved:
         sq.solved = is_solved
         sq.is_set_unsolved = False
+        current_user.update_streak()
     
     add_to_db_ajax(sq, 'Check-Answer: Operation Error while writing to DB')
 

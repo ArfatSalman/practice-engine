@@ -1,4 +1,5 @@
 from flask import render_template
+from sqlalchemy.exc import *
 from . import main
 
 '''A difference when writing error handlers inside a blueprint is that if the errorhandler
@@ -13,3 +14,7 @@ def page_not_found(e):
 @main.app_errorhandler(500)
 def internal_server_error(e):
 	return render_template('500.html'), 500
+
+@main.app_errorhandler(OperationalError)
+def aa(e):
+	return 'operational error %s ' % e

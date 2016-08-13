@@ -48,7 +48,7 @@
 			
 			<div class="col-md-11">	
 
-				<div class="difficulty pull-right">
+				<div class="difficulty pull-right" {% if current_user.setting.hide_difficulty %} style="display: none" {% endif %}>
 					<p>Solved {{ques.difficulty[1]}} times</p>
 					<p>Attempted {{ques.difficulty[0]}} times</p> 
 				</div>
@@ -104,7 +104,7 @@
 						</div>
 						<div class="posted-on col-md-3">
 							<span>
-							Posted on {{ques.timestamp.strftime('%a %b %Y')}}
+							Posted on <br/> {{ques.timestamp|time}}
 							</span>
 						</div>
 						

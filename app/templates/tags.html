@@ -17,9 +17,18 @@
         </div>
 
         <div class="active-user-list col-md-3 pull-right">
-            <h5>Most</h5>
+            <h5 class="text-center">Most Active Users</h5>
             <div class="row">
-                {{user_box(current_user, class='pull-right')}}
+                {% for user in tag.top_users() %}
+                    <div class="col-md-12">
+                        {{user_box(user, class='pull-right')}}
+                    </div>
+                {% else %}
+                    <div class="col-md-12">
+                        <p>No Users</p>
+                    </div>
+                {% endfor %}
+                
             </div>
             
         </div>

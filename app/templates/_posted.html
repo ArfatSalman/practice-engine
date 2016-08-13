@@ -7,16 +7,17 @@
 {% endif %}
 
 {% call(ques_assoc) question(obj, type='posted') %}
-	<div class="col-md-4">
+	<div class="col-md-5">
 		{{upvote(current_user, ques_assoc)}}
 		{{downvote(current_user, ques_assoc)}}
 		{{favourite(current_user, ques_assoc)}}
 		{{delete_button(current_user, ques_assoc)}}
+		<a href="{{url_for('question.edit_question', id=ques_assoc.id)}}" class="btn btn-info">Edit</a>
     </div>
                     
-    <div class="col-md-4">
+    <div class="col-md-3">
         <small>
-        	Posted on {{ques_assoc.timestamp.strftime('%a %b %Y')}}
+        	Posted on {{ques_assoc.timestamp|time}}
     	</small>
     </div>
 

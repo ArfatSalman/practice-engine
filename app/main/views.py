@@ -4,8 +4,7 @@ from flask_login import current_user, login_required, login_user
 from sqlalchemy.exc import SQLAlchemyError
 from . import main
 from .. import db
-from ..models import (
-                        User, 
+from ..models import (  User, 
                         Question, 
                         Tag,
                         FavouriteQuestionAssoc as FQ,
@@ -18,7 +17,7 @@ from ..models import (
 from .forms import UserTagsForm
 from ..question.forms import SolutionForm
 from ..question.views import associate_tags
-from ..utilities import print_debug, bad_request, add_to_db, add_to_db_ajax
+from ..utilities import print_debug, bad_request, add_to_db, add_to_db_ajax, dual_response
 import random, datetime
 
 @main.before_app_request
@@ -89,7 +88,7 @@ def add_user_tags():
 
         result = {}
         for tag in current_user.associated_tags:
-            result[tag.tagname] = tag.id
+            result[tag.tagname] = dict(id=tag.id, count=tag.questions.count())
         return jsonify(result)
 
     return bad_request('Form submission is not correct', 403)
@@ -254,6 +253,19 @@ def user_questions(id, ques_type):
     return jsonify(content=render_template(filename,
                                             pagination=pagination))
 
+@main.route('/user/info', methods=['POST', 'GET'])
+@login_required
+def user_info():
+    desc = request.form.get('description')
+
+    if desc:
+        current_user.description = desc
+
+    add_to_db(current_user, 'Update unsuccessful')
+    
+    return dual_response('Update successful')
+
+
 @main.route('/tags/<tagname>')
 @login_required
 def tags(tagname):
@@ -296,13 +308,11 @@ def user_setting():
             setting.auto_load_questions = False
         else:
             setting.auto_load_questions = True
-    elif name == 'HS':
-        if setting.hide_solutions:
-            setting.hide_solutions = False
-        else:
-            setting.hide_solutions = True
     elif name == 'HO':
-        pass
+        if setting.hide_options:
+            setting.hide_options = False
+        else:
+            setting.hide_options = True
     else:
         return bad_request('Setting Not Found')
 

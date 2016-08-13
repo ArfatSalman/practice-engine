@@ -3,7 +3,16 @@ import sys
 
 from . import db
 from sqlalchemy.exc import SQLAlchemyError
-from flask import flash, redirect, jsonify, url_for, request
+from flask import (
+	flash, 
+	redirect, 
+	jsonify, 
+	url_for, 
+	request, 
+	current_app
+	)
+
+
 
 def print_debug(*args, **kwargs):
 	return print(*args, file=sys.stderr, **kwargs)

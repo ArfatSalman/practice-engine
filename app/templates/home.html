@@ -32,12 +32,7 @@
 						<ul class="dropdown-menu" aria‐labelledby="dropdownMenu1">
 							{% set setting = current_user.setting %}
 
-							<li>
-								{% if setting and setting.hide_difficulty %}
-									<button data-type="HD" id="hide-difficulty" type="button" class="btn btn-success btn-block" autocomplete="off">Hide Difficulty</button>
-								{% else %}
-									<button data-type="HD" id="hide-difficulty" type="button" class="btn btn-default btn-block" autocomplete="off">Hide Difficulty</button>
-								{% endif %}
+							<li>										<button data-type="HD" id="hide-difficulty" type="button" class="btn {% if setting.hide_difficulty %}btn-success {% else %} btn-default {% endif %} btn-block">Hide Difficulty</button>
 							</li>
 							
 							<li>

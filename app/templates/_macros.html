@@ -182,12 +182,15 @@
 {% macro tags(user, tags) %}
 	<ul class="list-group">
 		{% for tag in tags.limit(10) %}
-			<li class="list-group-item"><a href="{{url_for('main.tags', tagname=tag.tagname)}}">{{tag.tagname}}</a>
+			<li class="list-group-item">
+				<a href="{{url_for('main.tags', tagname=tag.tagname)}}">{{tag.tagname}}</a>
+				
 				<span class="badge">{{tag.questions.count()}}</span>
-
+			
 			{% if user == current_user %}
 				<a href="#" data-id="{{tag.id}}" class="close" type="button">&times;</a>
 			{% endif %}
+			</li>
 		{% else %}
 			<h3>Please choose at least one tag.</h3>
 		{% endfor %}

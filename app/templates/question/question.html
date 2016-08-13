@@ -10,6 +10,23 @@
 		{% include "question/_question.html" %}
 	</div>
 
+	<div class="active-user-list col-md-3">
+		<h5 class="text-center">Solved by Users</h5>
+
+		<div class="row">
+                {% for solved_ques_assoc in ques.recently_solved_by() %}
+                    <div class="col-md-12">
+                        {{user_box(solved_ques_assoc.user, class='pull-right')}}
+                    </div>
+                {% else %}
+                    <div class="col-md-12">
+                        <p>No Users</p>
+                    </div>
+                {% endfor %}
+                
+            </div>
+	</div>
+
 	
 </div>
 {% endblock %}
