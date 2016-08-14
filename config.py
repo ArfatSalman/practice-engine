@@ -11,6 +11,7 @@ class Config:
 	SECRET_KEY = "\x079Z\x9c%Z\xcf/f\x1f\x17\xad\x18\xcb+eIP%a-\x99M:\xaf\x82\x98\x9e\xe3B4"
 	SQLALCHEMY_COMMIT_ON_TEARDOWN = False
 	SQLALCHEMY_TRACK_MODIFICATIONS = False
+	SQLALCHEMY_POOL_RECYCLE = 299
 	PER_PAGE_LIMIT = 2
 
 	@staticmethod
