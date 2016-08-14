@@ -23,7 +23,7 @@
                             "last-seen">Last Seen {{user.last_seen|time}}</span></h2>
 
                         
-                        <p id="user-desc"> {% if not user.description %} No Description {% else %} {{user.description}} {% endif %} {% if user == current_user %} <button id="edit-desc-btn" class="btn btn-info btn-xs">Edit</button>{% endif %}</p>                   
+                        <p id="user-desc">{%- if not user.description %} No Description {% else %} {{user.description}} {% endif -%} {% if user == current_user %} <button id="edit-desc-btn" class="btn btn-info btn-xs"><span class="glyphicon glyphicon-edit"></span> Edit</button>{% endif %}</p>                   
                         
                     </div>
                 </div>

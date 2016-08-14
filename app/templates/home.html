@@ -13,8 +13,8 @@
 
 				{{form.submit(class='btn btn-primary btn-block')}}
 			</form>
-
-			<h4>My topics</h4>
+		<hr/>
+			<h5><span class="glyphicon glyphicon-book"></span> My topics</h5>
 			
 			{{macros.tags(current_user, current_user.associated_tags)}}
 		
@@ -24,7 +24,7 @@
 
 		<div class="control">
 					<div class="dropdown-settings pull-right">
-						<button class="btn btn-default dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+						<button class="btn btn-default dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ><span class="glyphicon glyphicon-cog"></span>
 							Settings
 							<span class="caret"></span>
 						</button>
@@ -32,24 +32,21 @@
 						<ul class="dropdown-menu" aria‐labelledby="dropdownMenu1">
 							{% set setting = current_user.setting %}
 
-							<li>										<button data-type="HD" id="hide-difficulty" type="button" class="btn {% if setting.hide_difficulty %}btn-success {% else %} btn-default {% endif %} btn-block">Hide Difficulty</button>
+							<li>										<button data-type="HD" id="hide-difficulty" type="button" class="btn {% if setting.hide_difficulty %}btn-success {% else %} btn-default {% endif %} btn-block"> Hide Difficulty</button>
 							</li>
 							
 							<li>
-								{% if setting and setting.repeat_solved_questions %}
-									<button data-type="KSQ" id="keep-solved-ques" type="button" class="btn btn-success btn-block" autocomplete="off">Show Solved Question</button>
-								{% else %}
-									<button data-type="KSQ" id="keep-solved-ques" type="button" class="btn btn-default btn-block" autocomplete="off">Show Solved Question</button>
-								{% endif %}
+								
+								<button data-type="KSQ" id="keep-solved-ques" type="button" class="btn {% if setting.repeat_solved_questions %}btn-success {% else %} btn-default {% endif %} btn-block"><span class="glyphicon glyphicon-duplicate"></span> Show Solved Question</button>
 							</li>
 							<li>
-								{% if setting and setting.auto_load_questions %}
-									<button data-type="AL" id="auto-load" type="button" class="btn btn-success btn-block" autocomplete="off">Auto-Load</button>
-								{% else %}
-									<button data-type="AL" id="auto-load" type="button" class="btn btn-default btn-block" autocomplete="off">Auto-Load</button>
-								{% endif %}
+								
+								<button data-type="AL" id="auto-load" type="button" class="btn {% if setting.auto_load_questions %}btn-success {% else %} btn-default {% endif %} btn-block"><span class="glyphicon glyphicon-refresh"></span> Auto-Load</button>
+								
 							</li>
-							<li><button data-type="HO" id="hide-options" type="button" class="btn btn-default btn-block">Hide Options</button></li>
+							<li>
+								<button data-type="HO" id="hide-options" type="button" class="btn {% if setting.hide_options %}btn-success{% else %} btn-default {% endif %} btn-block">Hide Options</button>
+							</li>
 						</ul>
 					</div>
 

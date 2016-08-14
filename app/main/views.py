@@ -258,9 +258,10 @@ def user_questions(id, ques_type):
 def user_info():
     desc = request.form.get('description')
 
-    if desc:
-        current_user.description = desc
+    if not desc:
+        return bad_request('Description Empty. Please enter Description.')
 
+    current_user.description = desc
     add_to_db(current_user, 'Update unsuccessful')
     
     return dual_response('Update successful')

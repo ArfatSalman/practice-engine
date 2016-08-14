@@ -169,13 +169,13 @@
 
 {% macro delete_button(user, ques, btn_size='') %}
 	{% if ques.user == user %}
-		<a href="{{url_for('question.delete_question', id=ques.id)}}" data-id="{{ques.id}}" class="btn btn-danger {{btn_size}}" >Delete</a>
+		<a href="{{url_for('question.delete_question', id=ques.id)}}" data-id="{{ques.id}}" class="btn btn-danger {{btn_size}}"><span class="glyphicon glyphicon-trash"></span> Delete</a>
 	{% endif %}
 {% endmacro %}
 
 {% macro unsolve_button(user, ques, text='', btn_size='') %}
 	{% if user.has_solved(ques) %}
-		<button data-id="{{ques.id}}" class="unsolve-btn btn btn-danger {{btn_size}}" >Unsolve</button>
+		<button data-id="{{ques.id}}" class="unsolve-btn btn btn-danger {{btn_size}}"><span class="glyphicon glyphicon-remove-sign"></span> Unsolve</button>
 	{% endif %}
 {% endmacro %}
 

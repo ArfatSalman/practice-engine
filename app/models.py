@@ -133,6 +133,7 @@ class User(UserMixin, db.Model):
     picture = db.Column(db.String(128))
     score = db.Column(db.Integer, default=0) # Only from correct solution
     streak = db.Column(db.Integer, default=1)
+    streak_updated = db.Column(db.Boolean, default=False)
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     
     questions = db.relationship("Question", 
@@ -294,15 +295,23 @@ class User(UserMixin, db.Model):
         
         time_difference = datetime.utcnow() - current_user.last_seen
 
-        if time_difference >= one_day and time_difference <= two_days:
-            current_user.streak = current_user.streak + 1
-        elif time_difference > two_days:
-            current_user.streak = 1
-        else:
-            return
+        if not self.streak_updated:
+            self.streak_updated = True
 
-        db.session.add(self)
-        db.session.commit()
+            if time_difference <= one_day:
+                self.streak = self.streak + 1
+            else:
+                self.streak = 1
+
+            db.session.add(self)
+            db.session.commit()
+
+    @property
+    def valid_streak(self):
+        one_day = timedelta(days=1)
+        td = datetime.utcnow() - self.last_seen
+
+        return True if td <= one_day else False
     
     def total_score(self):
         pass

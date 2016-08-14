@@ -26,6 +26,14 @@ var QUESTION_LIST = {};
         });
     };
 
+    $.fn.just_text_node = function(text) {
+        return this.contents()
+                   .filter(function(){ 
+                        return this.nodeType == 3; 
+                        })
+                   .replaceWith(text)
+    };
+
 }(jQuery));
 
 
@@ -35,7 +43,7 @@ var show_input_error = function(elem, message = "") {
         message = 'This is required';
     }
 
-    var msg_elem = '<span class="text-danger">' + message + '</span>';
+    var msg_elem = '<p class="text-danger">' + message + '</p>';
 
     elem.css({
         border: '1px solid red'
@@ -62,6 +70,7 @@ var checks = function() {
         }
     });
 };
+
 
 var showAlert = function(message, category = "success") {
     /*
@@ -219,12 +228,44 @@ $(function(){
 $(function(){
     $(document).on('click','#edit-desc-btn', function(e){
         var markup = '<textarea id="desc-text" class="form-control" rows="3"></textarea>';
-        var save_btn = '<button id="save-desc-btn" class="btn btn-default">Update</button>'
+        var save_btn = '<button type="submit" id="save-desc-btn" class="btn btn-default">Update</button>'
+        var form = '<form id="user-desc-form" action="post">';
+        var end_form = '</form>';
+        var user_desc = $('#user-desc');
 
         var self = $(this);
-        var text = self.val();
-        $('#user-desc').replaceWith(markup+save_btn);
-        
+        // For taking only the text value of the elem and not the child
+        var text = $.trim(user_desc.contents()[0].nodeValue);
+
+        user_desc.replaceWith(form+markup+save_btn+end_form);
+        $('#desc-text').val(text).my_required();
+
+        $('#user-desc-form').on('submit', function(e){
+            e.preventDefault();
+            var new_desc = $('#desc-text').val();
+            var self = $(this);
+            $.ajax({
+                url: '/user/info',
+                type: 'POST',
+                data: {
+                    description: new_desc
+                },
+                beforeSend: function(){
+                    self.attr('disabled', true);
+                },
+                success: function(data){
+                    var p = '<p id="user-desc">' + new_desc;
+                    var end_p = '<button id="edit-desc-btn" class="btn btn-info btn-xs">Edit</button></p>';
+
+                    $('#user-desc-form').replaceWith(p+end_p);
+
+                    showAlert(data.message, 'success');
+                }, 
+                error: function(jqxhr) {
+                    error(jqxhr)
+                }
+            });
+        });
 
     });
 });
@@ -368,6 +409,7 @@ $(function() {
         }
     });
 });
+
 // Submit solution
 $(function() {
     $(document).on('submit', '#solution-form', function(event) {
@@ -876,13 +918,13 @@ $(function() {
     });
 });
 
-// Submitting Questions for User
+// Check answer
 $(function() {
     $('.question-box').on('submit', '.option-form', function(event) {
         event.preventDefault();
-        var submit = $('.option-form input[type="submit"]');
+        var submit = $('.option-form #submit-options');
 
-        if (submit.val() === "Next Question") {
+        if ($.trim(submit.text()) === "Next Question") {
             location.reload();
             return;
         }
@@ -896,36 +938,34 @@ $(function() {
                 type: 'POST',
                 data: $(this).serialize(),
                 beforeSend: function() {
-                    submit.attr('value', 'Checking...')
-                        .prop('disabled', true);
+                    submit.prop('disabled', true)
+                          .just_text_node('Checking...');
                 },
                 complete: function() {
 
                     if (is_correct) {
-                        submit.attr('disabled', true);
 
                         if (auto_load()) {
                             var counter = 3;
                             var interval = setInterval(function() {
                                 counter--;
-                                submit.attr('value', 'Loading ' + counter)
+                                submit.just_text_node(' Load in '+counter);
 
                                 if (counter === 0) {
-                                    submit.attr('value', 'Loading..')
+                                    submit.just_text_node('Loading..');
+                                    //submit.attr('value', 'Loading..')
                                     load_next_question();
-                                    console.log('returned before query complete')
                                     clearInterval(interval);
                                 }
                             }, 1000);
 
                         } else {
-                            submit.attr('value', 'Next Question')
-                                .attr('disabled', false);
+                            submit.attr('disabled', false)
+                                  .just_text_node(' Next Question');
                         }
 
                     } else {
-                        submit.attr('value', 'Recheck')
-                            .attr('disabled', false);
+                        submit.attr('disabled', false).just_text_node(' Recheck');
                     }
 
                 },
@@ -956,8 +996,8 @@ $(function() {
                     } else {
                         showAlert('Something went wrong.', 'danger');
                     }
-                    submit.attr('value', 'Check')
-                        .prop('disabled', false);
+                    submit.prop('disabled', false)
+                          .just_text_node('Check');
                 }
             }).done();
         }

@@ -12,7 +12,7 @@
 		{{downvote(current_user, ques_assoc)}}
 		{{favourite(current_user, ques_assoc)}}
 		{{delete_button(current_user, ques_assoc)}}
-		<a href="{{url_for('question.edit_question', id=ques_assoc.id)}}" class="btn btn-info">Edit</a>
+		<a href="{{url_for('question.edit_question', id=ques_assoc.id)}}" class="btn btn-info"><span class="glyphicon glyphicon-edit"></span> Edit</a>
     </div>
                     
     <div class="col-md-3">
