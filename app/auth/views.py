@@ -39,9 +39,8 @@ def google_authorized(resp):
 	user = User.query.filter_by(email=userinfo['email']).first()
 
 	if not user:
-		user = User()
+		user = User(userinfo['email'])
 		user.username = userinfo['name']
-		user.email = userinfo['email']
 		user.picture = userinfo['picture']
 
 		db.session.add(user)

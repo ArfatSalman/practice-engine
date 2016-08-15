@@ -38,7 +38,7 @@ class TestingConfig(Config):
 
 
 class ProductionConfig(Config):
-	SQLALCHEMY_DATABASE_URI = 'mysql://Arfat:arfat78692@mysql.server/Arfat$arfat'
+	SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://Arfat:arfat78692@Arfat.mysql.pythonanywhere-services.com/Arfat$arfat'
 
 config = {
 	'development': DevelopmentConfig,

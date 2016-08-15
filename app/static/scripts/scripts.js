@@ -598,7 +598,7 @@ var button_hover_effects = function(elemID) {
         var self = $(this);
         child_html = self.html();
         var count = self.data('count');
-        var new_html = '<span class="glyphicon"><b>' + count + '</b></span>';
+        var new_html = '<span class="button-hover"><strong>' + count + '</strong></span>';
         self.html(new_html);
     }).on('mouseout', elemID, function() {
         var self = $(this);

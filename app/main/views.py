@@ -228,7 +228,7 @@ def user(id):
     user = User.query.get_or_404(id)
 
     return render_template('user.html',
-                            user = user)
+                            user=user)
 
 
 @main.route('/user/<int:id>/<ques_type>')

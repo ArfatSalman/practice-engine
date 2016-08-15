@@ -1,4 +1,4 @@
-{% from "_macros.html" import question, upvote, downvote, favourite, unsolve_button with context %}
+{% from "_macros.html" import question, upvote, downvote, favourite with context %}
 
 {% if tag %}
 	{% set ques = tag.questions %}
@@ -7,5 +7,9 @@
 {% endif %}
 
 {% call(obj) question(ques, type='tag-ques')%}
-
+	<div class="col-md-5">
+		{{upvote(current_user, obj)}}
+		{{downvote(current_user, obj)}}
+		{{favourite(current_user, obj)}}
+	</div>
 {% endcall %}

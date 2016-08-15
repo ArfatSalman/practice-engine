@@ -4,16 +4,27 @@
 {% block content %}
     
     <div class="row">
-        <div class=" user-tags-col col-md-2">
+        <div class="user-tags-col col-md-2">
                 <h4>My topics</h4>
                 
                 {{tags(current_user, current_user.associated_tags)}}
         </div>
 
         <div class="col-md-7">
-            <h1>{{tag.tagname}}</h1>
-            <h2>Followed: {{tag.assoc_users.count()}}</h2>
-            <h2>Questions: {{ques.count()}}</h2>
+            <div class="panel panel-info">
+                <!-- <div class="panel-heading">
+                    <h3>{{tag.tagname}}</h3>
+                </div> -->
+                <div class="panel-body">
+                    <h2>{{tag.tagname}}</h2>
+
+                    <p>Number of Questions: <strong>{{tag.questions.count()}}</strong></p>
+                </div>
+                <div class="panel-footer">
+                    <button class="btn btn-info"><strong>Subscribe</strong> | {{tag.assoc_users.count()}}</button>
+                </div>
+            </div>
+
         </div>
 
         <div class="active-user-list col-md-3 pull-right">
