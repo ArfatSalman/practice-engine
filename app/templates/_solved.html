@@ -10,7 +10,7 @@
 
 	{% set ques = ques_assoc.question %}
 	
-	<div class="col-md-4">
+	<div class="col-md-5">
 		{{upvote(current_user, ques)}}
 		{{downvote(current_user, ques)}}
 		{{favourite(current_user, ques)}}
@@ -18,9 +18,7 @@
     </div>
                     
     <div class="col-md-4">
-        <small>
-        	Solved on {{ques_assoc.timestamp.strftime('%a %b %Y')}} in 
-        	<b>{{ques_assoc.attempted}}</b> attempt(s). 
-    	</small>
+        	Solved on <strong>{{ques_assoc.timestamp|time}}</strong> in 
+        	<strong>{{ques_assoc.attempted}}</strong> attempt(s). 
     </div>
 {% endcall %}

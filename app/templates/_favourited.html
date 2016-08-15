@@ -16,8 +16,6 @@
     </div>
                     
     <div class="col-md-4">
-        <small>
-        	Favourited on {{ques_assoc.timestamp.strftime('%a %b %Y')}}
-    	</small>
+        	Favourited on <strong>{{ques_assoc.timestamp|time}}</strong>
     </div>
 {% endcall %}

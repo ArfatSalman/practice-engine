@@ -40,7 +40,7 @@ def google_authorized(resp):
 
 	if not user:
 		user = User(userinfo['email'])
-		user.username = userinfo['name']
+		user.username = userinfo['name'] or 'No Name'
 		user.picture = userinfo['picture']
 
 		db.session.add(user)

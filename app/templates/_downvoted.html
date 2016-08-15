@@ -15,8 +15,6 @@
     </div>
                     
     <div class="col-md-4">
-        <small>
-        	Downvoted on {{ques_assoc.timestamp.strftime('%a %b %Y')}}
-    	</small>
+        	Downvoted on <strong>{{ques_assoc.timestamp|time}}</strong>
     </div>
 {% endcall %}

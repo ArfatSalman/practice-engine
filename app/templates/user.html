@@ -15,7 +15,7 @@
             <div class="panel-body">
                 <div class="row">
                     <div class="col-md-4">
-                        <img class="img-responsive" src="{{user.picture}}" width="250px" alt="{{user.username}}" />
+                        <img class="img-responsive" src="{{user.picture or url_for('static', filename='anon_user.jpg')}}" widht="250px" alt="{{user.username}}" />
                     </div>
 
                     <div class="col-md-8">

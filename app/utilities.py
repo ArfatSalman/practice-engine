@@ -24,12 +24,12 @@ def dual_response(message, category='success', redir=''):
 		flash(message, 'success')
 		return redirect('main.home')
 
-def bad_request(message, status_code=403, redir=''):
+def bad_request(message, status_code=403, redir='', category='danger'):
 	if request.is_xhr:
-		response = jsonify({'message': message})
+		response = jsonify(message=message, category=category)
 		response.status_code = status_code
 	else:
-		flash(message, 'danger')
+		flash(message, category)
 		if redir:
 			return redirect(redir)
 		return redirect(url_for('main.index'))

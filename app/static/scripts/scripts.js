@@ -123,7 +123,7 @@ var error = function(jqxhr) {
     var json = jqxhr.responseJSON;
 
     if (json) {
-        showAlert(json.message, 'danger');
+        showAlert(json.message, json.category);
     } else {
         showAlert(jqxhr.statusText, 'danger');
     }
@@ -713,7 +713,70 @@ var validate_tags = function() {
     }
     return true;
 }
+//Tags
+$(function(){
+    $('#subs-tag').on('click', function(){
+        var self = $(this);
+        var url = '/user-tags';
 
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: {
+                tag: self.data('id')
+            }, 
+            beforeSend: function(){
+                self.attr('disbaled', true);
+            },
+            success: function(data) {
+                var count = self.text().split('|')[1];
+                var list = $('.list-group');
+
+                if (self.hasClass('btn-info')) {
+                    self.removeClass('btn-info').addClass('btn-success');
+                    self.children().text('Subscribed');
+
+                    make_tag_elem(list, data);
+                } else {
+                    self.removeClass('btn-success').addClass('btn-info');
+                    self.children().text('Subscribe');
+
+                    list.children().each(function(){
+                        var self = $(this);
+
+                        if (self.text().contains(data.tagname)) {
+                            self.remove();
+                            return false;
+                        }
+
+                    });
+                }
+
+                self.attr('disabled', false);
+            },
+            error: function() {
+                error(jqxhr);
+            }
+        });
+    });
+});
+
+var make_tag_elem = function(list, data) {
+    list.children().remove();
+    $.each(data, function(key, value) {
+        var badge = '<span class="badge">' + value.count + '</span>';
+        var cross = '<a href="#" data-id="' + value['id'] + '" class="close" type="button">&times;</a>';
+        var link = '/tags/' + key;
+        var tag = '<a href="' + link + '">' + key +'</a>'
+        
+        var elem = '<list class="list-group-item">' + 
+                    tag + 
+                    badge +
+                    cross+
+                    '</li>';
+        list.append(elem);
+    });
+}
 //Tags to user
 $(function() {
     /*
@@ -747,29 +810,14 @@ $(function() {
                         alt_msg.remove();
                     }
 
-                    list.children().remove();
-                    $.each(data, function(key, value) {
-                        var badge = '<span class="badge">' + value.count + '</span>';
-                        var cross = '<a href="#" data-id="' + value['id'] + '" class="close" type="button">&times;</a>';
-                        var link = '/tags/' + key;
-                        var tag = '<a href="' + link + '">' + key +'</a>'
-                        
-                        var elem = '<list class="list-group-item">' + 
-                                    tag + 
-                                    badge +
-                                    cross+
-                                    '</li>'
-                        list.append(elem);
-                    });
+                    make_tag_elem(list, data);
 
                     $('.tagit-choice').remove();
+
+                    QUESTION_LIST = {};
                 },
                 error: function(jqxhr, textStatus, errorThrown) {
-                    if (jqxhr.status === 406) {
-                        showAlert('At least one tag is required.', 'info');
-                    } else {
-                        showAlert('Error while adding tags', 'danger');
-                    }
+                    error(jqxhr);
                 }
             });
         }

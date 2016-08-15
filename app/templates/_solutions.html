@@ -8,6 +8,6 @@
 
 {% call(sol_assoc) solution(obj, type='view-solutions') %}
     <small>
-        Posted {{sol_assoc.timestamp.strftime('%a %b %Y')}}
+        Posted {{sol_assoc.timestamp|time}}
     </small>
 {% endcall %}

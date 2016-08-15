@@ -4,7 +4,7 @@
 .button-hover {
     padding: 3px;
 }
-#user-desc {
+#MathQues, #user-desc {
     white-space: pre-wrap;
 }
 .streak {

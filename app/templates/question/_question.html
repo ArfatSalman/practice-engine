@@ -41,8 +41,7 @@
 			<div class="col-md-11">
 				<h5>Tags</h5>
 				{% for tag in ques.tags %}
-					<span class="label label-info">
-						<a href="{{url_for('main.tags', tagname=tag.tagname)}}">{{tag.tagname}}</a></span>
+						<a class="btn {% if tag.has_user(current_user) %}btn-success{%else%}btn-info{%endif%} btn-xs" href="{{url_for('main.tags', tagname=tag.tagname)}}"><strong>{{tag.tagname}}</strong></a>
 				{% endfor %}
 			</div>
 			
@@ -112,7 +111,7 @@
 							<button id="submit-options" class="btn btn-primary btn-block" type="submit"><span class="glyphicon glyphicon-send"></span> Check</button>
 						</div>
 						
-						{{macros.user_box(current_user, class="col-md-4 pull-right")}}
+						{{macros.user_box(ques.user, class="col-md-4 pull-right")}}
 
 					</div>
 				</form>

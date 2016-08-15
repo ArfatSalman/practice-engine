@@ -59,6 +59,37 @@ def home():
                             form=form,
                             sol_form=sol_form)
 
+def add_tags(tags):
+
+    if current_user.associated_tags.count() > 10:
+        return bad_request('You cannot add any more tags. Delete some tags and try again.', category='warning')
+
+    if not tags:
+            return bad_request('At least one tag is required', 406)
+
+    """
+    This loop checks to see if any matching tags
+    for this user exists or not. Since, SQLAlchemy will
+    either generate unique contraint error or Add multiple 
+    duplicate entries. Hence, it is checked manually."""
+    for tag in tags:
+        if tag not in current_user.associated_tags:
+            current_user.associated_tags.append(tag)
+
+    add_to_db(current_user, 'Tags could not be properly saved. Please try again.')
+
+    result = {}
+    for tag in current_user.associated_tags:
+        result[tag.tagname] = dict(id=tag.id, count=tag.questions.count())
+    return jsonify(result)
+
+def remove_tag(tag):
+    current_user.associated_tags.remove(tag)
+
+    add_to_db(current_user, 'Tag cannot be removed.')
+
+    return jsonify(message='Tag removed successfully.', tagname=tag.tagname)
+
 
 @main.route('/add-user-tags', methods=['POST'])
 @login_required
@@ -66,30 +97,31 @@ def add_user_tags():
     form = UserTagsForm()
 
     if form.validate_on_submit():
+
+        # if current_user.associated_tags.count() > 10:
+        #     return bad_request('You cannot add any more tags. Delete some tags and try again.', category='warning')
+
+        # returns a list of tags that are not in the DB
         tags = associate_tags(form)
         
-        if not tags:
-            return bad_request('At least one tag is required', 406)
+        return add_tags(tags)
+        # if not tags:
+        #     return bad_request('At least one tag is required', 406)
         
-        """This loop checks to see if any matching tags
-        for this user exists or not. Since, SQLAlchemy will
-        either generate unique contraint error or Add multiple 
-        duplicate entries. Hence, it is checked manually."""
-        for tag in tags:
-            if tag not in current_user.associated_tags:
-                current_user.associated_tags.append(tag)
-        try:
-            db.session.add(current_user)
-            db.session.commit()
-        except SQLAlchemyError:
-            db.session.rollback()
-            msg = 'Tags could not be properly saved. Please try again.'
-            return jsonify(bad_request(msg, 500))
+        # """This loop checks to see if any matching tags
+        # for this user exists or not. Since, SQLAlchemy will
+        # either generate unique contraint error or Add multiple 
+        # duplicate entries. Hence, it is checked manually."""
+        # for tag in tags:
+        #     if tag not in current_user.associated_tags:
+        #         current_user.associated_tags.append(tag)
 
-        result = {}
-        for tag in current_user.associated_tags:
-            result[tag.tagname] = dict(id=tag.id, count=tag.questions.count())
-        return jsonify(result)
+        # add_to_db(current_user, 'Tags could not be properly saved. Please try again.')
+
+        # result = {}
+        # for tag in current_user.associated_tags:
+        #     result[tag.tagname] = dict(id=tag.id, count=tag.questions.count())
+        # return jsonify(result)
 
     return bad_request('Form submission is not correct', 403)
 
@@ -102,18 +134,31 @@ def remove_user_tags():
     tag_id = request.form.get('id', 0, type=int)
     tag = Tag.query.get_or_404(tag_id)
 
-    current_user.associated_tags.remove(tag)
+    # current_user.associated_tags.remove(tag)
 
-    try:
-        db.session.add(current_user)
-        db.session.commit()
-    except SQLAlchemyError:
-        db.session.rollback()
-        msg = 'Tag cannot be removed.'
-        return bad_request(msg, 500)
+    # try:
+    #     db.session.add(current_user)
+    #     db.session.commit()
+    # except SQLAlchemyError:
+    #     db.session.rollback()
+    #     msg = 'Tag cannot be removed.'
+    #     return bad_request(msg, 500)
     
-    result['message'] = 'Remove Successful'
-    return jsonify(result)
+    # result['message'] = 'Remove Successful'
+    # return jsonify(result)
+    return remove_tag(tag)
+
+
+@main.route('/user-tags', methods=['POST'])
+@login_required
+def user_tags():
+    tag_id = request.form.get('tag', 0, type=int)
+    tag = Tag.query.get_or_404(tag_id)
+
+    if tag in current_user.associated_tags:
+        return remove_tag(tag)
+    else:
+        return add_tags([tag])
 
 
 @main.route('/upvote', methods=['POST'])
@@ -226,7 +271,6 @@ def fav_ques():
 @login_required
 def user(id):
     user = User.query.get_or_404(id)
-
     return render_template('user.html',
                             user=user)
 

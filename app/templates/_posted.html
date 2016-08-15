@@ -7,7 +7,7 @@
 {% endif %}
 
 {% call(ques) question(obj, type='posted') %}
-	<div class="col-md-5">
+	<div class="col-md-6">
 		{{upvote(current_user, ques)}}
 		{{downvote(current_user, ques)}}
 		{{favourite(current_user, ques)}}
@@ -19,9 +19,7 @@
     </div>
                     
     <div class="col-md-3">
-        <small>
-        	Posted on {{ques.timestamp|time}}
-    	</small>
+        	Posted on <strong>{{ques.timestamp|time}}</strong>
     </div>
 
     

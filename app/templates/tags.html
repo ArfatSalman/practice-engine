@@ -21,7 +21,8 @@
                     <p>Number of Questions: <strong>{{tag.questions.count()}}</strong></p>
                 </div>
                 <div class="panel-footer">
-                    <button class="btn btn-info"><strong>Subscribe</strong> | {{tag.assoc_users.count()}}</button>
+                     {% if tag.has_user(current_user) %}
+                        <button id="subs-tag" data-id="{{tag.id}}" class="btn btn-success"><strong>Subscribed</strong> {% else %} <button id="subs-tag" data-id="{{tag.id}}" class="btn btn-info"><strong>Subscribe</strong> {% endif %}| {{tag.assoc_users.count()}}</button>
                 </div>
             </div>
 

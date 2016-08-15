@@ -1,4 +1,4 @@
-{% from "_macros.html" import question with context %}
+{% from "_macros.html" import question, upvote, downvote, favourite with context %}
 
 {% if user %}
 	{% set obj = user.questions_upvoted %}
@@ -7,8 +7,14 @@
 {% endif %}
 
 {% call(ques_assoc) question(obj, type='upvoted') %}
-    <p>
-        Solved on {{ques_assoc.timestamp.strftime('%a %b %Y')}}
-        Attempts {{ques_assoc.attempted}}
-    </p>
+	{% set ques = ques_assoc.question %}
+    <div class="col-md-4">
+    	{{upvote(current_user, ques)}}
+    	{{downvote(current_user, ques)}}
+    	{{favourite(current_user, ques)}}
+    </div>
+
+    <div class="col-md-4">
+        Upvoted on <strong>{{ques_assoc.timestamp|time}}</strong>
+    </div>
 {% endcall %}
