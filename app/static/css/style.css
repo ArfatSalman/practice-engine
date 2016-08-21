@@ -1,11 +1,34 @@
+
+blockquote {
+    padding: 5px 10px;
+    font-size: 14px;
+    margin: 0;
+}
+.active-user-list .panel-body {
+    padding: 0;
+}
+#question-body {
+    white-space: pre-wrap;
+}
+.help-info {
+    margin-bottom: 20px;
+}
+#brand {
+    color: black !important;
+    font-family: Ubuntu;
+    font-size: 25px;
+}
+#brand span {
+    font-size: 14px;
+}
 #tag-ques {
     margin-top: 10px;
 }
 .button-hover {
     padding: 3px;
 }
-#MathQues, #user-desc {
-    white-space: pre-wrap;
+#view-solutions .panel-body, #sol-preview, #MathQues, #user-desc {
+    white-space: pre-line;
 }
 .streak {
     background: #9f84bd none repeat scroll 0 0;
@@ -40,7 +63,7 @@
     right: 0;
 }
 .active-user-list {
-    width: 22%;
+    width: 22.4%;
 }
 .active-user-list .user-box {
     margin: 7px 20px;
@@ -116,8 +139,8 @@
 }
 .user-box {
     height: 40px;
-    margin: -4px 9px;
     padding: 0;
+    margin: 5px 0;
     width: auto;
 }
 .user-box img {
@@ -273,4 +296,11 @@ h5 {
 }
 .custom-checkbox input:checked + label::before {
     background-color: #fff;
+}
+.home-user-box {
+    margin: -4px 9px;
+}
+
+.panel-footer .user-box {
+    margin: 0px 5px;
 }

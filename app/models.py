@@ -289,6 +289,17 @@ class User(UserMixin, db.Model):
             return False
         return True
 
+    def has_reported(self, ques):
+        RQ = ReportQuestionAssoc
+
+        try:
+            u = self.questions_reported\
+                    .filter(RQ.question == ques)\
+                    .filter(RQ.user == self).one()
+        except NoResultFound:
+            return False
+        return u
+
     def update_streak(self):
         one_day = timedelta(days=1)
         two_days = timedelta(days=2)
@@ -311,10 +322,11 @@ class User(UserMixin, db.Model):
         one_day = timedelta(days=1)
         td = datetime.utcnow() - self.last_seen
 
-        return True if td <= one_day else False
+        return True if td <= one_day and not self.streak_updated else False
     
     def total_score(self):
-        pass
+        upvoted = self.questions_upvoted.count()
+        
 
 
     def get_relevant_question(self):
@@ -393,6 +405,7 @@ class Question(db.Model):
                                                 lazy='dynamic'),
                             lazy='dynamic')
 
+
     '''
     BACKREFS:
     user -> the user object who has posted this question
@@ -400,6 +413,7 @@ class Question(db.Model):
     downvoted_by -> same as upvoted by
     fav_by -> collection of Users who've favourited this question
     solved_by -> collection of Users who've solved this question
+    reported_by -> colletion of Users who've reporeted
 
     '''
 

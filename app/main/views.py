@@ -98,30 +98,11 @@ def add_user_tags():
 
     if form.validate_on_submit():
 
-        # if current_user.associated_tags.count() > 10:
-        #     return bad_request('You cannot add any more tags. Delete some tags and try again.', category='warning')
-
         # returns a list of tags that are not in the DB
         tags = associate_tags(form)
         
         return add_tags(tags)
-        # if not tags:
-        #     return bad_request('At least one tag is required', 406)
-        
-        # """This loop checks to see if any matching tags
-        # for this user exists or not. Since, SQLAlchemy will
-        # either generate unique contraint error or Add multiple 
-        # duplicate entries. Hence, it is checked manually."""
-        # for tag in tags:
-        #     if tag not in current_user.associated_tags:
-        #         current_user.associated_tags.append(tag)
 
-        # add_to_db(current_user, 'Tags could not be properly saved. Please try again.')
-
-        # result = {}
-        # for tag in current_user.associated_tags:
-        #     result[tag.tagname] = dict(id=tag.id, count=tag.questions.count())
-        # return jsonify(result)
 
     return bad_request('Form submission is not correct', 403)
 
@@ -134,18 +115,6 @@ def remove_user_tags():
     tag_id = request.form.get('id', 0, type=int)
     tag = Tag.query.get_or_404(tag_id)
 
-    # current_user.associated_tags.remove(tag)
-
-    # try:
-    #     db.session.add(current_user)
-    #     db.session.commit()
-    # except SQLAlchemyError:
-    #     db.session.rollback()
-    #     msg = 'Tag cannot be removed.'
-    #     return bad_request(msg, 500)
-    
-    # result['message'] = 'Remove Successful'
-    # return jsonify(result)
     return remove_tag(tag)
 
 
@@ -300,15 +269,22 @@ def user_questions(id, ques_type):
 @main.route('/user/info', methods=['POST', 'GET'])
 @login_required
 def user_info():
-    desc = request.form.get('description')
+    desc = request.form.get('description', '')
+    username = request.form.get('username', '')
 
-    if not desc:
-        return bad_request('Description Empty. Please enter Description.')
+    if username:
+        current_user.username = username
+        msg = 'Username updated successfully.'
+    elif desc:
+        current_user.description = desc
+        msg = 'Description updated successfully.'
+    else:
+        return bad_request('Field Empty.')
 
-    current_user.description = desc
     add_to_db(current_user, 'Update unsuccessful')
-    
-    return dual_response('Update successful')
+    redir = url_for('.user', id=current_user.id)
+
+    return dual_response(msg, redir=redir)
 
 
 @main.route('/tags/<tagname>')

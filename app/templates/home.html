@@ -10,8 +10,8 @@
 				{{form.hidden_tag()}}
 				
 				{{macros.render_field(form.tags, class='form-control')}}
-
-				{{form.submit(class='btn btn-primary btn-block')}}
+		
+				{{form.submit(class='btn btn-default btn-block')}}
 			</form>
 		<hr/>
 			<h5><span class="glyphicon glyphicon-book"></span> My topics</h5>
@@ -32,7 +32,7 @@
 						<ul class="dropdown-menu" aria‐labelledby="dropdownMenu1">
 							{% set setting = current_user.setting %}
 
-							<li>										<button data-type="HD" id="hide-difficulty" type="button" class="btn {% if setting.hide_difficulty %}btn-success {% else %} btn-default {% endif %} btn-block"> Hide Difficulty</button>
+							<li>										<button data-type="HD" id="hide-difficulty" type="button" class="btn {% if setting.hide_difficulty %}btn-success {% else %} btn-default {% endif %} btn-block"><span class="glyphicon glyphicon-eye-close"></span> Hide Difficulty</button>
 							</li>
 							
 							<li>
@@ -45,23 +45,10 @@
 								
 							</li>
 							<li>
-								<button data-type="HO" id="hide-options" type="button" class="btn {% if setting.hide_options %}btn-success{% else %} btn-default {% endif %} btn-block">Hide Options</button>
+								<button data-type="HO" id="hide-options" type="button" class="btn {% if setting.hide_options %}btn-success{% else %} btn-default {% endif %} btn-block"><span class="glyphicon glyphicon-eye-close"></span> Hide Options</button>
 							</li>
 						</ul>
 					</div>
-
-<!-- 					<button  class="btn btn-default">
-						Auto Load
-						<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
-					</button>
-					<button id="keep-solved-ques" class="btn btn-default">
-						Show Solved Q's
-						<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
-					</button>
-					<button id="hide-difficulty" class="btn btn-default">
-						Hide Difficulty
-						<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
-					</button> -->
 		</div>
 		
 		
@@ -83,7 +70,8 @@
 				</div>
 			{% endfor %}
 		{% else %}
-		<h4>No related questions</h4>
+		<h5>There are no related questions.</h5>
+		<h5>You can post your own <a href="{{url_for('question.post_question')}}">here.</a></h5>
 		{% endif %}
 	</div>
 

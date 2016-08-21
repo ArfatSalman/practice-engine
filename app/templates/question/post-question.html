@@ -2,7 +2,38 @@
 
 
 {% block content%}
-	
-	{% include "question/_modify_questions.html" %}
+	<div class="row">
+		<div class="col-md-10 col-md-offset-1">
+			<div class="help-info">
+				<p class="lead">Post a Question!</p>
+				<p>Here you can post your own questions. <b>Please follow the standard conventions described here.</b></p>
+				<strong>Standard Conventions: </strong>
+				<ul>
+					<li>Please make sure that the question is unabmiguous, complete and correct.</li>
+					<li><strong>For Math content:</strong> The <code>Question</code> field and the <code>Options</code> field support MathJax. For a quick reference and examples <a href="http://meta.math.stackexchange.com/questions/5020/mathjax-basic-tutorial-and-quick-reference">click</a> here.</li>
+					<li>Only <strong>two</strong> options are necessary for a questions.</li>
+					<li><b>More than one option can be correct.</b></li>
+					<li><code>Description</code> is not necessary, however, it becomes easier for users to know additional information about the question. Descriptions can include:-</li>
+						<ul>
+							<li>The original author's name and/or year.</li>
+							<li>The exam(s) in which the question appeared.</li>
+							<li>Trivia etc.</li>
+						</ul>
+					<li>For maximum visibilty, choose the <code>Tags</code> carefully. The <code>Tags</code> are separated by a <code>,</code> (comma).</li>
+					<li> <b>There can be a maximum of 5 tags per question.</b> The recommended number is <b>3</b>.</li>
+					<li>Follow a heirarchy such as <b>Subject</b>,<b>Sub-field</b>, <b>Topic</b>, <b>Sub-topic</b> ... whenever applicable. Some examples are 
+						<ul>
+							<li>Computer, Compilers, LR Parsers</li>
+							<li>Physics, Motion, Newton's Laws</li>
+							<li>Math, Statistics, Regression</li>
+						</ul>
+					</li>
+
+				</ul>
+			
+			</div>
+		</div>
+		{% include "question/_modify_questions.html" %}
+	</div>
 	
 {% endblock %}

@@ -21,7 +21,7 @@ var QUESTION_LIST = {};
             elem.on('focus', function() {
                 elem.css({
                     border: '1px solid #ccc'
-                }).siblings('.text-danger').remove();
+                }).next('.text-danger').remove();
             });
         });
     };
@@ -36,6 +36,9 @@ var QUESTION_LIST = {};
 
 }(jQuery));
 
+function escapeHTML(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
 
 var show_input_error = function(elem, message = "") {
 
@@ -254,8 +257,11 @@ $(function(){
                     self.attr('disabled', true);
                 },
                 success: function(data){
-                    var p = '<p id="user-desc">' + new_desc;
-                    var end_p = '<button id="edit-desc-btn" class="btn btn-info btn-xs">Edit</button></p>';
+                    var p = '<p id="user-desc">' + escapeHTML(new_desc);
+                    var edit_icon = '<span class="glyphicon glyphicon-edit"></span>';
+                    var end_p = '<button id="edit-desc-btn" class="btn btn-link btn-xs">'+
+                                edit_icon+
+                                ' Edit</button></p>';
 
                     $('#user-desc-form').replaceWith(p+end_p);
 
@@ -270,6 +276,25 @@ $(function(){
     });
 });
 
+//Updating username 
+$(function(){
+    $(document).on('click', '#edit-username-btn', function(){
+        var username = $($('#username').contents()[0]);
+
+        var form = '<form method="post" action="/user/info" id="edit-username-form" class="form-inline">'+
+                    '<div class="form-group">'+
+                    '<input type="text" name="username" class="form-control" placeholder="Jane Doe">'+
+                    '</div>'+
+                    '<button type="submit" class="btn btn-default">Save</button>'+
+                    '</form>';
+
+        username.replaceWith(form);
+        $('#edit-username-form input').val(username.text());
+
+    });
+
+
+}); 
 // Hide options 
 $(function() {
     var hide_options = $('#hide-options');
@@ -427,7 +452,7 @@ $(function() {
                     var ques_id = $('input[name="question-id"]').val();
                     get_questions(ques_id);
                     //Show the appropriate message;
-                    if ($.isEmptyObject(sol_is)) {
+                    if ($.isEmptyObject(sol_id)) {
                         showAlert('Solution Posted Successfully.', 'success')
                     } else {
                         showAlert('Solution Edited successfully.', 'success');
@@ -565,6 +590,7 @@ $(function() {
 // Tag-it settings
 $(function() {
     $('#tags').tagit({
+        tagLimit: 5,
         allowSpaces: true,
         autocomplete: {
             source: function(request, response) {
@@ -623,7 +649,7 @@ $(function(){
                 self.attr('disabled', true);
             },
             success: function(data, textStatus, jqxhr) {
-
+                self.attr('disabled', false);
                 if (self.has('span').length === 0) {
                     self.parents('.panel').remove();
                 } else {
@@ -702,6 +728,14 @@ $(function() {
     });
 });
 
+$(function(){
+    $('input.ui-widget-content').on('focus', function(){
+        $('.tagit').css({
+            border: '1px solid #ccc'
+        }).next().remove();
+    });
+});
+
 var validate_tags = function() {
 
     if ($('#tags').val() === "") {
@@ -713,7 +747,8 @@ var validate_tags = function() {
     }
     return true;
 }
-//Tags
+
+//Tags Single tag subsription 
 $(function(){
     $('#subs-tag').on('click', function(){
         var self = $(this);
@@ -813,8 +848,12 @@ $(function() {
                     make_tag_elem(list, data);
 
                     $('.tagit-choice').remove();
+                    $('input.ui-widget-content').val('');
 
                     QUESTION_LIST = {};
+
+                    window.location.reload();
+
                 },
                 error: function(jqxhr, textStatus, errorThrown) {
                     error(jqxhr);
@@ -842,8 +881,7 @@ $(function() {
                 self.parent().remove()
             },
             error: function(jqxhr, textStatus, errorThrown) {
-                var json = jqxhr.responseJSON;
-                showAlert(json.message, 'danger');
+                error(jqxhr);
             }
         });
     });
@@ -936,6 +974,8 @@ var load_next_question = function() {
         delete QUESTION_LIST[key];
         break;
     }
+
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
 
     checks();
 
@@ -1062,15 +1102,15 @@ $(function() {
 
     // For setting the height of Sidebar 
     // and user tags
-    var height = parseInt($('.question-box').css('height'));
-    if (height > 564) {
-        var obj = {
-            height: height
-        }
-        $('.user-tags-col').css(obj);
-        $('.sidebar').css(obj);
+    var height = $(document).height();
 
-    }
+    var obj = {
+        height: height - 70
+        }
+
+    $('.user-tags-col').css(obj);
+    $('.sidebar').css(obj);
+    $('.question-box').css(obj);
 });
 
 var markdown = function(){

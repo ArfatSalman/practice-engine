@@ -67,6 +67,9 @@ def post_question():
             return redirect(url_for('.post_question'))
 
         tags = associate_tags(form)
+        if len(tags) > 5:
+            return dual_response('More than 5 tags are not allowed.')
+        
         if not tags:
             flash('At least one tag is required.')
             return redirect(url_for('.post_question'))
@@ -355,7 +358,7 @@ def delete_question(id):
 def unsolve_question():
     id = request.form.get('question-id', 0, type=int)
     ques = Question.query.get_or_404(id)
-    ques_assoc = SQ.query.filter_by(question=ques).one_or_none()
+    ques_assoc = SQ.query.filter_by(question=ques, user=current_user).one_or_none()
 
     ques_link = '<a href="%s"class="alert-link">Question %d</a>' % (url_for('.questions', id=ques.id), ques.id)
 

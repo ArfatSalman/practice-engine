@@ -1,6 +1,5 @@
 {% import "_macros.html" as macros %}
 
-<div class="row">
 	<div class="col-md-10 col-md-offset-1">
 		<form id="modify-ques-form" method="POST">
 			{{form.hidden_tag()}}
@@ -13,7 +12,7 @@
 				<div class="col-md-5 col-md-offset-1">
 					<h5> Question </h5>
 					<div class="questions">
-						<p id="MathQues" class="placeholder-text">Your question</p>
+						<p id="MathQues" class="placeholder-text">Question Preview</p>
 					</div>
 				</div>
 			</div>
@@ -49,12 +48,10 @@
 				</div>
 
 				<div class="col-md-5">
-					<!-- <h5> Option 1 </h5> -->
 					<p id="option_preview_1">Preview</p>
 				</div>
 
 				<div class="col-md-5 col-md-offset-1">
-					<!-- <h5> Option 2 </h5> -->
 					<p id="option_preview_2">Preview</p>
 				</div>
 
@@ -89,12 +86,10 @@
 				</div>
 
 				<div class="col-md-5">
-<!-- 					<h5> Option 3 </h5> -->
 					<p id="option_preview_3">Preview</p>
 				</div>
 
 				<div class="col-md-5 col-md-offset-1">
-<!-- 					<h5> Option 4 </h5> -->
 					<p id="option_preview_4">Preview</p>
 				</div>				
 			</div>
@@ -107,7 +102,7 @@
 				<div class="col-md-5 col-md-offset-1">
 					<h5> Description </h5>
 					<div>
-					<p id="desc-preview">Your question</p>
+					<p id="desc-preview">Description Preview</p>
 					</div>
 				</div>
 			</div>
@@ -123,78 +118,5 @@
 					{{form.submit(class='btn btn-block btn-primary', value='Post Question')}}
 				</div>
 			</div>
-
-
-			<!-- <div class="options row">
-				<div class="col-md-5">
-					{{macros.render_field(form.option2, class='form-control')}}
-
-					{% if form.option2_id %}
-						{{form.option2_id()}}
-					{% endif %}
-				</div>
-				<div class="col-md-1">
-					<div class="custom-checkbox">
-						{{form.check_option2}}
-						<label for="check_option2"></label>
-					</div>
-				</div>
-
-				<div class="col-md-5">
-					<h5> Option 2 </h5>
-					<div>
-					<p id="option_preview_2">Your question</p>
-					</div>
-				</div>
-			</div>
-
-			<div class="options row">
-				<div class="col-md-5">
-					{{macros.render_field(form.option3, class='form-control')}}
-
-					{% if form.option3_id %}
-						{{form.option3_id()}}
-					{% endif %}
-				</div>
-
-				<div class="col-md-1">
-					<div class="custom-checkbox">
-						{{form.check_option3}}
-						<label for="check_option3"></label>
-					</div>
-				</div>
-
-				<div class="col-md-5">
-					<h5> Option 3 </h5>
-					<div>
-					<p id="option_preview_3">Your question</p>
-					</div>
-				</div>
-			</div>
-
-			<div class="options row">
-				<div class="col-md-5">
-					{{macros.render_field(form.option4, class='form-control')}}
-
-					{% if form.option4_id %}
-						{{form.option4_id()}}
-					{% endif %}
-				</div>
-
-				<div class="col-md-1">
-					<div class="custom-checkbox">
-						{{form.check_option4}}
-						<label for="check_option4"></label>
-					</div>
-				</div>
-				
-				<div class="col-md-5">
-					<h5> Option 4 </h5>
-					<div>
-					<p id="option_preview_4">Your question</p>
-					</div>
-				</div>
-			</div> -->
 		</form>
 	</div>
-</div>

@@ -31,7 +31,7 @@
 					{% endif %}
 
 
-					<button id="report-question" data-count="{{ques.reported_wrong_ques}}" class="btn btn-default">
+					<button id="report-question" data-count="{{ques.reported_wrong_ques}}" class="btn {% if current_user.has_reported(ques) %}btn-success{% else %}btn-default{%endif%}">
 						<span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>
 					</button>
 
@@ -53,11 +53,14 @@
 				</div>
 
 				<h5>Question</h5>
-
-
-
+				{%- if ques.reported_by.count() > 3 %}
+				<div class="alert alert-warning alert-dismissible" role="alert">
+				  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				  <strong>Note!</strong> Better check yourself, you're not looking too good.
+				</div>
+				{% endif -%}
 				<div>
-					<p class="lead">{{ques.body}}</p>
+					<p id="question-body" class="lead">{{ques.body}}</p>
 				</div>
 			</div>
 
@@ -96,7 +99,7 @@
 								</button>
 
 								<ul class="dropdown-menu">
-									<li><a href="{{url_for('question.questions', id=ques.id)}}">Permalink</a></li>
+									<li><a href="{{url_for('question.questions', id=ques.id)}}"><span class="glyphicon glyphicon-paperclip"></span> Permalink</a></li>
 								</ul>
 							</div>
 
@@ -111,7 +114,7 @@
 							<button id="submit-options" class="btn btn-primary btn-block" type="submit"><span class="glyphicon glyphicon-send"></span> Check</button>
 						</div>
 						
-						{{macros.user_box(ques.user, class="col-md-4 pull-right")}}
+						{{macros.user_box(ques.user, class="home-user-box col-md-4 pull-right")}}
 
 					</div>
 				</form>
@@ -135,5 +138,20 @@
 
 		
 {% else %}
-	<h3>Please choose at least one topic.</h3>
+	{% if current_user.associated_tags.count() == 0 %}
+	<br/>
+	<br/>	
+	<h5>Please choose at least one topic to populate the questions.</h5>
+	<strong>Here is a quick walkthrough :-</strong>
+	<ul>
+		<li>You can post your own questions in Multiple Choice Format.</li>
+		<li>You can answer other questions</li>
+		<li>Every correct answer will fetch you points.</li>
+		<li>The streak will be updated everyday when you successfully solve a question that day.</li>
+	</ul>
+
+	<img class="img-rounded center-block" width="350px" src="{{url_for('static', filename='ph.jpg')}}" />
+	{% else %}
+
+	{% endif %}
 {% endif %}

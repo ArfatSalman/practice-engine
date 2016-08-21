@@ -22,7 +22,9 @@ def dual_response(message, category='success', redir=''):
 		return jsonify(message=message)
 	else:
 		flash(message, 'success')
-		return redirect('main.home')
+		if redir:
+			return redirect(redir)
+		return redirect(url_for('main.home'))
 
 def bad_request(message, status_code=403, redir='', category='danger'):
 	if request.is_xhr:

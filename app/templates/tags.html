@@ -12,9 +12,6 @@
 
         <div class="col-md-7">
             <div class="panel panel-info">
-                <!-- <div class="panel-heading">
-                    <h3>{{tag.tagname}}</h3>
-                </div> -->
                 <div class="panel-body">
                     <h2>{{tag.tagname}}</h2>
 
@@ -29,18 +26,24 @@
         </div>
 
         <div class="active-user-list col-md-3 pull-right">
-            <h5 class="text-center">Most Active Users</h5>
-            <div class="row">
-                {% for user in tag.top_users() %}
-                    <div class="col-md-12">
-                        {{user_box(user, class='pull-right')}}
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <strong>Most Active Users</strong>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        {% for user in tag.top_users() %}
+                            <div class="col-md-12">
+                                {{user_box(user, class='pull-right')}}
+                            </div>
+                        {% else %}
+                            <div class="col-md-12">
+                                <p>No Users</p>
+                            </div>
+                        {% endfor %}
+                        
                     </div>
-                {% else %}
-                    <div class="col-md-12">
-                        <p>No Users</p>
-                    </div>
-                {% endfor %}
-                
+                </div>
             </div>
             
         </div>

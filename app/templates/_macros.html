@@ -30,19 +30,19 @@
 {% macro question(obj, type='') %}
 
 	<div class="question row">
-		{% if obj.items %}
+		{%- if obj.items %}
 			{% set questions = obj.items %}
 		{% else %}
 			{% set questions = obj.limit(config['PER_PAGE_LIMIT']) %}
-		{% endif %}
+		{% endif -%}
 
-		{% for ques_assoc in questions %}
+		{%- for ques_assoc in questions %}
 
-            {% if ques_assoc.question %}
+            {%- if ques_assoc.question %}
                 {% set ques = ques_assoc.question %}
             {% else %}
                 {% set ques = ques_assoc %}
-            {% endif %}
+            {% endif -%}
 			
 			<div class="panel panel-default">
               
@@ -67,17 +67,17 @@
         {% else %}
         	<div class="panel panel-default">
         		<div class="panel-body">
-                	<p class="lead">No questions to display</p>
+                	<h5>There are no question to display. </h5>
               </div>
         	</div>
-        {% endfor %}
+        {% endfor -%}
 		
 		{{pager(obj, type)}}
 
     </div>
 {% endmacro %}
 
-{% macro solution(obj, type='') %}
+{%- macro solution(obj, type='') %}
 	
 	{% if obj.items %}
 		{% set solutions = obj.items %}
@@ -88,10 +88,7 @@
     {% for sol in solutions %}
         <div class="panel panel-info">
             
-            <div class="panel-body">
-
-           		{{sol.body}}
-            </div>
+            <div class="panel-body">{{sol.body}}</div>
 
             <div class="panel-footer">
                 <div class="row">
@@ -110,17 +107,15 @@
                 
               </div>
         </div> 
-    {% else %}
+    {%- else %}
     <div class="panel panel-danger">
-        <div class="panel-body">
-            No Solutions
-        </div>
+        <div class="panel-body"><h5>There are no solutions at the moment.</h5><h5>You can post a solution by clicking on the <code>Solutions > Post Solutions</code> tab above.</h5></div>
     </div>
-    {% endfor %}
+    {% endfor -%}
 
     {{pager(obj, type)}}
 
-{% endmacro %}
+{% endmacro -%}
 
 {% macro render_field(field) %}
 	{% if field.errors %}		
@@ -134,7 +129,7 @@
 		</div>
 	{% else %}
 		<div class="form-group">
-			{{field.label}}
+			{{field.label}} {% if field.flags.required %}<span class="text-danger glyphicon glyphicon-asterisk"></span> {% endif %}
 			{{field(**kwargs)}}
 		</div>
 	{% endif %}
@@ -192,7 +187,7 @@
 			{% endif %}
 			</li>
 		{% else %}
-			<h3>Please choose at least one tag.</h3>
+			<h5 class="text-center">At the moment, there are no tags associated in your profile.</h5>
 		{% endfor %}
 	</ul>
 {% endmacro %}
