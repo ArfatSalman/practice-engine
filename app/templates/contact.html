@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% from "_macros.html" import render_field with context %}
+
+{% block title %}Contact Us{% endblock %}
+
+{% block content %}
+	<div class="row">
+
+		<div class="col-md-6 col-md-offset-3">
+			<h1>Contact Us!</h1>
+
+			<p class="lead">If you have any suggestions, feedback or criticism, please email us. </p>
+		</div>
+		
+		<div class="col-md-6 col-md-offset-3">
+			
+			<form id="contact-form" method="post">
+				{{form.hidden_tag()}}
+
+				{{render_field(form.message, class='form-control', rows="5", required='required')}}
+
+				{{form.submit(class='btn btn-info btn-block')}}
+			</form>
+
+		</div>
+	</div>
+{% endblock %}

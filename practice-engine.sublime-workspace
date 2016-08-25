@@ -4,12 +4,64 @@
 		"selected_items":
 		[
 			[
-				"cure",
-				"current_user"
+				"di",
+				"disabled"
+			],
+			[
+				"fun",
+				"function〔keyword〕"
+			],
+			[
+				"pag",
+				"paginate"
+			],
+			[
+				"questions",
+				"questions_fav"
+			],
+			[
+				"ques_",
+				"ques_type〔argument〕"
+			],
+			[
+				"before",
+				"beforeSend"
 			],
 			[
 				"ques",
-				"questions_reported"
+				"ques_id"
+			],
+			[
+				"solution",
+				"solutions"
+			],
+			[
+				"sc",
+				"script"
+			],
+			[
+				"bac",
+				"background-repeat"
+			],
+			[
+				"w",
+				"width"
+			],
+			[
+				"ba",
+				"background-size"
+			],
+			[
+				"hea",
+				"header"
+			],
+			[
+				"font-",
+				"font-family"
+			],
+			[
+				"cure",
+				"current_user"
 			],
 			[
 				"da",
@@ -204,10 +256,6 @@
 				"app_errorhandler"
 			],
 			[
-				"di",
-				"difficulty"
-			],
-			[
 				"dif",
 				"difficulty〔variable〕"
 			],
@@ -226,10 +274,6 @@
 			[
 				"Sol",
 				"SolvedQuestionAssoc"
-			],
-			[
-				"questions",
-				"questions_solved"
 			],
 			[
 				"q",
@@ -258,10 +302,6 @@
 			[
 				"a",
 				"ajax〔function〕"
-			],
-			[
-				"ques_",
-				"ques_link〔variable〕"
 			],
 			[
 				"filter",
@@ -474,46 +514,6 @@
 			[
 				"curre",
 				"current_user〔module〕"
-			],
-			[
-				"get_",
-				"get_or_404"
-			],
-			[
-				"sele",
-				"select_option〔function〕"
-			],
-			[
-				"bt",
-				"$btn〔argument〕"
-			],
-			[
-				"CO",
-				"COV〔variable〕"
-			],
-			[
-				"ex",
-				"executable〔variable〕"
-			],
-			[
-				"execv",
-				"execvp〔function〕"
-			],
-			[
-				"qu",
-				"ques_assoc"
-			],
-			[
-				"S",
-				"SolutionForm"
-			],
-			[
-				"all",
-				"allowed_tags〔variable〕"
-			],
-			[
-				"body",
-				"body_html"
 			]
 		]
 	},
@@ -523,15 +523,7 @@
 			"file": "app/main/views.py",
 			"settings":
 			{
-				"buffer_size": 10473,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "app/main/__init__.py",
-			"settings":
-			{
-				"buffer_size": 851,
+				"buffer_size": 11084,
 				"line_ending": "Windows"
 			}
 		},
@@ -539,15 +531,15 @@
 			"file": "app/question/views.py",
 			"settings":
 			{
-				"buffer_size": 13673,
+				"buffer_size": 13985,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "app/templates/question/question.html",
+			"file": "app/templates/_posted.html",
 			"settings":
 			{
-				"buffer_size": 3759,
+				"buffer_size": 753,
 				"line_ending": "Windows"
 			}
 		},
@@ -579,7 +571,7 @@
 			"file": "app/templates/base.html",
 			"settings":
 			{
-				"buffer_size": 6255,
+				"buffer_size": 6144,
 				"line_ending": "Windows"
 			}
 		},
@@ -608,10 +600,18 @@
 			}
 		},
 		{
+			"file": "app/templates/index.html",
+			"settings":
+			{
+				"buffer_size": 3396,
+				"line_ending": "Windows"
+			}
+		},
+		{
 			"file": "app/static/scripts/scripts.js",
 			"settings":
 			{
-				"buffer_size": 33376,
+				"buffer_size": 34637,
 				"line_ending": "Windows"
 			}
 		},
@@ -619,7 +619,23 @@
 			"file": "app/templates/_macros.html",
 			"settings":
 			{
-				"buffer_size": 6253,
+				"buffer_size": 6345,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "app/templates/_downvoted.html",
+			"settings":
+			{
+				"buffer_size": 571,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "config.py",
+			"settings":
+			{
+				"buffer_size": 1488,
 				"line_ending": "Windows"
 			}
 		},
@@ -664,24 +680,32 @@
 	},
 	"file_history":
 	[
+		"/C/Users/Arfat Salman/Desktop/practice-engine/app/__init__.py",
+		"/C/Users/Arfat Salman/Desktop/practice-engine/manage.py",
+		"/C/Users/Arfat Salman/Desktop/practice-engine/app/templates/_macros.html",
+		"/C/Users/Arfat Salman/Desktop/practice-engine/app/auth/views.py",
+		"/C/Users/Arfat Salman/Desktop/ball.js",
+		"/C/Users/Arfat Salman/Desktop/unslider-master/src/js/unslider.js",
+		"/C/Users/Arfat Salman/Desktop/unslider-master/dist/css/unslider-dots.css",
+		"/C/Users/Arfat Salman/Desktop/unslider-master/src/scss/unslider.css",
+		"/C/Users/Arfat Salman/Desktop/CS 702 Information Security/1_additive_cipher.cpp",
+		"/C/Users/Arfat Salman/Desktop/unslider-master/dist/css/unslider.css",
+		"/C/Users/Arfat Salman/Desktop/CodeVita/Set 2/Q3.py",
+		"/C/Users/Arfat Salman/Desktop/practice-engine/app/templates/question/question.html",
+		"/C/Users/Arfat Salman/Desktop/practice-engine/app/main/__init__.py",
 		"/C/Users/Arfat Salman/Desktop/practice-engine/.gitignore",
 		"/C/Users/Arfat Salman/Desktop/practice-engine/app/templates/_posted.html",
 		"/C/Users/Arfat Salman/Desktop/practice-engine/app/templates/home.html",
 		"/C/Users/Arfat Salman/Desktop/practice-engine/app/templates/user.html",
-		"/C/Users/Arfat Salman/Desktop/CS 702 Information Security/1_additive_cipher.cpp",
 		"/C/Users/Arfat Salman/Desktop/a.html",
 		"/C/Users/Arfat Salman/Desktop/practice-engine/app/templates/tags.html",
 		"/C/Users/Arfat Salman/Desktop/practice-engine/app/templates/question/_question.html",
-		"/C/Users/Arfat Salman/Desktop/practice-engine/app/auth/views.py",
 		"/C/Users/Arfat Salman/Desktop/practice-engine/app/templates/question/_modify_questions.html",
 		"/C/Users/Arfat Salman/Desktop/practice-engine/app/templates/question/post-question.html",
 		"/C/Users/Arfat Salman/Desktop/practice-engine/app/templates/base.html",
 		"/C/Users/Arfat Salman/Desktop/practice-engine/reset_streak.py",
-		"/C/Users/Arfat Salman/Desktop/practice-engine/manage.py",
 		"/C/Users/Arfat Salman/Desktop/practice-engine/app/reset_streak.py",
-		"/C/Users/Arfat Salman/Desktop/practice-engine/app/__init__.py",
 		"/C/Users/Arfat Salman/Desktop/practice-engine/config.py",
-		"/C/Users/Arfat Salman/Desktop/practice-engine/app/templates/_macros.html",
 		"/C/Users/Arfat Salman/Desktop/practice-engine/app/templates/_tags.html",
 		"/C/Users/Arfat Salman/Desktop/practice-engine/app/templates/_favourited.html",
 		"/C/Users/Arfat Salman/Desktop/practice-engine/app/templates/_downvoted.html",
@@ -701,8 +725,6 @@
 		"/C/Users/Arfat Salman/Desktop/practice-engine/app/static/scripts/scripts.js",
 		"/C/Users/Arfat Salman/Desktop/practice-engine/app/templates/question/_tabs.html",
 		"/C/Users/Arfat Salman/Desktop/practice-engine/tests/test_main.py",
-		"/C/Users/Arfat Salman/Desktop/practice-engine/app/templates/question/question.html",
-		"/C/Users/Arfat Salman/Desktop/practice-engine/app/main/__init__.py",
 		"/C/Users/Arfat Salman/Desktop/practice-engine/tests/data.py",
 		"/C/Users/Arfat Salman/Desktop/practice-engine/migrations/versions/25e16179690f_.py",
 		"/C/Users/Arfat Salman/Desktop/practice-engine/app/templates/404.html",
@@ -765,6 +787,11 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"upvote",
+			"height",
+			"sol-pre",
+			"solution",
+			"></",
 			"tags",
 			"check",
 			"MathJax",
@@ -817,7 +844,7 @@
 	"groups":
 	[
 		{
-			"selected": 6,
+			"selected": 2,
 			"sheets":
 			[
 				{
@@ -825,15 +852,15 @@
 					"file": "app/main/views.py",
 					"settings":
 					{
-						"buffer_size": 10473,
+						"buffer_size": 11084,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								8796,
-								8796
+								8678,
+								8678
 							]
 						],
 						"settings":
@@ -844,53 +871,25 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 54.0,
+						"translation.y": 4536.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "app/main/__init__.py",
-					"settings":
-					{
-						"buffer_size": 851,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								610,
-								610
-							]
-						],
-						"settings":
-						{
-							"auto_complete": false,
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 162.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
 					"file": "app/question/views.py",
 					"settings":
 					{
-						"buffer_size": 13673,
+						"buffer_size": 13985,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1823,
-								1823
+								11540,
+								11540
 							]
 						],
 						"settings":
@@ -901,41 +900,39 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 432.0,
+						"translation.y": 4752.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 3,
-					"file": "app/templates/question/question.html",
+					"buffer": 2,
+					"file": "app/templates/_posted.html",
 					"settings":
 					{
-						"buffer_size": 3759,
+						"buffer_size": 753,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2778,
-								2778
+								40,
+								68
 							]
 						],
 						"settings":
 						{
-							"auto_complete": false,
-							"syntax": "Packages/HTML/HTML.tmLanguage",
-							"translate_tabs_to_spaces": false
+							"syntax": "Packages/HTML/HTML.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 756.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 4,
+					"buffer": 3,
 					"file": "app/templates/question/_question.html",
 					"settings":
 					{
@@ -946,8 +943,8 @@
 						"selection":
 						[
 							[
-								4261,
-								4261
+								3963,
+								3963
 							]
 						],
 						"settings":
@@ -957,13 +954,13 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2430.0,
+						"translation.y": 90.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 5,
+					"buffer": 4,
 					"file": "app/templates/_solutions.html",
 					"settings":
 					{
@@ -990,7 +987,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 6,
+					"buffer": 5,
 					"file": "app/templates/user.html",
 					"settings":
 					{
@@ -1013,7 +1010,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 216.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1021,38 +1018,39 @@
 			]
 		},
 		{
-			"selected": 4,
+			"selected": 8,
 			"sheets":
 			[
 				{
-					"buffer": 7,
+					"buffer": 6,
 					"file": "app/templates/base.html",
 					"settings":
 					{
-						"buffer_size": 6255,
+						"buffer_size": 6144,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3361,
-								3543
+								1498,
+								1498
 							]
 						],
 						"settings":
 						{
+							"auto_complete": false,
 							"syntax": "Packages/HTML/HTML.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1674.0,
+						"translation.y": 648.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 8,
+					"buffer": 7,
 					"file": "app/static/css/style.css",
 					"settings":
 					{
@@ -1080,7 +1078,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 9,
+					"buffer": 8,
 					"file": "/D/Ciphers/cipher/main.cpp",
 					"settings":
 					{
@@ -1108,7 +1106,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 10,
+					"buffer": 9,
 					"file": "app/models.py",
 					"settings":
 					{
@@ -1131,7 +1129,36 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 6210.0,
+						"translation.y": 9666.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "app/templates/index.html",
+					"settings":
+					{
+						"buffer_size": 3396,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								470,
+								470
+							]
+						],
+						"settings":
+						{
+							"auto_complete": false,
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1141,15 +1168,15 @@
 					"file": "app/static/scripts/scripts.js",
 					"settings":
 					{
-						"buffer_size": 33376,
+						"buffer_size": 34637,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								24307,
-								24307
+								19544,
+								19544
 							]
 						],
 						"settings":
@@ -1160,7 +1187,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 14974.0,
+						"translation.y": 12574.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1170,15 +1197,15 @@
 					"file": "app/templates/_macros.html",
 					"settings":
 					{
-						"buffer_size": 6253,
+						"buffer_size": 6345,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3430,
-								3430
+								5702,
+								5702
 							]
 						],
 						"settings":
@@ -1187,13 +1214,70 @@
 							"syntax": "Packages/HTML/HTML.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 1836.0,
+						"translation.y": 486.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 13,
+					"file": "app/templates/_downvoted.html",
+					"settings":
+					{
+						"buffer_size": 571,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								67,
+								67
+							]
+						],
+						"settings":
+						{
+							"auto_complete": false,
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 14,
+					"file": "config.py",
+					"settings":
+					{
+						"buffer_size": 1488,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								723,
+								723
+							]
+						],
+						"settings":
+						{
+							"auto_complete": false,
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 162.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 15,
 					"file": "app/utilities.py",
 					"settings":
 					{
@@ -1215,7 +1299,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 324.0,
+						"translation.y": 270.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

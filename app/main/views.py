@@ -1,9 +1,13 @@
+import random, datetime
+
 from flask import render_template, session, redirect, url_for
 from flask import request, jsonify, flash, current_app
 from flask_login import current_user, login_required, login_user
+from flask_mail import Message
 from sqlalchemy.exc import SQLAlchemyError
+
 from . import main
-from .. import db
+from .. import db, mail
 from ..models import (  User, 
                         Question, 
                         Tag,
@@ -14,11 +18,11 @@ from ..models import (  User,
                         UpvoteDownvoteSolutionAssoc as UDS,
                         UserSetting as US,
                         SolvedQuestionsAssoc as SQ)
-from .forms import UserTagsForm
+from .forms import UserTagsForm, ContactUsForm
 from ..question.forms import SolutionForm
 from ..question.views import associate_tags
 from ..utilities import print_debug, bad_request, add_to_db, add_to_db_ajax, dual_response
-import random, datetime
+
 
 @main.before_app_request
 def ping():
@@ -261,6 +265,18 @@ def user_questions(id, ques_type):
                          .paginate(page,
                                    per_page=current_app.config['PER_PAGE_LIMIT'])
         filename = "_solved.html"
+    elif ques_type == 'favourited':
+        pagination = user.questions_fav\
+                         .paginate(page, per_page=current_app.config['PER_PAGE_LIMIT'])
+        filename = '_favourited.html'
+    elif ques_type == 'upvoted':
+        pagination = user.questions_upvoted\
+                         .paginate(page, per_page=current_app.config['PER_PAGE_LIMIT'])
+        filename = '_upvoted.html'
+    elif ques_type == 'downvoted':
+        pagination = user.questions_downvoted\
+                         .paginate(page, per_page=current_app.config['PER_PAGE_LIMIT'])
+        filename = '_downvoted.html'
     else:
         return bad_request("Wrong request format.")
     return jsonify(content=render_template(filename,
@@ -340,3 +356,26 @@ def user_setting():
     add_to_db_ajax(setting, 'Setting Unsuccessful')
 
     return jsonify(message='Setting successful')
+
+
+@main.route('/contact-us', methods=['POST', 'GET'])
+@login_required
+def contact_us():
+    form = ContactUsForm()
+
+    if form.validate_on_submit():
+
+        msg = Message('Message - Practice Engine', sender='giney.paradise@gmail.com')
+        
+        body = 'User ID - %s\n' % current_user.id
+        body += 'Email - %s\n' % current_user.email
+        body += '| Message - %s' % form.message.data
+
+        msg.recipients = ['giney.paradise@gmail.com']
+        msg.body = body
+        
+        mail.send(msg)
+
+        return dual_response('Your feedback has been successfully sent.', redir=url_for('.home'))
+
+    return render_template('contact.html', form=form)

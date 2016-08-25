@@ -136,26 +136,24 @@
 {% endmacro %}
 
 {% macro upvote(user, ques, type='upvote-btn') %}
-
-	
-		<button href="#" data-id="{{ques.id}}" data-count="{{ques.upvoted_by.count()}}" class="{{type}} btn {% if user.has_upvoted(ques) %}btn-success{% else %}btn-default{%endif%}" {% if user.has_downvoted(ques)%}disabled="disbaled"{%endif%}>
+		<button href="#" data-id="{{ques.id}}" data-count="{{ques.upvoted_by.count()}}" class="{{type}} btn {% if user.has_upvoted(ques) %}btn-success{% else %}btn-default{%endif%}" {% if user.has_downvoted(ques)%}disabled="disabled"{%endif%} autocomplete="off">
 			<span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span>
 		</button>
 {% endmacro %}
 
 {% macro downvote(user, ques, type='downvote-btn') %}
-		<button data-id="{{ques.id}}" data-count="{{ques.downvoted_by.count()}}" class="{{type}} btn {% if user.has_downvoted(ques) %}btn-success{%else%}btn-default{%endif%}" {%if user.has_upvoted(ques)%}disabled="disbaled"{%endif%}>
+		<button data-id="{{ques.id}}" data-count="{{ques.downvoted_by.count()}}" class="{{type}} btn {% if user.has_downvoted(ques) %}btn-success{%else%}btn-default{%endif%}" {%if user.has_upvoted(ques)%}disabled="disabled"{%endif%} autocomplete="off">
 			<span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
 		</button>
 {% endmacro %}
 
 {% macro favourite(user, ques, text='', btn_size="") %}
 	{% if user.has_favourited(ques) %}
-		<button data-id="{{ques.id}}" data-count="{{ques.fav_by.count()}}" class="favourite-btn btn btn-success">
+		<button data-id="{{ques.id}}" data-count="{{ques.fav_by.count()}}" class="favourite-btn btn btn-success" autocomplete="off">
 			{{text}}
 			<span class="glyphicon glyphicon-star" aria-hidden="true"></span>
 	{% else %}
-		<button data-id="{{ques.id}}" data-count="{{ques.fav_by.count()}}" class="favourite-btn btn btn-default">
+		<button data-id="{{ques.id}}" data-count="{{ques.fav_by.count()}}" class="favourite-btn btn btn-default" autocomplete="off">
 			{{text}}
 			<span class="glyphicon glyphicon-star-empty" aria-hidden="true"></span>
 	{% endif %}
@@ -170,7 +168,7 @@
 
 {% macro unsolve_button(user, ques, text='', btn_size='') %}
 	{% if user.has_solved(ques) %}
-		<button data-id="{{ques.id}}" class="unsolve-btn btn btn-danger {{btn_size}}"><span class="glyphicon glyphicon-remove-sign"></span> Unsolve</button>
+		<button data-id="{{ques.id}}" class="unsolve-btn btn btn-danger {{btn_size}}" autocomplete="off"><span class="glyphicon glyphicon-remove-sign"></span> Unsolve</button>
 	{% endif %}
 {% endmacro %}
 

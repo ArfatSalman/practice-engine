@@ -1,3 +1,10 @@
+#contact-form {
+    height: 450px;
+}
+#practice {
+    color: red;
+    font-size: 25px;
+}
 
 blockquote {
     padding: 5px 10px;
@@ -18,7 +25,7 @@ blockquote {
     font-family: Ubuntu;
     font-size: 25px;
 }
-#brand span {
+#brand small {
     font-size: 14px;
 }
 #tag-ques {

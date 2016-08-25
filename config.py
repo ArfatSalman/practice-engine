@@ -20,11 +20,12 @@ class Config:
 
 class DevelopmentConfig(Config):
 	DEBUG = True
-	MAIL_SERVER = ''
-	MAIL_PORT = 587
-	MAIL_USE_TLS = True
-	MAIL_USERNAME = ''
-	MAIL_PASSWORD = ''
+	MAIL_SERVER = 'smtp.gmail.com'
+	MAIL_PORT = 465
+	MAIL_USE_TLS = False
+	MAIL_USE_SSL = True
+	MAIL_USERNAME = 'giney.paradise@gmail.com'
+	MAIL_PASSWORD = 'arfat78692%'
 	SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root@localhost/test'
 	SQLALCHEMY_ECHO = False
 	REMEMBER_COOKIE_HTTPONLY = True
@@ -38,6 +39,11 @@ class TestingConfig(Config):
 
 
 class ProductionConfig(Config):
+	MAIL_SERVER = 'smtp.googlemail.com'
+	MAIL_PORT = 587
+	MAIL_USE_TLS = True
+	MAIL_USERNAME = 'giney.paradise@gmail.com'
+	MAIL_PASSWORD = 'arfat78692%'
 	SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://Arfat:arfat78692@Arfat.mysql.pythonanywhere-services.com/Arfat$arfat'
 
 config = {

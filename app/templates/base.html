@@ -7,7 +7,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>
-		{% block title %} Forty 2 {% endblock %}
+		 {% block title %}Home{% endblock %} - Practice Engine
 		</title>
 
 		<!-- Bootstrap -->
@@ -18,16 +18,14 @@
 		<link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet"> 
 
 		<script src='http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_HTMLorMML'></script>
-		
-		<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>-->
-		<script type="text/javascript" src="{{url_for('static', _external=True, filename='scripts/jquery.js')}}"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 		<script type="text/javascript" src="{{url_for('static',_external=True,filename='scripts/jqueryui.js')}}"></script>
 		<script type="text/javascript" src="{{url_for('static',_external=True, filename='scripts/bootstrap.min.js')}}">
 		</script>
 
 		<script type="text/javascript" src="{{url_for('static',_external=True,filename='scripts/tagit.js')}}"></script>
 
-		<script type="text/javascript" src="{{url_for('static',_external=True,filename='scripts/scripts.js')}}"></script>
+		 <script type="text/javascript" src="{{url_for('static',_external=True,filename='scripts/scripts.js')}}"></script>
 
 		<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -51,7 +49,7 @@
 			        <span class="icon-bar"></span>
 			        <span class="icon-bar"></span>
 			      </button>
-			      <a id="brand" class="navbar-brand" href="{{url_for('main.index',_external=True)}}">Practice ∃ngine <span class="text-danger"><strong> Beta</strong></span></a>
+			      <a id="brand" class="navbar-brand" href="{{url_for('main.index',_external=True)}}"><span id="practice">Practice</span> ∃ngine <span class="text-danger"><small> Beta</small></a>
 			    </div>
 
 			    <!-- Collect the nav links, forms, and other content for toggling -->
@@ -72,6 +70,7 @@
 				          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="caret"></span></a>
 					         <ul class="dropdown-menu">
 					            <li><a href="{{url_for('main.user', id=current_user.id)}}"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
+					            <li><a href="{{url_for('main.contact_us')}}"><span class="glyphicon glyphicon-earphone"></span> Contact Us</a></li>
 					            <li><a href="{{url_for('auth.logout')}}"><span class="glyphicon glyphicon-log-out"></span> Sign out</a></li>
 					           
 		          			</ul>

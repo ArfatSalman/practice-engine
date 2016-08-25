@@ -28,16 +28,16 @@ var QUESTION_LIST = {};
 
     $.fn.just_text_node = function(text) {
         return this.contents()
-                   .filter(function(){ 
-                        return this.nodeType == 3; 
-                        })
-                   .replaceWith(text)
+            .filter(function() {
+                return this.nodeType == 3;
+            })
+            .replaceWith(text)
     };
 
 }(jQuery));
 
 function escapeHTML(str) {
-    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 var show_input_error = function(elem, message = "") {
@@ -55,23 +55,23 @@ var show_input_error = function(elem, message = "") {
 
 var checks = function() {
 
-    $('.upvote-btn').each(function(){
-        var obj = $(this);
-        
-        if (obj.hasClass('btn-success')) {
-            obj.siblings('.downvote-btn')
-               .attr('disabled', true);
-        }
-    });
+    // $('.upvote-btn').each(function(){
+    //     var obj = $(this);
 
-    $('.downvote-btn').each(function(){
-        var obj = $(this);
-        
-        if (obj.hasClass('btn-success')) {
-            obj.siblings('.upvote-btn')
-               .attr('disabled', true);
-        }
-    });
+    //     if (obj.hasClass('btn-success')) {
+    //         obj.siblings('.downvote-btn')
+    //            .attr('disabled', true);
+    //     }
+    // });
+
+    // $('.downvote-btn').each(function(){
+    //     var obj = $(this);
+
+    //     if (obj.hasClass('btn-success')) {
+    //         obj.siblings('.upvote-btn')
+    //            .attr('disabled', true);
+    //     }
+    // });
 };
 
 
@@ -116,7 +116,7 @@ var preview = function(inputElem, previewElem) {
         var self = $(this);
         var text = self.val();
 
-        
+
         UpdateMath(text, previewElem).css(css);
 
     });
@@ -180,12 +180,12 @@ var report_questions = function(self, _data) {
     };
 
     $.extend(data, _data);
-    
+
     $.ajax({
         url: '/report-question',
         type: 'POST',
         data: data,
-        beforeSend: function(){
+        beforeSend: function() {
             self.prop('disabled', true);
         },
         success: function() {
@@ -201,11 +201,42 @@ var report_questions = function(self, _data) {
     });
 };
 
-// Report Questions
-$(function(){
-    $('.question-box').on('click', '#report-question', function(e){
+// Contact Us FORM
+$(function() {
+    $("#contact-form").on('submit', function(e) {
+        e.preventDefault();
+
         var self = $(this);
-        
+
+        var btn = self.children('#submit');
+
+        $.ajax({
+            url: '/contact-us',
+            type: 'POST',
+            data: self.serialize(),
+            beforeSend: function() {
+                btn.attr('disabled', true);
+            },
+            complete: function() {
+                btn.attr('disabled', false);
+            },
+            success: function(data) {
+                showAlert(data.message, 'success');
+            },
+            error: function(jqxhr) {
+                error(jqxhr)
+            }
+        });
+    });
+});
+
+
+
+// Report Questions
+$(function() {
+    $('.question-box').on('click', '#report-question', function(e) {
+        var self = $(this);
+
         if (self.hasClass('btn-default')) {
             $('#report-ques-modal').modal();
         } else {
@@ -213,7 +244,7 @@ $(function(){
         }
     });
 
-    $('.modal').on('click', '#report-ques-btn', function(e){
+    $('.modal').on('click', '#report-ques-btn', function(e) {
         var data = {
             message: $('#report-message').val()
         };
@@ -223,13 +254,13 @@ $(function(){
             report_questions(self, data);
         } else {
             report_questions(self);
-        }        
+        }
     })
 });
 
 // Updating description.
-$(function(){
-    $(document).on('click','#edit-desc-btn', function(e){
+$(function() {
+    $(document).on('click', '#edit-desc-btn', function(e) {
         var markup = '<textarea id="desc-text" class="form-control" rows="3"></textarea>';
         var save_btn = '<button type="submit" id="save-desc-btn" class="btn btn-default">Update</button>'
         var form = '<form id="user-desc-form" action="post">';
@@ -240,10 +271,10 @@ $(function(){
         // For taking only the text value of the elem and not the child
         var text = $.trim(user_desc.contents()[0].nodeValue);
 
-        user_desc.replaceWith(form+markup+save_btn+end_form);
+        user_desc.replaceWith(form + markup + save_btn + end_form);
         $('#desc-text').val(text).my_required();
 
-        $('#user-desc-form').on('submit', function(e){
+        $('#user-desc-form').on('submit', function(e) {
             e.preventDefault();
             var new_desc = $('#desc-text').val();
             var self = $(this);
@@ -253,20 +284,20 @@ $(function(){
                 data: {
                     description: new_desc
                 },
-                beforeSend: function(){
+                beforeSend: function() {
                     self.attr('disabled', true);
                 },
-                success: function(data){
+                success: function(data) {
                     var p = '<p id="user-desc">' + escapeHTML(new_desc);
                     var edit_icon = '<span class="glyphicon glyphicon-edit"></span>';
-                    var end_p = '<button id="edit-desc-btn" class="btn btn-link btn-xs">'+
-                                edit_icon+
-                                ' Edit</button></p>';
+                    var end_p = '<button id="edit-desc-btn" class="btn btn-link btn-xs">' +
+                        edit_icon +
+                        ' Edit</button></p>';
 
-                    $('#user-desc-form').replaceWith(p+end_p);
+                    $('#user-desc-form').replaceWith(p + end_p);
 
                     showAlert(data.message, 'success');
-                }, 
+                },
                 error: function(jqxhr) {
                     error(jqxhr)
                 }
@@ -277,16 +308,16 @@ $(function(){
 });
 
 //Updating username 
-$(function(){
-    $(document).on('click', '#edit-username-btn', function(){
+$(function() {
+    $(document).on('click', '#edit-username-btn', function() {
         var username = $($('#username').contents()[0]);
 
-        var form = '<form method="post" action="/user/info" id="edit-username-form" class="form-inline">'+
-                    '<div class="form-group">'+
-                    '<input type="text" name="username" class="form-control" placeholder="Jane Doe">'+
-                    '</div>'+
-                    '<button type="submit" class="btn btn-default">Save</button>'+
-                    '</form>';
+        var form = '<form method="post" action="/user/info" id="edit-username-form" class="form-inline">' +
+            '<div class="form-group">' +
+            '<input type="text" name="username" class="form-control" placeholder="Jane Doe">' +
+            '</div>' +
+            '<button type="submit" class="btn btn-default">Save</button>' +
+            '</form>';
 
         username.replaceWith(form);
         $('#edit-username-form input').val(username.text());
@@ -294,7 +325,7 @@ $(function(){
     });
 
 
-}); 
+});
 // Hide options 
 $(function() {
     var hide_options = $('#hide-options');
@@ -303,23 +334,23 @@ $(function() {
         hide_options();
     }
 
-    $(".question-box").on('click', '#show-options-btn', function(e){
+    $(".question-box").on('click', '#show-options-btn', function(e) {
         show_options();
         e.preventDefault();
     });
 });
 
 // pagination 
-$(function(){
-    $(document).on('click', '.previous, .next', function(event){
+$(function() {
+    $(document).on('click', '.previous, .next', function(event) {
         event.preventDefault();
-        
+
         var self = $(this);
         var user_id = $('input[name="user-id"]').val();
         var question_id = $('input[name="question-id"]').val();
         var type = self.parent().attr('class').split(' ')[0];
 
-        var url = '/user/'+ user_id + '/' + type;
+        var url = '/user/' + user_id + '/' + type;
         var data = {
             page: self.data('page')
         };
@@ -345,18 +376,18 @@ $(function(){
             complete: function() {
                 self.removeClass('disabled');
             },
-            success: function(data, textStatus, jqxhr){
+            success: function(data, textStatus, jqxhr) {
                 var html = data['content'];
-                var elem = '#'+type;
+                var elem = '#' + type;
 
                 if (html) {
                     $(elem).html(html);
                 }
 
                 // For rendering the Math again.
-                MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
             },
-            error: function(jqxhr){
+            error: function(jqxhr) {
                 error(jqxhr)
             }
         });
@@ -381,7 +412,7 @@ $(function() {
             url: '/vote-solution',
             data: data,
             type: 'POST',
-            beforeSend: function(){
+            beforeSend: function() {
                 self.attr('disabled', true);
             },
             success: function() {
@@ -389,17 +420,17 @@ $(function() {
 
                 if (data.is_upvote) {
                     if (self.hasClass('btn-success')) {
-                        self.siblings('.sol-downvote-btn')
+                        self.siblings('.sol-downvote-btn:first')
                             .attr('disabled', true);
                     } else {
-                        self.siblings('.sol-downvote-btn')
+                        self.siblings('.sol-downvote-btn:first')
                             .attr('disabled', false);
                     }
                 } else {
                     if (self.hasClass('btn-success')) {
-                        self.siblings('.sol-upvote-btn').attr('disabled', true);
+                        self.siblings('.sol-upvote-btn:first').attr('disabled', true);
                     } else {
-                        self.siblings('.sol-upvote-btn').attr('disabled', false);
+                        self.siblings('.sol-upvote-btn:first').attr('disabled', false);
                     }
                 }
 
@@ -415,23 +446,58 @@ $(function() {
 //Post Solutions
 $(function() {
     $(document).on('click', '#edit-sol', function() {
+        var self = $(this);
         var sol_form = $('#solution-form');
-        var val = $.trim($('#to-edit').text());
-        var css = {
-                display: 'none',
-            };
+        //var val = $.trim($('#to-edit').text());
 
-        if (sol_form.css('display') === "none") {
-            css.display = 'block';
+        var ques_id = $('input[name="question-id"]').val();
 
-            sol_form.css(css);
-            $('#solution-form #body').val(val);
-            $('#sol-preview').text(val).css({
-                height: '130px'
-            });
-        } else {
-            sol_form.css(css);
-        }
+        $.ajax({
+            url: '/question/' + ques_id + '/solution',
+            beforeSend: function() {
+                self.attr('disabled', true);
+            },
+            success: function(data) {
+                var val = '';
+
+                val = data.solution;
+
+                var css = {
+                    display: 'none',
+                };
+
+                if (sol_form.css('display') === "none") {
+                    css.display = 'block';
+
+                    sol_form.css(css);
+                    $('#solution-form #body').val(val);
+                    $('#sol-preview').text(val).css({
+                        height: '130px'
+                    });
+                } else {
+                    sol_form.css(css);
+                }
+
+                preview('#solution-form #body', 'sol-preview');
+
+            }
+        });
+
+        // var css = {
+        //         display: 'none',
+        //     };
+
+        // if (sol_form.css('display') === "none") {
+        //     css.display = 'block';
+
+        //     sol_form.css(css);
+        //     $('#solution-form #body').val(val);
+        //     $('#sol-preview').text(val).css({
+        //         height: '130px'
+        //     });
+        // } else {
+        //     sol_form.css(css);
+        // }
     });
 });
 
@@ -501,12 +567,12 @@ var validate_modify_questions = function() {
         showAlert('At least one option should be selected as correct.', 'danger');
         has_error = true;
     } else {
-        options.each(function(index){
-            
+        options.each(function(index) {
+
             var checked = false;
             var self = $(this);
 
-            if (self.val() === '' && 
+            if (self.val() === '' &&
                 $(check_option_names[index]).is(':checked')) {
                 showAlert('A correct option should contain text.', 'danger');
             }
@@ -633,14 +699,14 @@ var button_hover_effects = function(elemID) {
 }
 
 //UnSolved Questions
-$(function(){
-    $(document).on('click', '.unsolve-btn', function(e){
-        
+$(function() {
+    $(document).on('click', '.unsolve-btn', function(e) {
+
         var self = $(this);
         var data = {
-            'question-id' : self.data('id')
+            'question-id': self.data('id')
         }
-        
+
         $.ajax({
             url: '/unsolve',
             data: data,
@@ -664,7 +730,7 @@ $(function(){
         });
         e.stopPropagation();
     });
-}); 
+});
 
 //Favourite Upvote and downvote Ajax
 $(function() {
@@ -673,13 +739,13 @@ $(function() {
     button_hover_effects('.downvote-btn');
     button_hover_effects('.favourite-btn');
 
-    $(document).on('click', '.upvote-btn, .downvote-btn, .favourite-btn', function() {
+    $('.question-box').on('click', '.upvote-btn, .downvote-btn, .favourite-btn', function() {
 
         var btn = $(this);
         var data = {
             "question-id": btn.data('id')
         };
-        
+
         var url = '/upvote';
         if (btn.hasClass('downvote-btn')) {
             url = '/downvote';
@@ -691,6 +757,12 @@ $(function() {
             url: url,
             type: 'POST',
             data: data,
+            beforeSend: function() {
+                btn.attr('disabled', true);
+            },
+            complete: function() {
+                btn.attr('disabled', false);
+            },
             success: function() {
                 var vote_count = $('.upvote-count');
                 var currentvote = parseInt(vote_count.text(), 10);
@@ -699,11 +771,11 @@ $(function() {
                     if (btn.hasClass('btn-default')) {
                         add_success_class(btn);
                         vote_count.text(currentvote + 1);
-                        btn.siblings('.downvote-btn').attr('disabled', true);
+                        btn.siblings('.downvote-btn:first').attr('disabled', true);
                     } else {
                         add_default_class(btn);
                         vote_count.text(currentvote - 1);
-                        btn.siblings('.downvote-btn').attr('disabled', false);
+                        btn.siblings('.downvote-btn:first').attr('disabled', false);
                     }
                 } else if (btn.hasClass('favourite-btn')) {
                     var fav_star = btn.children('.glyphicon');
@@ -713,13 +785,13 @@ $(function() {
                     if (btn.hasClass('btn-default')) {
                         add_success_class(btn);
                         vote_count.text(currentvote - 1);
-                        btn.siblings('.upvote-btn').attr('disabled', true);
-                     } else {
+                        btn.siblings('.upvote-btn:first').attr('disabled', true);
+                    } else {
                         add_default_class(btn);
                         vote_count.text(currentvote + 1);
-                        btn.siblings('.upvote-btn').attr('disabled', false);
-                     }
-                }                
+                        btn.siblings('.upvote-btn:first').attr('disabled', false);
+                    }
+                }
             },
             error: function(jqxhr, textStatus, errorThrown) {
                 error(jqxhr);
@@ -728,8 +800,8 @@ $(function() {
     });
 });
 
-$(function(){
-    $('input.ui-widget-content').on('focus', function(){
+$(function() {
+    $('input.ui-widget-content').on('focus', function() {
         $('.tagit').css({
             border: '1px solid #ccc'
         }).next().remove();
@@ -749,8 +821,8 @@ var validate_tags = function() {
 }
 
 //Tags Single tag subsription 
-$(function(){
-    $('#subs-tag').on('click', function(){
+$(function() {
+    $('#subs-tag').on('click', function() {
         var self = $(this);
         var url = '/user-tags';
 
@@ -759,8 +831,8 @@ $(function(){
             type: 'POST',
             data: {
                 tag: self.data('id')
-            }, 
-            beforeSend: function(){
+            },
+            beforeSend: function() {
                 self.attr('disbaled', true);
             },
             success: function(data) {
@@ -776,7 +848,7 @@ $(function(){
                     self.removeClass('btn-success').addClass('btn-info');
                     self.children().text('Subscribe');
 
-                    list.children().each(function(){
+                    list.children().each(function() {
                         var self = $(this);
 
                         if (self.text().contains(data.tagname)) {
@@ -797,22 +869,22 @@ $(function(){
 });
 
 var make_tag_elem = function(list, data) {
-    list.children().remove();
-    $.each(data, function(key, value) {
-        var badge = '<span class="badge">' + value.count + '</span>';
-        var cross = '<a href="#" data-id="' + value['id'] + '" class="close" type="button">&times;</a>';
-        var link = '/tags/' + key;
-        var tag = '<a href="' + link + '">' + key +'</a>'
-        
-        var elem = '<list class="list-group-item">' + 
-                    tag + 
-                    badge +
-                    cross+
-                    '</li>';
-        list.append(elem);
-    });
-}
-//Tags to user
+        list.children().remove();
+        $.each(data, function(key, value) {
+            var badge = '<span class="badge">' + value.count + '</span>';
+            var cross = '<a href="#" data-id="' + value['id'] + '" class="close" type="button">&times;</a>';
+            var link = '/tags/' + key;
+            var tag = '<a href="' + link + '">' + key + '</a>'
+
+            var elem = '<list class="list-group-item">' +
+                tag +
+                badge +
+                cross +
+                '</li>';
+            list.append(elem);
+        });
+    }
+    //Tags to user
 $(function() {
     /*
     For adding tags to a User. 
@@ -887,16 +959,16 @@ $(function() {
     });
 });
 
-var select_option = function($btn){
+var select_option = function($btn) {
 
-       /*
+    /*
     This sets up an event where each option is checked for the selected
     class. If it has that class, the selected class is removed.
     HACK - Serialize() do not include fields which do not have names.
     Hence, we remove the name attribute if the option is not selected
     to stop it from showing in the form.
     */
-    
+
     if ($btn.hasClass('btn-info') || $btn.hasClass('btn-danger')) {
         $btn.removeClass('btn-info').addClass('btn-default');
         $btn.removeClass('btn-danger').addClass('btn-default');
@@ -931,7 +1003,7 @@ $(function() {
 
 // Event on Selecting Options
 $(function() {
- 
+
     $('.question-box').on('click', '.options > .btn', function() {
         var $btn = $(this);
         select_option($btn);
@@ -975,7 +1047,7 @@ var load_next_question = function() {
         break;
     }
 
-    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
 
     checks();
 
@@ -1027,7 +1099,7 @@ $(function() {
                 data: $(this).serialize(),
                 beforeSend: function() {
                     submit.prop('disabled', true)
-                          .just_text_node('Checking...');
+                        .just_text_node('Checking...');
                 },
                 complete: function() {
 
@@ -1037,7 +1109,7 @@ $(function() {
                             var counter = 3;
                             var interval = setInterval(function() {
                                 counter--;
-                                submit.just_text_node(' Load in '+counter);
+                                submit.just_text_node(' Load in ' + counter);
 
                                 if (counter === 0) {
                                     submit.just_text_node('Loading..');
@@ -1049,7 +1121,7 @@ $(function() {
 
                         } else {
                             submit.attr('disabled', false)
-                                  .just_text_node(' Next Question');
+                                .just_text_node(' Next Question');
                         }
 
                     } else {
@@ -1085,7 +1157,7 @@ $(function() {
                         showAlert('Something went wrong.', 'danger');
                     }
                     submit.prop('disabled', false)
-                          .just_text_node('Check');
+                        .just_text_node('Check');
                 }
             }).done();
         }
@@ -1106,14 +1178,14 @@ $(function() {
 
     var obj = {
         height: height - 70
-        }
+    }
 
     $('.user-tags-col').css(obj);
     $('.sidebar').css(obj);
-    $('.question-box').css(obj);
+
 });
 
-var markdown = function(){
+var markdown = function() {
     var convert = new Markdown.getSanitizingConverter().makeHtml;
 
 };

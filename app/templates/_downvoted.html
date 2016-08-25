@@ -1,4 +1,4 @@
-{% from "_macros.html" import question with context %}
+{% from "_macros.html" import question, upvote, downvote, favourite with context %}
 
 {% if user %}
 	{% set obj = user.questions_downvoted %}

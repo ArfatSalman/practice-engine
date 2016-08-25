@@ -22,6 +22,11 @@ def google_login():
 @google.authorized_handler
 def google_authorized(resp):
 	next_url = request.args.get('next') or url_for('main.index')
+	error = request.args.get('error', '')
+
+	if error:
+		flash('Login failed due to the following reason: %s' % error, 'danger')
+		return redirect(url_for('main.index'))
 
 	if resp is None:
 		flash('Access Denied for the reason: %s.' % (request.args['error_reason']), 'danger')

@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from config import config
 from flask_oauth import OAuth
 from flask_login import LoginManager
+from flask_mail import Mail
 
 login_manager = LoginManager()
 login_manager.session_protection = 'basic'
@@ -12,6 +13,8 @@ login_manager.login_message_category = 'danger'
 db = SQLAlchemy()
 
 oauth = OAuth()
+
+mail = Mail()
 
 google = oauth.remote_app('google',
 	base_url = 'https://www.google.com/accounts/',
@@ -43,6 +46,7 @@ def create_app(config_name):
 	
 	db.init_app(app)
 	login_manager.init_app(app)
+	mail.init_app(app)
 
 	'''The blueprint is registered here.'''
 	from main import main as main_blueprint

@@ -1,5 +1,107 @@
-{%extends "base.html" %}
+<html>
 
-{% block title %}
-Home Page - Knowledge Discovery Engine
-{% endblock %}
+<head>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap.css',_external=True)}}">
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Tangerine" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Baloo+Thambi" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    
+    <script type="text/javascript" src="{{url_for('static',_external=True, filename='scripts/bootstrap.min.js')}}"></script>
+    <script type="text/javascript" src="{{url_for('static',_external=True,filename='scripts/scripts.js')}}"></script>
+    
+    <title>{% block title %}Practice Engine - Home Page{% endblock %}</title>
+
+    <style type="text/css">
+    #brand {
+        font-family: 'Ubuntu', sans-serif;
+        font-size: 40px;
+        color: black;
+        text-decoration: none;
+    }
+    
+    #brand span {
+        color: red;
+    }
+    
+    #tagline {
+        color: black !important;
+        font-family: 'Tangerine', cursive;
+        font-size: 30px;
+    }
+    
+    .signin img{
+        width: 220px;
+    }
+
+    .signin img:hover {
+        background-image: url('/static/btn_google_signin_dark_focus_web@2x.png');
+        background-size: 220px;
+        background-repeat: no-repeat;
+    }
+    
+    .jumbotron h1 {
+        font-family: 'Baloo Thambi', cursive;
+    }
+
+    .footer {
+        background: #f4faff;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .jumbotron {
+        background: #f4faff;
+        margin-bottom: 0;
+    }
+    .header {
+        background: #f4faff;
+    }
+    .header:hover {
+        background: #ffffff;
+    }
+    .footer p {
+        margin: 0;
+        color: gray;
+    }
+
+    h2 {
+        font-family: 'Ubuntu';
+    }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="header row">
+            <div class="col-md-12">
+                <a id="brand" href=""><span id="practice"><strong>Practice</span></strong> ∃ngine<span id="tagline">There exists an answer.</span></a>
+                <a class="pull-right signin" href="{{url_for('auth.google_login')}}"><img src="{{url_for('static', filename='btn_google_signin_dark_normal_web@2x.png')}}" alt="Sign in using google" /></a>
+            </div>
+        </div>
+    </div>
+    <div class="header row">
+        <div id="alert" class="col-md-6 col-md-offset-3">
+            {% with messages = get_flashed_messages(with_categories=True) %} {% if messages %} {% for category, message in messages %}
+            <div class="alert alert-{{category}} alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                {{message|safe}}</div>
+            {% endfor %} {% endif %} {% endwith %}
+        </div>
+    </div>
+    <div class="jumbotron">
+        <div class="container-fluid">
+            <h1 class="text-center">Practice you way to success!</h1>
+            <h2 class="text-center">A great way to augment your studies.</h2>
+            <img class="center-block" src="{{url_for('static', filename='ph.jpg')}}" />
+        </div>
+    </div>
+</body>
+<div class="footer">
+    <p class="text-center">Practice Engine &copy;</p>
+</div>
+
+</html>

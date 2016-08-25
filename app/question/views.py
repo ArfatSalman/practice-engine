@@ -334,6 +334,16 @@ def question_solutions(id, type_data):
                                             per_page=current_app.config['PER_PAGE_LIMIT'])
         return jsonify(content=render_template('_solutions.html',
                                                 pagination=pagination))
+    elif type_data == 'solution':
+        a = ques.solution_by_user(current_user)
+        
+        if not a:
+            return dual_response('The user or question does not exist.', 'danger')
+        
+        return jsonify(id=a.id,solution=a.body)
+
+
+    return dual_response('Unkown request format.', 'danger')
 
 
 

@@ -24,7 +24,10 @@ def timedelta(time):
 
 	if td.total_seconds() < 86400:
 		hours = td.total_seconds() // 3600
-		return "%d hours ago." % hours
+		if hours >= 0:
+			return "%d hours ago." % hours
+		else:
+			"0 hours ago."
 	elif td.total_seconds() < 2*86400:
 		return "%d day ago" % td.days
 	else:
