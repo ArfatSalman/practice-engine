@@ -658,6 +658,9 @@ $(function() {
 // Tag-it settings
 $(function() {
     $('#tags').tagit({
+        onTagLimitExceeded: function(event, ui) {
+            showAlert('You cannot add more than 5 tags.','warning');
+        },
         tagLimit: 5,
         allowSpaces: true,
         autocomplete: {
@@ -921,8 +924,8 @@ $(function() {
 
                     make_tag_elem(list, data);
 
-                    $('.tagit-choice').remove();
-                    $('input.ui-widget-content').val('');
+                    $('#tags').tagit('removeAll');
+                    //$('input.ui-widget-content').val('');
 
                     QUESTION_LIST = {};
 

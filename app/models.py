@@ -31,7 +31,8 @@ class ReportQuestionAssoc(db.Model):
 
     question = db.relationship('Question', 
                                 backref=db.backref('reported_by', 
-                                                    lazy='dynamic'))
+                                                    lazy='dynamic',
+                                                    cascade='all, delete, delete-orphan'))
     def __init__(self, question):
         self.question = question
 
@@ -61,7 +62,8 @@ class DownvoteQuestionAssoc(db.Model):
 
     question = db.relationship('Question', 
                                 backref=db.backref('downvoted_by', 
-                                                    lazy='dynamic'))
+                                                    lazy='dynamic',
+                                                    cascade='all, delete, delete-orphan'))
 
     def __init__(self, question):
         self.question = question
@@ -76,7 +78,8 @@ class UpvoteQuestionAssoc(db.Model):
 
     question = db.relationship('Question', 
                                 backref=db.backref('upvoted_by', 
-                                                    lazy='dynamic'))
+                                                    lazy='dynamic',
+                                                    cascade='all, delete, delete-orphan'))
 
     def __init__(self, question):
         self.question = question
@@ -91,7 +94,8 @@ class FavouriteQuestionAssoc(db.Model):
 
     question = db.relationship('Question', 
                                 backref=db.backref('fav_by', 
-                                                    lazy='dynamic'))
+                                                    lazy='dynamic',
+                                                    cascade='all, delete, delete-orphan'))
 
     def __init__(self, question):
         self.question = question
@@ -116,7 +120,9 @@ class SolvedQuestionsAssoc(db.Model):
     # question is_set_unsolved, score = 0
     is_set_unsolved = db.Column(db.Boolean, default=False)
 
-    question = db.relationship('Question', backref=db.backref('solved_by', lazy='dynamic'))
+    question = db.relationship('Question', backref=db.backref('solved_by', 
+                                                               lazy='dynamic', 
+                                                               cascade='all, delete, delete-orphan'))
 
     def __init__(self, question):
         self.question = question
@@ -139,25 +145,27 @@ class User(UserMixin, db.Model):
     questions = db.relationship("Question", 
                     backref=db.backref('user'),
                     order_by='desc(Question.timestamp)',
-                    lazy='dynamic')
+                    lazy='dynamic',
+                    cascade='all, delete, delete-orphan')
 
     solutions = db.relationship('Solution',
                                 backref='user',
                                 order_by='desc(Solution.timestamp)',
-                                lazy='dynamic')
+                                lazy='dynamic',
+                                cascade='all, delete, delete-orphan')
 
     solutions_voted = db.relationship('UpvoteDownvoteSolutionAssoc',
                                       backref='user',
                                       order_by='desc(UpvoteDownvoteSolutionAssoc.timestamp)',
                                       lazy='dynamic',
-                                      cascade='all, delete-orphan')
+                                      cascade='all, delete, delete-orphan')
     sols_voted = association_proxy('solutions_voted', 'solution')
 
     setting = db.relationship('UserSetting',
                                backref='user',
                                uselist=False,
                                lazy='joined',
-                               cascade='all, delete-orphan')
+                               cascade='all, delete, delete-orphan')
 
     questions_activity = db.relationship('SolvedQuestionsAssoc',
                                     backref='user',
@@ -169,7 +177,7 @@ class User(UserMixin, db.Model):
     questions_upvoted = db.relationship('UpvoteQuestionAssoc',
                                              backref='user',
                                              order_by='desc(UpvoteQuestionAssoc.timestamp)',
-                                             cascade='all, delete-orphan',
+                                             cascade='all, delete, delete-orphan',
                                              lazy='dynamic')
     ques_upvoted = association_proxy('questions_upvoted', 'question')
 
@@ -184,7 +192,7 @@ class User(UserMixin, db.Model):
     questions_fav = db.relationship('FavouriteQuestionAssoc',
                                      backref='user',
                                      order_by='desc(FavouriteQuestionAssoc.timestamp)',
-                                     cascade='all, delete-orphan',
+                                     cascade='all, delete, delete-orphan',
                                      lazy='dynamic')
     ques_fav = association_proxy('questions_fav', 'question')
 
@@ -392,7 +400,7 @@ class Question(db.Model):
     solutions = db.relationship('Solution',
                                 backref='question',
                                 lazy='dynamic',
-                                cascade="all, delete-orphan")
+                                cascade="all, delete, delete-orphan")
 
     options = db.relationship("Option",
                                order_by='Option.id',
