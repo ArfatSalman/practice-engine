@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% from "_macros.html" import question, tags, user_box with context %}
 
+{% block title %}Questions in {{tag.tagname}}{% endblock %}
+
 {% block content %}
     
     <div class="row">

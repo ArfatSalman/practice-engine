@@ -1,129 +1,142 @@
-{% extends "base.html" %}
-{% from "_macros.html" import user_box with context %}
+{% extends "base.html" %} 
+{% from "_macros.html" import user_box with context %} 
+{% block title %}Question {{ques.id}}{% endblock %} 
+
 {% block content %}
 <div class="row">
-	<div class="col-md-3">
-		<div class="panel-group" id="accordion" role="tablist">
-
-			<div class="panel panel-default">
-		    <div class="panel-heading" role="tab">
-		      <h4 class="panel-title">
+    <div class="col-md-3">
+        <div class="panel-group" id="accordion" role="tablist">
+            <div class="panel panel-info">
+                <div class="panel-heading" role="tab">
+                    <h4 class="panel-title">
+		        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#hall-of-fame" aria-expanded="false" aria-controls="hall-of-fame">
+		         <span class="glyphicon glyphicon-certificate"></span> Hall of Fame
+		        </a>
+		      </h4>
+                </div>
+                <div id="hall-of-fame" class="panel-collapse collapse" role="tabpanel">
+                    <div class="panel-body">
+                    	<small>It lists chronologically the users who have solved this question in first attempt.</small>
+                        {% for user_assoc in ques.hall_of_fame() %}
+                        <br/>
+                        <div class="col-md-12">
+                            {{user_box(user_assoc.user)}}
+                        </div>
+                        {% else %}
+                        <h5>No one has solved this question. <strong>Be the first one!</strong></h5> {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab">
+                    <h4 class="panel-title">
 		        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#upvoted-by" aria-expanded="false" aria-controls="upvoted-by">
+		        	<span class="glyphicon glyphicon-chevron-up"></span>
 		          Upvoted by
 		        </a>
 		      </h4>
-		    </div>
-
-		    <div id="upvoted-by" class="panel-collapse collapse" role="tabpanel">
-		    	<div class="panel-body">
-		    		{% for user in ques.upvoted_by.limit(5).all()%}
-					<div class="col-md-12">
-						{{user_box(current_user)}}
-					</div>
-					{% else %}
-					<h5>This queston has not been upvoted.</h5>
-					{% endfor %}
-				</div>
-		    </div>
-		  </div>
-
-		<div class="panel panel-default">
-		    <div class="panel-heading" role="tab">
-		      <h4 class="panel-title">
+                </div>
+                <div id="upvoted-by" class="panel-collapse collapse" role="tabpanel">
+                    <div class="panel-body">
+                        {% for user_assoc in ques.upvoted_by.limit(5).all()%}
+                        <div class="col-md-12">
+                            {{user_box(user_assoc.user)}}
+                        </div>
+                        {% else %}
+                        <h5>This queston has not been upvoted.</h5> {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab">
+                    <h4 class="panel-title">
 		        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#downvoted-by" aria-controls="downvoted-by">
+		        	<span class="glyphicon glyphicon-chevron-down"></span>
 		          Downvoted by
 		        </a>
 		      </h4>
-		    </div>
-
-		    <div id="downvoted-by" class="panel-collapse collapse" role="tabpanel">
-		    	<div class="panel-body">
-					{% for user in ques.downvoted_by.limit(5).all()%}
-					<div class="col-md-12">
-						{{user_box(current_user)}}
-					</div>
-					{% else %}
-					<h5>This queston has not been downvoted.</h5>
-					{% endfor %}
-				</div>
-		    </div>
-		  </div>
-
-		 <div class="panel panel-default">
-		    <div class="panel-heading" role="tab">
-		      <h4 class="panel-title">
+                </div>
+                <div id="downvoted-by" class="panel-collapse collapse" role="tabpanel">
+                    <div class="panel-body">
+                        {% for user_assoc in ques.downvoted_by.limit(5).all()%}
+                        <div class="col-md-12">
+                            {{user_box(user_assoc.user)}}
+                        </div>
+                        {% else %}
+                        <h5>This queston has not been downvoted.</h5> {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab">
+                    <h4 class="panel-title">
 		        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#favourited-by" aria-controls="favourited-by">
+		        	<span class="glyphicon glyphicon-star"></span>
 		          Favourited by
 		        </a>
 		      </h4>
-		    </div>
-
-		    <div id="favourited-by" class="panel-collapse collapse" role="tabpanel">
-		    	<div class="panel-body">
-					{% for user in ques.fav_by.limit(5).all()%}
-					<div class="col-md-12">
-						{{user_box(current_user)}}
-					</div>
-					{% else %}
-					<h5>This queston has not been favourited.</h5>
-					{% endfor %}
-				</div>
-		    </div>
-		  </div>
-
-		  <div class="panel panel-default">
-		    <div class="panel-heading" role="tab">
-		      <h4 class="panel-title">
+                </div>
+                <div id="favourited-by" class="panel-collapse collapse" role="tabpanel">
+                    <div class="panel-body">
+                        {% for user_assoc in ques.fav_by.limit(5).all()%}
+                        <div class="col-md-12">
+                            {{user_box(user_assoc.user)}}
+                        </div>
+                        {% else %}
+                        <h5>This queston has not been favourited.</h5> {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab">
+                    <h4 class="panel-title">
 		        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#reported-by" aria-controls="reported-by">
+		        	<span class="glyphicon glyphicon-ban-circle"></span>
 		          Reported by
 		        </a>
 		      </h4>
-		    </div>
-
-		    <div id="reported-by" class="panel-collapse collapse" role="tabpanel">
-		    	<div class="panel-body">
-					{% for user in ques.reported_by.limit(5).all()%}
-					<div class="col-md-12">
-						{{user_box(current_user)}}
-						<h5>reported that </h5><blockquote>dawdjwadhiuwhd</blockquote>
-					</div>
-					{% else %}
-					<h5>This queston has not been reported.</h5>
-					{% endfor %}
-				</div>
-		    </div>
-		  </div>
-		</div> <!-- panel group -->
-
-	</div> <!--Col md 3 -->
-
-	<div class="question-box col-md-6">
-		{% include "question/_question.html" %}
-	</div>
-
-	<div class="active-user-list col-md-3">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<p class="text-center"><strong>Solved by Users (Most Recent)</strong></p>
-			</div>
-			<div class="panel-body">
-			
-				<div class="row">
-		        {% for solved_ques_assoc in ques.recently_solved_by() %}
-		            <div class="col-md-12">
-		                {{user_box(solved_ques_assoc.user, class='pull-right')}}
-		            </div>
-		        {% else %}
-		            <div class="col-md-12">
-		                <p>No Users</p>
-		            </div>
-		        {% endfor %}   
-	        	</div>
-			</div>
-		
-		</div>
-	</div>
-
-	
+                </div>
+                <div id="reported-by" class="panel-collapse collapse" role="tabpanel">
+                    <div class="panel-body">
+                        {% for user_assoc in ques.reported_by.limit(5).all()%}
+                        <div class="col-md-12">
+                        	{% set report_assoc = ques.report(user_assoc.user) %}
+								
+                            {{user_box(user_assoc.user)}}
+                            <h5>reported <strong>{{report_assoc.timestamp|timedelta}}</strong> that </h5>
+                            <blockquote>{{report_assoc.message}}</blockquote>
+                        </div>
+                        {% else %}
+                        <h5>This queston has not been reported.</h5> {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- panel group -->
+    </div>
+    <!--Col md 3 -->
+    <div class="question-box col-md-6">
+        {% include "question/_question.html" %}
+    </div>
+    <div class="active-user-list col-md-3">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <p class="text-center"><strong>Solved by Users (Most Recent)</strong></p>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    {% for solved_ques_assoc in ques.recently_solved_by() %}
+                    <div class="col-md-12">
+                        {{user_box(solved_ques_assoc.user, class='pull-right')}}
+                    </div>
+                    {% else %}
+                    <div class="col-md-12">
+                        <p>No Users</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

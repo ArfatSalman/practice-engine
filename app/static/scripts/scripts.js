@@ -310,7 +310,9 @@ $(function() {
 //Updating username 
 $(function() {
     $(document).on('click', '#edit-username-btn', function() {
-        var username = $($('#username').contents()[0]);
+
+        var username = $('#username');
+        var user_val = $(username.contents()[0]);
 
         var form = '<form method="post" action="/user/info" id="edit-username-form" class="form-inline">' +
             '<div class="form-group">' +
@@ -320,7 +322,7 @@ $(function() {
             '</form>';
 
         username.replaceWith(form);
-        $('#edit-username-form input').val(username.text());
+        $('#edit-username-form input').val(user_val.text());
 
     });
 
@@ -739,7 +741,7 @@ $(function() {
     button_hover_effects('.downvote-btn');
     button_hover_effects('.favourite-btn');
 
-    $('.question-box').on('click', '.upvote-btn, .downvote-btn, .favourite-btn', function() {
+    $(document).on('click', '.upvote-btn, .downvote-btn, .favourite-btn', function() {
 
         var btn = $(this);
         var data = {

@@ -152,6 +152,10 @@
 
 	<img class="img-rounded center-block" width="350px" src="{{url_for('static', filename='ph.jpg')}}" />
 	{% else %}
+		<br/>
+		<br/>
 
+		<h5>You have exhausted all the questions</h5>
+		<strong>You can post your own questions <a href="{{url_for('question.post_question')}}">here</a>. </strong>
 	{% endif %}
 {% endif %}

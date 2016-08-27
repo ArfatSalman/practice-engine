@@ -1,4 +1,4 @@
-<html>
+﻿<html>
 
 <head>
     <link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap.css',_external=True)}}">
@@ -11,7 +11,7 @@
     <script type="text/javascript" src="{{url_for('static',_external=True, filename='scripts/bootstrap.min.js')}}"></script>
     <script type="text/javascript" src="{{url_for('static',_external=True,filename='scripts/scripts.js')}}"></script>
     
-    <title>{% block title %}Practice Engine - Home Page{% endblock %}</title>
+    <title>{% block title %}Practice Engine - Practice your way to success!{% endblock %}</title>
 
     <style type="text/css">
     #brand {
@@ -50,16 +50,15 @@
         margin: 0;
         padding: 0;
     }
-    
+    #alert {
+        background: #f4faff;
+    }
     .jumbotron {
         background: #f4faff;
         margin-bottom: 0;
     }
     .header {
         background: #f4faff;
-    }
-    .header:hover {
-        background: #ffffff;
     }
     .footer p {
         margin: 0;
@@ -94,7 +93,7 @@
     </div>
     <div class="jumbotron">
         <div class="container-fluid">
-            <h1 class="text-center">Practice you way to success!</h1>
+            <h1 class="text-center">Practice your way to success!</h1>
             <h2 class="text-center">A great way to augment your studies.</h2>
             <img class="center-block" src="{{url_for('static', filename='ph.jpg')}}" />
         </div>

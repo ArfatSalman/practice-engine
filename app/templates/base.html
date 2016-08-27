@@ -7,24 +7,35 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>
-		 {% block title %}Home{% endblock %} - Practice Engine
+		 {% block title %}{% endblock %} - Practice Engine
 		</title>
 
 		<!-- Bootstrap -->
+		{% if not config['DEBUG'] %}
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		{% else %}
 		<link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap.css',_external=True)}}">
+		{% endif %}
 		<link rel="stylesheet" href="{{url_for('static',filename='css/tagit.css',_external=True)}}">
 		<link rel="stylesheet" href="{{url_for('static',filename='css/tagit-theme.css',_external=True)}}">
 		<link rel="stylesheet" href="{{url_for('static',filename='css/style.css',_external=True)}}">
-		<link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet"> 
+		<link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
 
+		
+	
+		{% if not config['DEBUG'] %}
 		<script src='http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_HTMLorMML'></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		{% else %}
+		<script type="text/javascript" src="/static/scripts/MathJax/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
+		<script type="text/javascript" src="{{url_for('static', _external=True, filename='scripts/jquery.js')}}"></script>
 		<script type="text/javascript" src="{{url_for('static',_external=True,filename='scripts/jqueryui.js')}}"></script>
 		<script type="text/javascript" src="{{url_for('static',_external=True, filename='scripts/bootstrap.min.js')}}">
 		</script>
-
+		{% endif %}
 		<script type="text/javascript" src="{{url_for('static',_external=True,filename='scripts/tagit.js')}}"></script>
-
 		 <script type="text/javascript" src="{{url_for('static',_external=True,filename='scripts/scripts.js')}}"></script>
 
 		<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->

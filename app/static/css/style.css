@@ -1,3 +1,6 @@
+.form-inline * {
+    margin-right: 2px;
+}
 #contact-form {
     height: 450px;
 }

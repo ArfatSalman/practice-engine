@@ -416,6 +416,19 @@ class Question(db.Model):
     reported_by -> colletion of Users who've reporeted
 
     '''
+    def report(self, user):
+        u = ReportQuestionAssoc.query.filter_by(question=self, user=user)
+        
+        return u.one_or_none()
+
+    def hall_of_fame(self):
+        u = SolvedQuestionsAssoc.query\
+                                .filter_by(question=self)\
+                                .filter_by(attempted=1, solved=1)\
+                                .order_by(SolvedQuestionsAssoc.timestamp)\
+                                .limit(5)\
+                                .all()
+        return u
 
     def recently_solved_by(self):
         return self.solved_by\

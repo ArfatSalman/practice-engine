@@ -1,5 +1,9 @@
 {% extends "base.html" %} 
 {% from "_macros.html" import tags with context %}
+
+
+{% block title %}{{user.username}}{% endblock %}
+
 {% block content %}
 
 <div class="user row">

@@ -113,7 +113,7 @@ def edit_question(id):
     if form.validate_on_submit():
         
         ques.body = form.body.data
-        ques.description = form.body.description
+        ques.description = form.description.data
         ques.tags = associate_tags(form)
 
         is_all_false = True

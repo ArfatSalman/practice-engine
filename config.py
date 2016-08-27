@@ -39,12 +39,13 @@ class TestingConfig(Config):
 
 
 class ProductionConfig(Config):
-	MAIL_SERVER = 'smtp.googlemail.com'
-	MAIL_PORT = 587
-	MAIL_USE_TLS = True
+	MAIL_SERVER = 'smtp.gmail.com'
+	MAIL_PORT = 465
+	MAIL_USE_TLS = False
+	MAIL_USE_SSL = True
 	MAIL_USERNAME = 'giney.paradise@gmail.com'
 	MAIL_PASSWORD = 'arfat78692%'
-	SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://Arfat:arfat78692@Arfat.mysql.pythonanywhere-services.com/Arfat$arfat'
+	SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://practiceengine:arfat78692@practiceengine.mysql.pythonanywhere-services.com/practiceengine$default'
 
 config = {
 	'development': DevelopmentConfig,
