@@ -36,6 +36,8 @@
             </div>
             <div class="panel-footer">
                 Streak: <span class="{% if user.valid_streak %}valid {% endif %} streak badge">{{user.streak}} {%if user.streak == 1 %} day {% else %} days {% endif %}</span>
+
+                <strong>Score: </strong><span id="score">{{user.score}}</span>
             </div>
         </div>
     </div>    

@@ -1,3 +1,35 @@
+@media (max-width: 1024px) {
+    .btn-group {
+        margin: -2px;
+    }
+
+    #skip-question-btn strong {
+        display: none;
+    }
+}
+#score {
+    background: #9f84bd;
+    padding: 2px 10px;
+    box-shadow: 1px 1px 4px #9f84bd;
+    border-radius: 2px;
+    font-weight: bold;
+    color: white;
+}
+
+#most-pop-tags li:hover {
+    background: rgba(0,0,255,0.05);
+    transition: all ease-in 0.25s;
+}
+
+#most-pop-tags a {
+    font-size: 22px;
+    font-family: Ubuntu;
+    margin-right: 20px;
+}
+#most-pop-tags div {
+    display: inline-block;
+}
+
 .form-inline * {
     margin-right: 2px;
 }

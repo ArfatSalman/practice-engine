@@ -230,7 +230,12 @@ $(function() {
     });
 });
 
-
+// Skip Questions
+$(function() {
+    $('#skip-question-btn').on('click', function() {
+        window.location.reload();
+    });
+});
 
 // Report Questions
 $(function() {
@@ -624,7 +629,7 @@ $(function() {
             data: data,
             beforeSend: function() {
                 original_text = self.text();
-                self.text('setting ...').attr('disabled', true);
+                self.just_text_node('setting ...').attr('disabled', true);
 
             },
             success: function() {
@@ -643,7 +648,7 @@ $(function() {
                     toggle_difficulty();
                 }
 
-                self.text(original_text).attr('disabled', false);
+                self.just_text_node(original_text).attr('disabled', false);
             },
             error: function(jqxhr) {
                 error(jqxhr);
@@ -659,7 +664,7 @@ $(function() {
 $(function() {
     $('#tags').tagit({
         onTagLimitExceeded: function(event, ui) {
-            showAlert('You cannot add more than 5 tags.','warning');
+            showAlert('You cannot add more than 5 tags.', 'warning');
         },
         tagLimit: 5,
         allowSpaces: true,
@@ -825,6 +830,28 @@ var validate_tags = function() {
     return true;
 }
 
+var remove_tag_from_most_pop = function(tagname) {
+
+    var elem = $('#most-pop-tags li').filter(function() {
+        var self = $(this);
+        if (self.children('a').text() === tagname) {
+            return true;
+        }
+        return false;
+    });
+
+    if ($.isEmptyObject(elem)) {
+        return false;
+    }
+
+    var btn = elem.children('button');
+
+    btn.removeClass('btn-success').addClass('btn-info').children().text('Subscribe');
+
+    return true;
+
+};
+
 //Tags Single tag subsription 
 $(function() {
     $('#subs-tag').on('click', function() {
@@ -838,11 +865,11 @@ $(function() {
                 tag: self.data('id')
             },
             beforeSend: function() {
-                self.attr('disbaled', true);
+                self.attr('disabled', true);
             },
             success: function(data) {
                 var count = self.text().split('|')[1];
-                var list = $('.list-group');
+                var list = $('.col-md-2 .list-group');
 
                 if (self.hasClass('btn-info')) {
                     self.removeClass('btn-info').addClass('btn-success');
@@ -866,7 +893,7 @@ $(function() {
 
                 self.attr('disabled', false);
             },
-            error: function() {
+            error: function(jqxhr) {
                 error(jqxhr);
             }
         });
@@ -948,14 +975,21 @@ $(function() {
     $('.list-group').on('click', 'a[type="button"]', function() {
         var self = $(this);
         var id = self.data('id');
+        var text = self.siblings('a').text();
+
         $.ajax({
             url: '/remove-user-tags',
             type: 'POST',
+            beforeSend: function() {
+                self.siblings('a').text('Deleting..');
+            },
             data: {
                 'id': id
             },
             success: function(data) {
-                self.parent().remove()
+                self.parent().remove();
+
+                remove_tag_from_most_pop(text);
             },
             error: function(jqxhr, textStatus, errorThrown) {
                 error(jqxhr);
@@ -1089,7 +1123,7 @@ $(function() {
         event.preventDefault();
         var submit = $('.option-form #submit-options');
 
-        if ($.trim(submit.text()) === "Next Question") {
+        if ($.trim(submit.text()) === "Next") {
             location.reload();
             return;
         }
@@ -1104,7 +1138,7 @@ $(function() {
                 data: $(this).serialize(),
                 beforeSend: function() {
                     submit.prop('disabled', true)
-                        .just_text_node('Checking...');
+                        .just_text_node('Check');
                 },
                 complete: function() {
 
@@ -1126,7 +1160,7 @@ $(function() {
 
                         } else {
                             submit.attr('disabled', false)
-                                .just_text_node(' Next Question');
+                                .just_text_node(' Next');
                         }
 
                     } else {

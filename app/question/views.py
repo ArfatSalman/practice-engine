@@ -259,6 +259,16 @@ def check_answer():
 
     return jsonify(result)
 
+
+@question.route('/tags')
+@login_required
+def tags():
+
+    popular_tags = Tag.popular_tags()
+
+    return render_template('popular_tags.html', popular_tags=popular_tags)
+
+
 @question.route('/get-questions')
 @login_required
 def get_questions():

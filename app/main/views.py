@@ -1,7 +1,7 @@
 import random, datetime
 
 from flask import render_template, session, redirect, url_for
-from flask import request, jsonify, flash, current_app
+from flask import request, jsonify, flash, current_app, abort
 from flask_login import current_user, login_required, login_user
 from flask_mail import Message
 from sqlalchemy.exc import SQLAlchemyError
@@ -88,6 +88,11 @@ def add_tags(tags):
     return jsonify(result)
 
 def remove_tag(tag):
+    
+    if tag not in current_user.associated_tags:
+        return bad_request('The tag %s is not associated to you.')
+
+
     current_user.associated_tags.remove(tag)
 
     add_to_db(current_user, 'Tag cannot be removed.')
@@ -309,6 +314,9 @@ def tags(tagname):
     page = request.args.get('page', 0, type=int)
 
     tag = Tag.query.filter_by(tagname=tagname).first()
+
+    if not tag:
+        return abort(404)
     
     if page:
         pagination = tag.questions.paginate(page, 

@@ -18,10 +18,12 @@
                     <div class="panel-body">
                     	<small>It lists chronologically the users who have solved this question in first attempt.</small>
                         {% for user_assoc in ques.hall_of_fame() %}
-                        <br/>
-                        <div class="col-md-12">
-                            {{user_box(user_assoc.user)}}
-                        </div>
+	                        {% if user_assoc.user != ques.user %}
+		                        <br/>
+		                        <div class="col-md-12">
+		                            {{user_box(user_assoc.user)}}
+		                        </div>
+	                        {% endif %}
                         {% else %}
                         <h5>No one has solved this question. <strong>Be the first one!</strong></h5> {% endfor %}
                     </div>

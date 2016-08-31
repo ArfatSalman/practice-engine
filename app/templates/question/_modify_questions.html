@@ -96,6 +96,9 @@
 
 			<div class="row">
 				<div class="col-md-5">
+					<ul>
+						<li>Please provide meaningful descriptions such as the year and the paper in which this question appeared.</li>
+					</ul>
 					{{macros.render_field(form.description, class='form-control', rows=1)}}
 				</div>
 
@@ -109,6 +112,19 @@
 
 			<div class="row">
 				<div class="col-md-12">
+					<ul>
+						<li>Please see above conventions regarding <code>Tags</code></li>
+						<li><p><code>Tags</code> are separated by <kbd>,</kbd> (comma)</p></li>
+						<li>A maximum of <b>5</b> tags are permissable for a question.</li>
+						<li>Please mention the name of <b>Entrance Exams</b> apart from the subjects if the question is aimed at preparation of aforementioned exams.
+							<ul>
+								<li><code>GATE</code></li>
+								<li><code>AIPMT</code></li>
+								<li><code>IIT-JEE</code></li>
+							</ul>
+						</li>
+					</ul>
+					
 					{{macros.render_field(form.tags, class='form-control')}}
 				</div>
 			</div>

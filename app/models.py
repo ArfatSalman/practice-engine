@@ -634,6 +634,20 @@ class Tag(db.Model):
             return False
         return u
 
+    @classmethod
+    def popular_tags(cls):
+        u = db.session.query(Tag)\
+                  .order_by(
+                        desc(
+                            db.session.query(
+                                func.count(Question.id))\
+                                    .join(tags_assoc)\
+                                    .filter(Tag.id == tags_assoc.c.tag_id)
+                            )
+                        ).limit(10).all()
+        return u
+
+
     def top_users(self, limit=5):
         SA = SolvedQuestionsAssoc
         return db.session.query(User)\

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% from "_macros.html" import tags with context %}
+
+{% block title%}Most Popular Tags {% endblock %}
+
+{% block content %}
+
+<div class="row">
+	<div class="user-tags-col col-md-2">
+		<h5 class="text-center">Subscribed Topic(s)</h5>
+		{{tags(current_user, current_user.associated_tags)}}
+	</div>
+
+	<div class="col-md-8">
+		<h2>Most Popular Tags</h2>
+		
+
+		<div id="most-pop-tags" class="list-group">
+			{% for tag in popular_tags %}
+				{% set user_subs = tag.has_user(current_user) %}
+
+				<li class="list-group-item list-group-item-{% if user_subs %}success{% else %}default{% endif %}">
+					<a href="{{url_for('main.tags', tagname=tag.tagname)}}"><strong>{{tag.tagname}}</strong></a>
+					<div>
+						<strong>Questions: </strong> <span class="badge">{{tag.questions.count()}}</span>
+
+						<strong>Users Associated: </strong> <span class="badge">{{tag.assoc_users.count()}}</span>
+					</div>
+					{% if not user_subs %}
+						<button id="subs-tag" data-id="{{tag.id}}" class="pull-right btn btn-info"><strong>Subscribe</strong></button>
+					{% endif %}
+				</li>
+
+			{% else %}
+			
+			{% endfor %} 
+		</div>
+	</div>
+</div>
+
+{% endblock %}

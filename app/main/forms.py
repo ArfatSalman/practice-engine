@@ -5,7 +5,7 @@ from wtforms import SubmitField, TextAreaField
 from ..question.forms import TagListField
 
 class UserTagsForm(Form):
-	tags = TagListField('Tags', validators=[Required()])
+	tags = TagListField('Topic(s)', validators=[Required()])
 	submit = SubmitField('Add')
 
 

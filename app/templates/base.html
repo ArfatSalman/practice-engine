@@ -67,6 +67,8 @@
 			    <div class="collapse navbar-collapse" id="navbar-collapse-1">
 					
 					<a href="{{url_for('question.post_question')}}" type="button" class="btn btn-info navbar-btn"><span class="glyphicon glyphicon-pencil"></span> <strong>Post Question</strong></a>
+
+					<a href="{{url_for('question.tags')}}" type="button" class="btn btn-default navbar-btn"><span class="glyphicon glyphicon-search"></span> <strong>Topics</strong></a>
 						
 				
 
@@ -129,8 +131,19 @@
 			        <h4 class="modal-title">Report Question</h4>
 			      </div>
 			      <div class="modal-body">
+			      	<strong>Sample Reason(s)</strong>
+			      	<p><b>The Question:-</b></p>
+
+			      	<ul>
+			      	
+			      		<li>is a wrong question.</li>
+			      		<li>Has wrong Options.</li>
+			      		<li>Has wrong solutions. </li>
+			      		<li>Is ambiguous.</li>
+			      		<li>Any other(s).</li>
+			      	</ul>
 			      	<div class="form-group">
-			      		<label>Reason(s)</label>
+			      		<label>Your Reason(s)</label>
 			      		<textarea id="report-message" class="form-control" rows="3" placeholder="Please specify the reasons ..."></textarea>
 			      	</div>
 			        

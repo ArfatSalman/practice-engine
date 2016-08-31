@@ -56,7 +56,7 @@
 				{%- if ques.reported_by.count() > 3 %}
 				<div class="alert alert-warning alert-dismissible" role="alert">
 				  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				  <strong>Note!</strong> Better check yourself, you're not looking too good.
+				  <strong>This question has been reprted {{ques.reported_by.count()}} time(s). Please verify the answer yourself.</strong> 
 				</div>
 				{% endif -%}
 				<div>
@@ -111,7 +111,10 @@
 						</div>
 						
 						<div class="col-md-4">
-							<button id="submit-options" class="btn btn-primary btn-block" type="submit"><span class="glyphicon glyphicon-send"></span> Check</button>
+							<div class="btn-group" role="group">
+								<button id="submit-options" class="btn btn-primary" type="submit"><span class="glyphicon glyphicon-send"></span> Check</button>
+								<button id="skip-question-btn" type="button" class="btn btn-danger"><span class="glyphicon glyphicon-new-window"></span><strong>Skip</strong></button>
+							</div>
 						</div>
 						
 						{{macros.user_box(ques.user, class="home-user-box col-md-4 pull-right")}}
@@ -142,11 +145,18 @@
 	<br/>
 	<br/>	
 	<h5>Please choose at least one topic to populate the questions.</h5>
-	<strong>Here is a quick walkthrough :-</strong>
-	<ul>
-		<li>You can post your own questions in Multiple Choice Format.</li>
-		<li>You can answer other questions</li>
+	<strong style="font-size: 20px;">Here is a quick walkthrough :-</strong>
+	<ul style="font-size: 20px;">
+		<li><strong>See the most popular <code>Topics</code> <a href="{{url_for('question.tags')}}">here</a>.</strong></li>
+		<li>You can add <code>Topic(s)</code> - <br>
+				<img class="" src="{{url_for('static', filename='sample1.jpg')}}" alt="Tutorial Image">
+				<img src="{{url_for('static', filename='sample2.jpg')}}" alt="Tutorial Image">
+		</li>
+		<li>You can <a href="{{url_for('question.post_question')}}">post</a> your own questions in <b>Multiple Choice Format.</b></li>
+		<li>You can use keys <kbd>1</kbd>, <kbd>2</kbd>, <kbd>3</kbd> or <kbd>4</kbd> to select options.</li>
+		<li>You can answer other questions.</li>
 		<li>Every correct answer will fetch you points.</li>
+		<li>The streak counts the number of days that you have successfully solved questions</li>
 		<li>The streak will be updated everyday when you successfully solve a question that day.</li>
 	</ul>
 
@@ -156,6 +166,6 @@
 		<br/>
 
 		<h5>You have exhausted all the questions</h5>
-		<strong>You can post your own questions <a href="{{url_for('question.post_question')}}">here</a>. </strong>
+		<strong style="font-size: 20px;">You can post your own questions <a href="{{url_for('question.post_question')}}">here</a>. </strong>
 	{% endif %}
 {% endif %}
