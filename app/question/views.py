@@ -340,7 +340,7 @@ def question_solutions(id, type_data):
     pagination = None
     
     if type_data == 'view-solutions':
-        pagination = ques.solutions.paginate(page,
+        pagination = ques.solution_by_upvotes.paginate(page,
                                             per_page=current_app.config['PER_PAGE_LIMIT'])
         return jsonify(content=render_template('_solutions.html',
                                                 pagination=pagination))
@@ -357,10 +357,11 @@ def question_solutions(id, type_data):
 
 
 
-@question.route('/delete-question/<int:id>')
+@question.route('/delete-question', methods=['POST'])
 @login_required
-def delete_question(id):
-    ques = Question.query.get_or_404(id)
+def delete_question():
+    ques_id = request.form.get('ques-id', 0, type=int)
+    ques = Question.query.get_or_404(ques_id)
 
     if ques.user == current_user:
         db.session.delete(ques)
@@ -424,3 +425,18 @@ def report_questions():
     
     message = '%s reported successfully.' % ques_link
     return dual_response(message)
+
+
+@question.route('/delete-solution', methods=['POST'])
+@login_required
+def delete_solution():
+
+    sol_id = request.form.get('sol-id', 0, type=int)
+
+    sol = Solution.query.get_or_404(sol_id)
+
+    db.session.delete(sol)
+
+    db.session.commit()
+
+    return dual_response('Solution deleted.')

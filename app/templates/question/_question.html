@@ -147,12 +147,12 @@
 	<h5>Please choose at least one topic to populate the questions.</h5>
 	<strong style="font-size: 20px;">Here is a quick walkthrough :-</strong>
 	<ul style="font-size: 20px;">
-		<li><strong>See the most popular <code>Topics</code> <a href="{{url_for('question.tags')}}">here</a>.</strong></li>
+		<li>You can <a href="{{url_for('question.tags')}}" class="btn btn-default"><span class="glyphicon glyphicon-search"></span> <strong>Find Topics</strong></a> here.</li>
 		<li>You can add <code>Topic(s)</code> - <br>
 				<img class="" src="{{url_for('static', filename='sample1.jpg')}}" alt="Tutorial Image">
 				<img src="{{url_for('static', filename='sample2.jpg')}}" alt="Tutorial Image">
 		</li>
-		<li>You can <a href="{{url_for('question.post_question')}}">post</a> your own questions in <b>Multiple Choice Format.</b></li>
+		<li>You can <a class="btn btn-info" href="{{url_for('question.post_question')}}"><strong><span class="glyphicon glyphicon-pencil"></span> Post Question</strong></a> in <b>Multiple Choice Format.</b></li>
 		<li>You can use keys <kbd>1</kbd>, <kbd>2</kbd>, <kbd>3</kbd> or <kbd>4</kbd> to select options.</li>
 		<li>You can answer other questions.</li>
 		<li>Every correct answer will fetch you points.</li>

@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"in",
+				"inline-block"
+			],
+			[
 				"st",
 				"strong	Tag"
 			],
@@ -456,10 +460,6 @@
 				"filter"
 			],
 			[
-				"in",
-				"int:id"
-			],
-			[
 				"M",
 				"Model"
 			],
@@ -520,18 +520,18 @@
 	"buffers":
 	[
 		{
-			"file": "app/question/views.py",
+			"file": "app/main/views.py",
 			"settings":
 			{
-				"buffer_size": 14156,
+				"buffer_size": 11990,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "app/main/views.py",
+			"file": "app/question/views.py",
 			"settings":
 			{
-				"buffer_size": 11976,
+				"buffer_size": 14516,
 				"line_ending": "Windows"
 			}
 		},
@@ -544,26 +544,26 @@
 			}
 		},
 		{
-			"file": "app/templates/home.html",
+			"file": "app/templates/question/_question.html",
 			"settings":
 			{
-				"buffer_size": 2941,
+				"buffer_size": 5712,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "app/templates/popular_tags.html",
+			"file": "app/templates/question/_tabs.html",
 			"settings":
 			{
-				"buffer_size": 1167,
+				"buffer_size": 3755,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "app/templates/user.html",
+			"file": "app/templates/_posted.html",
 			"settings":
 			{
-				"buffer_size": 3876,
+				"buffer_size": 753,
 				"line_ending": "Windows"
 			}
 		},
@@ -576,10 +576,34 @@
 			}
 		},
 		{
+			"file": "app/templates/user.html",
+			"settings":
+			{
+				"buffer_size": 3876,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "app/templates/_macros.html",
+			"settings":
+			{
+				"buffer_size": 6402,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "app/templates/home.html",
+			"settings":
+			{
+				"buffer_size": 2938,
+				"line_ending": "Windows"
+			}
+		},
+		{
 			"file": "app/templates/tags.html",
 			"settings":
 			{
-				"buffer_size": 2071,
+				"buffer_size": 2061,
 				"line_ending": "Windows"
 			}
 		},
@@ -595,7 +619,7 @@
 			"file": "app/static/css/style.css",
 			"settings":
 			{
-				"buffer_size": 6192,
+				"buffer_size": 6243,
 				"line_ending": "Windows"
 			}
 		},
@@ -603,7 +627,7 @@
 			"file": "app/static/scripts/scripts.js",
 			"settings":
 			{
-				"buffer_size": 36144,
+				"buffer_size": 36124,
 				"line_ending": "Windows"
 			}
 		}
@@ -640,12 +664,12 @@
 	},
 	"file_history":
 	[
+		"/C/Users/Arfat Salman/Desktop/practice-engine/app/templates/popular_tags.html",
 		"/C/Users/Arfat Salman/Desktop/practice-engine/app/templates/user.html",
 		"/C/Users/Arfat Salman/Desktop/practice-engine/app/templates/question/_question.html",
 		"/C/Users/Arfat Salman/Desktop/practice-engine/app/templates/404.html",
 		"/C/Users/Arfat Salman/Desktop/practice-engine/app/utilities.py",
 		"/C/Users/Arfat Salman/Desktop/practice-engine/app/templates/base.html",
-		"/C/Users/Arfat Salman/Desktop/practice-engine/app/templates/popular_tags.html",
 		"/C/Users/Arfat Salman/Desktop/practice-engine/app/main/views.py",
 		"/C/Users/Arfat Salman/Desktop/practice-engine/app/question/views.py",
 		"/C/Users/Arfat Salman/Desktop/practice-engine/app/templates/question/_modify_questions.html",
@@ -740,7 +764,7 @@
 	],
 	"find":
 	{
-		"height": 41.0
+		"height": 35.0
 	},
 	"find_in_files":
 	{
@@ -754,6 +778,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"preview",
+			".panel",
 			"Next Q",
 			"remove",
 			"ilter",
@@ -819,23 +845,23 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 4,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "app/question/views.py",
+					"file": "app/main/views.py",
 					"settings":
 					{
-						"buffer_size": 14156,
+						"buffer_size": 11990,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								8605,
-								8605
+								3058,
+								3058
 							]
 						],
 						"settings":
@@ -846,25 +872,25 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 4590.0,
+						"translation.y": 2862.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "app/main/views.py",
+					"file": "app/question/views.py",
 					"settings":
 					{
-						"buffer_size": 11976,
+						"buffer_size": 14516,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2935,
-								2935
+								10263,
+								10263
 							]
 						],
 						"settings":
@@ -875,7 +901,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 5562.0,
+						"translation.y": 5511.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -910,18 +936,18 @@
 				},
 				{
 					"buffer": 3,
-					"file": "app/templates/home.html",
+					"file": "app/templates/question/_question.html",
 					"settings":
 					{
-						"buffer_size": 2941,
+						"buffer_size": 5712,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								76,
-								26
+								4156,
+								4156
 							]
 						],
 						"settings":
@@ -930,53 +956,25 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 3456.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 4,
-					"file": "app/templates/popular_tags.html",
+					"file": "app/templates/question/_tabs.html",
 					"settings":
 					{
-						"buffer_size": 1167,
+						"buffer_size": 3755,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								872,
-								872
-							]
-						],
-						"settings":
-						{
-							"auto_complete": false,
-							"syntax": "Packages/HTML/HTML.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "app/templates/user.html",
-					"settings":
-					{
-						"buffer_size": 3876,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1865,
-								1865
+								1869,
+								1869
 							]
 						],
 						"settings":
@@ -986,17 +984,37 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 378.0,
+						"translation.y": 702.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
-				}
-			]
-		},
-		{
-			"selected": 2,
-			"sheets":
-			[
+				},
+				{
+					"buffer": 5,
+					"file": "app/templates/_posted.html",
+					"settings":
+					{
+						"buffer_size": 753,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								82,
+								82
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
 				{
 					"buffer": 6,
 					"file": "app/utilities.py",
@@ -1019,25 +1037,25 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 270.0,
+						"translation.y": 486.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 7,
-					"file": "app/templates/tags.html",
+					"file": "app/templates/user.html",
 					"settings":
 					{
-						"buffer_size": 2071,
+						"buffer_size": 3876,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								935,
-								901
+								3158,
+								3158
 							]
 						],
 						"settings":
@@ -1047,13 +1065,100 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 108.0,
+						"translation.y": 432.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 5,
+			"sheets":
+			[
+				{
+					"buffer": 8,
+					"file": "app/templates/_macros.html",
+					"settings":
+					{
+						"buffer_size": 6402,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5390,
+								5390
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 3132.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 8,
+					"buffer": 9,
+					"file": "app/templates/home.html",
+					"settings":
+					{
+						"buffer_size": 2938,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								478,
+								478
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1188.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "app/templates/tags.html",
+					"settings":
+					{
+						"buffer_size": 2061,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								895,
+								895
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 11,
 					"file": "app/models.py",
 					"settings":
 					{
@@ -1076,25 +1181,25 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 11178.0,
+						"translation.y": 10314.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 9,
+					"buffer": 12,
 					"file": "app/static/css/style.css",
 					"settings":
 					{
-						"buffer_size": 6192,
+						"buffer_size": 6243,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								299,
-								299
+								148,
+								148
 							]
 						],
 						"settings":
@@ -1110,19 +1215,19 @@
 					"type": "text"
 				},
 				{
-					"buffer": 10,
+					"buffer": 13,
 					"file": "app/static/scripts/scripts.js",
 					"settings":
 					{
-						"buffer_size": 36144,
+						"buffer_size": 36124,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								31744,
-								31744
+								2937,
+								2937
 							]
 						],
 						"settings":
@@ -1133,7 +1238,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 20206.0,
+						"translation.y": 1785.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

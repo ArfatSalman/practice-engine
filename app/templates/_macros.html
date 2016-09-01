@@ -162,7 +162,12 @@
 
 {% macro delete_button(user, ques, btn_size='') %}
 	{% if ques.user == user %}
-		<a href="{{url_for('question.delete_question', id=ques.id)}}" data-id="{{ques.id}}" class="btn btn-danger {{btn_size}}"><span class="glyphicon glyphicon-trash"></span> Delete</a>
+		<form method="POST" action="/delete-question" class="inline">
+			<div class="form-group">
+				<input type="hidden" name="ques-id" value="{{ques.id}}">
+				<input type="submit" class="btn btn-danger" value="Delete" >
+			</div>
+		</form>
 	{% endif %}
 {% endmacro %}
 

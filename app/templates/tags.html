@@ -21,7 +21,7 @@
                 </div>
                 <div class="panel-footer">
                      {% if tag.has_user(current_user) %}
-                        <button id="subs-tag" data-id="{{tag.id}}" class="btn btn-success"><strong>Subscribed</strong> {% else %} <button id="subs-tag" data-id="{{tag.id}}" class="btn btn-info"><strong>Subscribe</strong> {% endif %}| {{tag.assoc_users.count()}}</button>
+                        <button data-id="{{tag.id}}" class="subs-tag btn btn-success"><strong>Subscribed</strong> {% else %} <button data-id="{{tag.id}}" class="subs-tag btn btn-info"><strong>Subscribe</strong> {% endif %}| {{tag.assoc_users.count()}}</button>
                 </div>
             </div>
 

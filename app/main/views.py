@@ -90,7 +90,7 @@ def add_tags(tags):
 def remove_tag(tag):
     
     if tag not in current_user.associated_tags:
-        return bad_request('The tag %s is not associated to you.')
+        return bad_request('The tag %s is not associated to you.' % tag.tagname)
 
 
     current_user.associated_tags.remove(tag)

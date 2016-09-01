@@ -19,16 +19,15 @@
 			{% for tag in popular_tags %}
 				{% set user_subs = tag.has_user(current_user) %}
 
-				<li class="list-group-item list-group-item-{% if user_subs %}success{% else %}default{% endif %}">
+				<li class="list-group-item">
 					<a href="{{url_for('main.tags', tagname=tag.tagname)}}"><strong>{{tag.tagname}}</strong></a>
 					<div>
 						<strong>Questions: </strong> <span class="badge">{{tag.questions.count()}}</span>
 
 						<strong>Users Associated: </strong> <span class="badge">{{tag.assoc_users.count()}}</span>
 					</div>
-					{% if not user_subs %}
-						<button id="subs-tag" data-id="{{tag.id}}" class="pull-right btn btn-info"><strong>Subscribe</strong></button>
-					{% endif %}
+					
+					<button data-id="{{tag.id}}" class="subs-tag pull-right btn btn-{%if user_subs%}success{%else%}info{%endif%}"><strong>{%if user_subs%}Subscribed{%else%}Subscribe{%endif%}</strong></button>
 				</li>
 
 			{% else %}

@@ -112,7 +112,7 @@ var preview = function(inputElem, previewElem) {
         UpdateMath(elem.val(), previewElem).css(css);
     }
 
-    elem.on('keyup', function() {
+    $(document).on('keyup', inputElem, function() {
         var self = $(this);
         var text = self.val();
 
@@ -520,15 +520,15 @@ $(function() {
                 url: '/post-solution',
                 type: 'POST',
                 data: $('#solution-form, input[name="question-id"]').serialize(),
-                success: function() {
+                success: function(data) {
                     // Reload the question.
                     var ques_id = $('input[name="question-id"]').val();
                     get_questions(ques_id);
                     //Show the appropriate message;
-                    if ($.isEmptyObject(sol_id)) {
-                        showAlert('Solution Posted Successfully.', 'success')
+                    if (sol_id.length === 0) {
+                        showAlert(data.message, 'success')
                     } else {
-                        showAlert('Solution Edited successfully.', 'success');
+                        showAlert(data.message, 'success');
                     }
 
                 },
@@ -854,7 +854,7 @@ var remove_tag_from_most_pop = function(tagname) {
 
 //Tags Single tag subsription 
 $(function() {
-    $('#subs-tag').on('click', function() {
+    $('.subs-tag').on('click', function() {
         var self = $(this);
         var url = '/user-tags';
 
@@ -982,6 +982,7 @@ $(function() {
             type: 'POST',
             beforeSend: function() {
                 self.siblings('a').text('Deleting..');
+                self.hide();
             },
             data: {
                 'id': id

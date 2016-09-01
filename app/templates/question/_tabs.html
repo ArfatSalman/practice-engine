@@ -46,16 +46,20 @@
                         You have already posted to solution to this question.
                     </div>
                     
-                    <div id="to-edit" class="panel-body">
-                        {{sol.body}}
-                    </div>
+                    <div id="to-edit" class="panel-body">{{sol.body}}</div>
 
                     <div class="panel-footer">
                         
                         <div class="row">
-                            <div class="col-md-2">
+                            <div class="col-md-5">
                             {% if sol.user == current_user %}
-                                <button id="edit-sol" data-id="{{sol.id}}" class="downvote-sol btn btn-default">Edit</button>
+                                <button id="edit-sol" data-id="{{sol.id}}" class="downvote-sol btn btn-info"><span class="glyphicon glyphicon-edit"></span> Edit</button>
+
+                                <form class="inline" method="post" action="/delete-solution">
+                                    <input type="hidden" name="sol-id" value="{{sol.id}}">
+                                    <input type="submit" class="btn btn-danger" value="Delete">
+                                </form>
+                                
                             {% endif %}
                             </div>
 

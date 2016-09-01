@@ -1,7 +1,7 @@
 {% from "_macros.html" import solution with context %}
 
 {% if ques %}
-	{% set obj = ques.solutions %}
+	{% set obj = ques.solution_by_upvotes %}
 {% else %}
 	{% set obj = pagination %}
 {% endif %}

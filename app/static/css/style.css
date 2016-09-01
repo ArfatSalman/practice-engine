@@ -7,6 +7,11 @@
         display: none;
     }
 }
+
+.inline {
+    display: inline-block;
+}
+
 #score {
     background: #9f84bd;
     padding: 2px 10px;
@@ -69,7 +74,7 @@ blockquote {
 .button-hover {
     padding: 3px;
 }
-#view-solutions .panel-body, #sol-preview, #MathQues, #user-desc {
+#view-solutions .panel-body, #sol-preview, #MathQues, #user-desc, #to-edit {
     white-space: pre-line;
 }
 .streak {
@@ -344,5 +349,4 @@ h5 {
 }
 
 .panel-footer .user-box {
-    margin: 0px 5px;
-}
+    margin: -5px 8px;
