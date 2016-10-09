@@ -335,9 +335,9 @@ $(function() {
 });
 // Hide options 
 $(function() {
-    var hide_options = $('#hide-options');
+    var hide_opts = $('#hide-options');
 
-    if (hide_options.hasClass('btn-success')) {
+    if (hide_opts.hasClass('btn-success')) {
         hide_options();
     }
 
