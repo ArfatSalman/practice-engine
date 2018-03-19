@@ -1,7 +1,6 @@
 # Created by https://www.gitignore.io
 
 # Custom
-config.py
 app/static/scripts/Mathjax/
 
 ### Python ###
